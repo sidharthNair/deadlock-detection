@@ -29,7 +29,7 @@
 // SCK (pin 8) connected to PA2 (SSI0Clk)
 // MOSI (pin 7) connected to PA5 (SSI0Tx)
 // TFT_CS (pin 6) connected to PA3 (SSI0Fss) <- GPIO high to disable TFT
-// CARD_CS (pin 5) connected to PD7/PB0 GPIO output 
+// CARD_CS (pin 5) connected to PD7/PB0 GPIO output
 // Data/Command (pin 4) connected to PA6 (GPIO)<- GPIO low not using TFT
 // RESET (pin 3) connected to PA7 (GPIO)<- GPIO high to disable TFT
 // VCC (pin 2) connected to +3.3 V
@@ -46,9 +46,9 @@
 // CS   - PA3 TFT_CS, active low to enable TFT
 // *CS  - PD7/PB0 SDC_CS, active low to enable SDC
 // MISO - PA4 MISO SPI data from SDC to microcontroller
-// SDA  – (NC) I2C data for ADXL345 accelerometer
-// SCL  – (NC) I2C clock for ADXL345 accelerometer
-// SDO  – (NC) I2C alternate address for ADXL345 accelerometer
+// SDA  ï¿½ (NC) I2C data for ADXL345 accelerometer
+// SCL  ï¿½ (NC) I2C clock for ADXL345 accelerometer
+// SDO  ï¿½ (NC) I2C alternate address for ADXL345 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
 #include <stdint.h>
 #include "../inc/tm4c123gh6pm.h"
@@ -61,18 +61,18 @@
 #define TFT_CS_HIGH             0x08
 
 #if SDC_CS_PD7
-// CS is PD7  
+// CS is PD7
 // to change CS to another GPIO, change SDC_CS and CS_Init
-#define SDC_CS   (*((volatile unsigned long *)0x40007200)) 
+#define SDC_CS   (*((volatile unsigned long *)0x40007200))
 #define SDC_CS_LOW       0           // CS controlled by software
-#define SDC_CS_HIGH      0x80  
-void CS_Init(void){ 
+#define SDC_CS_HIGH      0x80
+void CS_Init(void){
   SYSCTL_RCGCGPIO_R |= 0x08; // activate port D
   while((SYSCTL_PRGPIO_R&0x08)==0){};
-  GPIO_PORTD_LOCK_R = 0x4C4F434B;   // 2) unlock PortD PD7  
-  GPIO_PORTD_CR_R |= 0xFF;          // allow changes to PD7-0       
+  GPIO_PORTD_LOCK_R = 0x4C4F434B;   // 2) unlock PortD PD7
+  GPIO_PORTD_CR_R |= 0xFF;          // allow changes to PD7-0
   GPIO_PORTD_PUR_R |= 0x80;         // enable weak pullup on PD7
-  GPIO_PORTD_DIR_R |= 0x80;         // make PD7 output 
+  GPIO_PORTD_DIR_R |= 0x80;         // make PD7 output
   GPIO_PORTD_DR4R_R |= 0x80;        // 4mA output on outputs
   SDC_CS = SDC_CS_HIGH;
   GPIO_PORTD_PCTL_R &= ~0xF0000000;
@@ -83,14 +83,14 @@ void CS_Init(void){
 #if SDC_CS_PB0
 // CS is PB0
 // to change CS to another GPIO, change SDC_CS and CS_Init
-#define SDC_CS   (*((volatile unsigned long *)0x40005004)) 
+#define SDC_CS   (*((volatile unsigned long *)0x40005004))
 #define SDC_CS_LOW       0           // CS controlled by software
-#define SDC_CS_HIGH      0x01  
-void CS_Init(void){ 
+#define SDC_CS_HIGH      0x01
+void CS_Init(void){
   SYSCTL_RCGCGPIO_R |= 0x02; // activate port B
   while((SYSCTL_PRGPIO_R&0x02)==0){};
   GPIO_PORTB_PUR_R |= 0x01;         // enable weak pullup on PB0
-  GPIO_PORTB_DIR_R |= 0x01;         // make PB0 output 
+  GPIO_PORTB_DIR_R |= 0x01;         // make PB0 output
   GPIO_PORTB_DR4R_R |= 0x01;        // 4mA output on outputs
   SDC_CS = SDC_CS_HIGH;
   GPIO_PORTB_PCTL_R &= ~0x0000000F;
@@ -133,9 +133,9 @@ void SSI0_Init(unsigned long CPSDVSR){
   SSI0_CR1_R &= ~SSI_CR1_SSE;           // disable SSI
   SSI0_CR1_R &= ~SSI_CR1_MS;            // master mode
                                         // clock divider for 8 MHz SSIClk (assumes 16 MHz PIOSC)
-  SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+CPSDVSR; 
+  SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+CPSDVSR;
   // CPSDVSR must be even from 2 to 254
-  
+
   SSI0_CR0_R &= ~(SSI_CR0_SCR_M |       // SCR = 0 (80 Mbps base clock)
                   SSI_CR0_SPH |         // SPH = 0
                   SSI_CR0_SPO);         // SPO = 0
@@ -165,7 +165,7 @@ void SSI0_Init(unsigned long CPSDVSR){
 //  TIMER5_CTL_R = 0x00000001;       // 10) enable timer5A
 //}
 //// Executed every 10 ms
-//void Timer5A_Handler(void){ 
+//void Timer5A_Handler(void){
 //  TIMER5_ICR_R = 0x00000001;       // acknowledge timer5A timeout
 //  disk_timerproc();
 //}
@@ -174,7 +174,7 @@ void SSI0_Init(unsigned long CPSDVSR){
 // SSIClk = PIOSC / (CPSDVSR * (1 + SCR)) = 80 MHz/CPSDVSR
 // 200 for   400,000 bps slow mode, used during initialization
 // 8  for 10,000,000 bps fast mode, used during disk I/O
-#define FCLK_SLOW() { SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+200; }  
+#define FCLK_SLOW() { SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+200; }
 #define FCLK_FAST() { SSI0_CPSR_R = (SSI0_CPSR_R&~SSI_CPSR_CPSDVSR_M)+8; }
 
 // de-asserts the CS pin to the card
@@ -256,7 +256,7 @@ static BYTE xchg_spi(BYTE dat){ BYTE volatile rcvdat;
 // Inputs:  none
 // Outputs: byte received from SPI
 // assumes it has been selected with CS low
-static BYTE rcvr_spi(void){ 
+static BYTE rcvr_spi(void){
 // wait until SSI0 not busy/transmit FIFO empty
   while((SSI0_SR_R&SSI_SR_BSY)==SSI_SR_BSY){};
   SSI0_DR_R = 0xFF;                     // data out, garbage
@@ -388,7 +388,7 @@ static int xmit_datablock(const BYTE *buff, BYTE token){
 /* Send a command packet to the MMC                                      */
 /*-----------------------------------------------------------------------*/
 // Inputs:  cmd Command index
-//          arg    /* Argument 
+//          arg    /* Argument
 // Outputs: R1 resp (bit7==1:Failed to send)
 static BYTE send_cmd(BYTE cmd, DWORD arg){
   BYTE n, res;
@@ -503,10 +503,10 @@ DSTATUS eDisk_Status(BYTE drv){
 /*-----------------------------------------------------------------------*/
 /* Read sector(s)                                                        */
 /*-----------------------------------------------------------------------*/
-//Inputs:  drv    Physical drive number (0) 
-//         buff   Pointer to the data buffer to store read data 
-//         sector Start sector number (LBA) 
-//         count  Number of sectors to read (1..128) 
+//Inputs:  drv    Physical drive number (0)
+//         buff   Pointer to the data buffer to store read data
+//         sector Start sector number (LBA)
+//         count  Number of sectors to read (1..128)
 // Outputs: status (see DRESULT)
 DRESULT eDisk_Read(BYTE drv, BYTE *buff, DWORD sector, UINT count){
   if (drv || !count) return RES_PARERR;    /* Check parameter */
@@ -538,11 +538,11 @@ DRESULT eDisk_Read(BYTE drv, BYTE *buff, DWORD sector, UINT count){
 // Inputs: pointer to an empty RAM buffer
 //         sector number of SD card to read: 0,1,2,...
 // Outputs: result
-//  RES_OK        0: Successful 
-//  RES_ERROR     1: R/W Error 
-//  RES_WRPRT     2: Write Protected 
-//  RES_NOTRDY    3: Not Ready 
-//  RES_PARERR    4: Invalid Parameter 
+//  RES_OK        0: Successful
+//  RES_ERROR     1: R/W Error
+//  RES_WRPRT     2: Write Protected
+//  RES_NOTRDY    3: Not Ready
+//  RES_PARERR    4: Invalid Parameter
 DRESULT eDisk_ReadBlock(
     BYTE *buff,         /* Pointer to the data buffer to store read data */
     DWORD sector){      /* Start sector number (LBA) */
@@ -555,10 +555,10 @@ DRESULT eDisk_ReadBlock(
 /*-----------------------------------------------------------------------*/
 
 #if _USE_WRITE
-//Inputs:  drv    Physical drive number (0) 
-//         buff   Pointer to the data buffer to write to disk 
-//         sector Start sector number (LBA) 
-//         count  Number of sectors to write (1..128) 
+//Inputs:  drv    Physical drive number (0)
+//         buff   Pointer to the data buffer to write to disk
+//         sector Start sector number (LBA)
+//         count  Number of sectors to write (1..128)
 // Outputs: status (see DRESULT)
 DRESULT eDisk_Write(BYTE drv, const BYTE *buff, DWORD sector, UINT count){
   if (drv || !count) return RES_PARERR;    /* Check parameter */
@@ -592,11 +592,11 @@ DRESULT eDisk_Write(BYTE drv, const BYTE *buff, DWORD sector, UINT count){
 // Inputs: pointer to RAM buffer with information
 //         sector number of SD card to write: 0,1,2,...
 // Outputs: result
-//  RES_OK        0: Successful 
-//  RES_ERROR     1: R/W Error 
-//  RES_WRPRT     2: Write Protected 
-//  RES_NOTRDY    3: Not Ready 
-//  RES_PARERR    4: Invalid Parameter 
+//  RES_OK        0: Successful
+//  RES_ERROR     1: R/W Error
+//  RES_WRPRT     2: Write Protected
+//  RES_NOTRDY    3: Not Ready
+//  RES_PARERR    4: Invalid Parameter
 DRESULT eDisk_WriteBlock (
     const BYTE *buff,   /* Pointer to the data to be written */
     DWORD sector){      /* Start sector number (LBA) */
@@ -609,9 +609,9 @@ DRESULT eDisk_WriteBlock (
 /*-----------------------------------------------------------------------*/
 /* Miscellaneous drive controls other than data read/write               */
 /*-----------------------------------------------------------------------*/
-// Inputs:  drv,   Physical drive number (0) 
-//          cmd,   Control command code 
-//          buff   Pointer to the control data 
+// Inputs:  drv,   Physical drive number (0)
+//          cmd,   Control command code
+//          buff   Pointer to the control data
 // Outputs: status (see DRESULT)
 #if _USE_IOCTL
 DRESULT disk_ioctl(BYTE drv, BYTE cmd, void *buff){
@@ -718,4 +718,3 @@ void disk_timerproc (void)
     s |= (STA_NODISK | STA_NOINIT);
   Stat = s;
 }
-

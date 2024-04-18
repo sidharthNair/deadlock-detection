@@ -57,8 +57,8 @@
 // SS3 triggering event: software trigger
 // SS3 1st sample source: Ain9 (PE4)
 // SS3 interrupts: enabled but not promoted to controller
-void ADC0_InitSWTriggerSeq3_Ch9(void){ 
-  SYSCTL_RCGCADC_R |= 0x0001;   // 7) activate ADC0 
+void ADC0_InitSWTriggerSeq3_Ch9(void){
+  SYSCTL_RCGCADC_R |= 0x0001;   // 7) activate ADC0
                                   // 1) activate clock for Port E
   SYSCTL_RCGCGPIO_R |= 0x10;
   while((SYSCTL_PRGPIO_R&0x10) != 0x10){};
@@ -66,7 +66,7 @@ void ADC0_InitSWTriggerSeq3_Ch9(void){
   GPIO_PORTE_AFSEL_R |= 0x10;     // 3) enable alternate function on PE4
   GPIO_PORTE_DEN_R &= ~0x10;      // 4) disable digital I/O on PE4
   GPIO_PORTE_AMSEL_R |= 0x10;     // 5) enable analog functionality on PE4
-    
+
   while((SYSCTL_PRADC_R&0x0001) != 0x0001){};    // good code, but not yet implemented in simulator
 
 
@@ -83,8 +83,8 @@ void ADC0_InitSWTriggerSeq3_Ch9(void){
 }
 
 // PD0 is AIN7
-void ADC0_InitSWTriggerSeq3_Ch7(void){ 
-  SYSCTL_RCGCADC_R |= 0x0001;   // 7) activate ADC0 
+void ADC0_InitSWTriggerSeq3_Ch7(void){
+  SYSCTL_RCGCADC_R |= 0x0001;   // 7) activate ADC0
                                   // 1) activate clock for Port D
   SYSCTL_RCGCGPIO_R |= 0x08;  // D
   while((SYSCTL_PRGPIO_R&0x08) != 0x08){};
@@ -92,7 +92,7 @@ void ADC0_InitSWTriggerSeq3_Ch7(void){
   GPIO_PORTD_AFSEL_R |= 0x01;     // 3) enable alternate function on PD0
   GPIO_PORTD_DEN_R &= ~0x01;      // 4) disable digital I/O on PD0
   GPIO_PORTD_AMSEL_R |= 0x01;     // 5) enable analog functionality on PD0
-    
+
   while((SYSCTL_PRADC_R&0x0001) != 0x0001){};    // good code, but not yet implemented in simulator
 
 
@@ -277,8 +277,8 @@ uint32_t ADC0_InSeq3(void){  uint32_t result;
 // SS2 1st sample source: Ain9 (PE4)
 // SS2 2nd sample source: Ain8 (PE5)
 // SS2 interrupts: enabled after 2nd sample but not promoted to controller
-void ADC_Init89(void){ 
-  volatile uint32_t delay;                         
+void ADC_Init89(void){
+  volatile uint32_t delay;
   SYSCTL_RCGCADC_R |= 0x00000001; // 1) activate ADC0
   SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R4; // 1) activate clock for Port E
   delay = SYSCTL_RCGCGPIO_R;      // 2) allow time for clock to stabilize
@@ -304,13 +304,13 @@ void ADC_Init89(void){
 // Busy-wait Analog to digital conversion
 // Input: none
 // Output: two 12-bit result of ADC conversions
-// Samples ADC8 and ADC9 
+// Samples ADC8 and ADC9
 // 125k max sampling
 // software trigger, busy-wait sampling
 // data returned by reference
 // data[0] is ADC8 (PE5) 0 to 4095
 // data[1] is ADC9 (PE4) 0 to 4095
-void ADC_In89(uint32_t data[2]){ 
+void ADC_In89(uint32_t data[2]){
   ADC0_PSSI_R = 0x0004;            // 1) initiate SS2
   while((ADC0_RIS_R&0x04)==0){};   // 2) wait for conversion done
   data[1] = ADC0_SSFIFO2_R&0xFFF;  // 3A) read first result
@@ -394,8 +394,8 @@ void ADC0_InSeq2(void){
 // SS3 triggering event: software trigger
 // SS3 1st sample source: internal temperature
 // SS3 interrupts: enabled but not promoted to controller
-void ADC0_InitSWTriggerSeq3_InternalTemperature(void){ 
-  SYSCTL_RCGCADC_R |= 0x0001;   // 7) activate ADC0 
+void ADC0_InitSWTriggerSeq3_InternalTemperature(void){
+  SYSCTL_RCGCADC_R |= 0x0001;   // 7) activate ADC0
   while((SYSCTL_PRADC_R&0x0001) != 0x0001){};    // good code, but not yet implemented in simulator
   ADC0_PC_R &= ~0xF;              // 7) clear max sample rate field
   ADC0_PC_R |= 0x1;               //    configure for 125K samples/sec
@@ -432,8 +432,8 @@ uint32_t ADC0_InSeq3_InternalTemperature(void){  uint32_t result;
 // SS2 3rd sample source: Ain2 (PE1)
 // SS2 4th sample source: Ain3 (PE0)
 // SS2 interrupts: enabled after 4th sample but not promoted to controller
-void ADC_Init3210(void){ 
-  volatile uint32_t delay;                         
+void ADC_Init3210(void){
+  volatile uint32_t delay;
   SYSCTL_RCGCADC_R |= 0x00000001; // 1) activate ADC0
   SYSCTL_RCGCGPIO_R |= 0x10;      // 1) activate clock for Port E
   while((SYSCTL_PRGPIO_R&0x10) == 0){};
@@ -459,7 +459,7 @@ void ADC_Init3210(void){
 // Busy-wait Analog to digital conversion
 // Input: none
 // Output: four 12-bit result of ADC conversions
-// Samples ADC0(PE3), ADC1(PE2), ADC2(PE1) and ADC3(PE0) 
+// Samples ADC0(PE3), ADC1(PE2), ADC2(PE1) and ADC3(PE0)
 // 125k max sampling
 // software trigger, busy-wait sampling
 // data returned by reference
@@ -467,7 +467,7 @@ void ADC_Init3210(void){
 // data[1] is ADC2 (PE1) 0 to 4095
 // data[2] is ADC1 (PE2) 0 to 4095
 // data[3] is ADC0 (PE3) 0 to 4095
-void ADC_In3210(uint32_t data[4]){ 
+void ADC_In3210(uint32_t data[4]){
   ADC0_PSSI_R = 0x0004;            // 1) initiate SS2
   while((ADC0_RIS_R&0x04)==0){};   // 2) wait for conversion done
   data[3] = ADC0_SSFIFO2_R&0xFFF;  // 3A) PE3 result
@@ -476,5 +476,3 @@ void ADC_In3210(uint32_t data[4]){
   data[0] = ADC0_SSFIFO2_R&0xFFF;  // 3B) PE0 result
   ADC0_ISC_R = 0x0004;             // 4) acknowledge completion
 }
-
-

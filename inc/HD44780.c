@@ -70,12 +70,12 @@ void static OutCmd(unsigned char command){
 // Initialize LCD
 // Inputs: none
 // Outputs: none
-void LCD_Init(void){ 
+void LCD_Init(void){
   SYSCTL_RCGCGPIO_R |= 0x00000003;  // 1) activate clock for Ports A and B
   while((SYSCTL_PRGPIO_R&0x03) != 0x03){};// ready?
   GPIO_PORTB_AMSEL_R &= ~0xFF;   // 3) disable analog function on PB7-0
-  GPIO_PORTA_AMSEL_R &= ~0xC0;   //    disable analog function on PA7-6              
-  GPIO_PORTB_PCTL_R = 0x00000000;   // 4) configure PB7-0 as GPIO   
+  GPIO_PORTA_AMSEL_R &= ~0xC0;   //    disable analog function on PA7-6
+  GPIO_PORTB_PCTL_R = 0x00000000;   // 4) configure PB7-0 as GPIO
   GPIO_PORTA_PCTL_R &= ~0xFF000000; //    configure PA7-6 as GPIO
   GPIO_PORTB_DIR_R = 0xFF;       // 5) set direction register
   GPIO_PORTA_DIR_R |= 0xC0;

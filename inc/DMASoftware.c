@@ -37,18 +37,18 @@ uint32_t ucControlTable[256] __attribute__ ((aligned(1024)));
 // Inputs:  none
 // Outputs: none
 void DMA_Init(void){  int i;
-  volatile uint32_t delay; 
+  volatile uint32_t delay;
   for(i=0; i<256; i++){
     ucControlTable[i] = 0;
   }
-  SYSCTL_RCGCDMA_R = 0x01;    // µDMA Module Run Mode Clock Gating Control
-  delay = SYSCTL_RCGCDMA_R;   // allow time to finish 
+  SYSCTL_RCGCDMA_R = 0x01;    // ï¿½DMA Module Run Mode Clock Gating Control
+  delay = SYSCTL_RCGCDMA_R;   // allow time to finish
   UDMA_CFG_R = 0x01;          // MASTEN Controller Master Enable
   UDMA_CTLBASE_R = (uint32_t)ucControlTable;
   UDMA_PRIOCLR_R = BIT30;     // default, not high priority
   UDMA_ALTCLR_R = BIT30;      // use primary control
   UDMA_USEBURSTCLR_R = BIT30; // responds to both burst and single requests
-  UDMA_REQMASKCLR_R = BIT30;  // allow the µDMA controller to recognize requests for this channel
+  UDMA_REQMASKCLR_R = BIT30;  // allow the ï¿½DMA controller to recognize requests for this channel
 }
 // ************DMA_Transfer*****************
 // Called to transfer 32-bit words from source to destination
@@ -57,7 +57,7 @@ void DMA_Init(void){  int i;
 //          count is the number of words to transfer (max is 1024 words)
 // Outputs: none
 // This routine does not wait for completion
-void DMA_Transfer(uint32_t *source, uint32_t *destination, uint32_t count){ 
+void DMA_Transfer(uint32_t *source, uint32_t *destination, uint32_t count){
   ucControlTable[CH30]   = (uint32_t)source+count*4-1;       // last address
   ucControlTable[CH30+1] = (uint32_t)destination+count*4-1;  // last address
   ucControlTable[CH30+2] = 0xAA00C002+((count-1)<<4);             // DMA Channel Control Word (DMACHCTL)
@@ -66,17 +66,17 @@ void DMA_Transfer(uint32_t *source, uint32_t *destination, uint32_t count){
    DSTSIZE           29:28   10    32-bit destination data size
    SRCINC            27:26   10    32-bit source address increment
    SRCSIZE           25:24   10    32-bit source data size
-   reserved          23:18   0     Reserved  
+   reserved          23:18   0     Reserved
    ARBSIZE           17:14   0011  Arbitrates after 8 transfers
    XFERSIZE          13:4  count-1 Transfer count items
    NXTUSEBURST       3       0     N/A for this transfer type
    XFERMODE          2:0     010   Use Auto-request transfer mode
   */
-  UDMA_ENASET_R = BIT30;  // µDMA Channel 30 is enabled.
-  UDMA_SWREQ_R = BIT30;   // software start, 
+  UDMA_ENASET_R = BIT30;  // ï¿½DMA Channel 30 is enabled.
+  UDMA_SWREQ_R = BIT30;   // software start,
   // bit 30 in UDMA_ENASET_R become clear when done
   // bits 2:0 ucControlTable[CH30+2] become clear when done
-  // vector 62, NVIC interrupt 46, vector address 0x0000.00F8 could be armed or µDMA Software interrupt
+  // vector 62, NVIC interrupt 46, vector address 0x0000.00F8 could be armed or ï¿½DMA Software interrupt
 }
 
 // ************DMA_Status*****************
@@ -84,7 +84,6 @@ void DMA_Transfer(uint32_t *source, uint32_t *destination, uint32_t count){
 // Inputs:  none
 // Outputs: true if still active, false if complete
 // This routine does not wait for completion
-uint32_t DMA_Status(void){ 
-  return (UDMA_ENASET_R&BIT30);  // µDMA Channel 30 enable nit is high if active
+uint32_t DMA_Status(void){
+  return (UDMA_ENASET_R&BIT30);  // ï¿½DMA Channel 30 enable nit is high if active
 }
-

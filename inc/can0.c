@@ -1,13 +1,13 @@
 // can0.c
 // Runs on LM4F120/TM4C123
 // Use CAN0 to communicate on CAN bus PE4 and PE5
-// 
+//
 
 // Jonathan Valvano
 // May 2, 2015
 
 /* This example accompanies the books
-   Embedded Systems: Real-Time Operating Systems for ARM Cortex-M Microcontrollers, Volume 3,  
+   Embedded Systems: Real-Time Operating Systems for ARM Cortex-M Microcontrollers, Volume 3,
    ISBN: 978-1466468863, Jonathan Valvano, copyright (c) 2015
 
    Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers, Volume 2
@@ -29,8 +29,8 @@
 // MCP2551 Pin3 VDD  ---- +5V with 0.1uF cap to ground
 // MCP2551 Pin4 RXD  ---- CAN0Rx PE4 (8) I TTL CAN module 0 receive
 // MCP2551 Pin5 VREF ---- open (it will be 2.5V)
-// MCP2551 Pin6 CANL ---- to other CANL on network 
-// MCP2551 Pin7 CANH ---- to other CANH on network 
+// MCP2551 Pin6 CANL ---- to other CANL on network
+// MCP2551 Pin7 CANH ---- to other CANH on network
 // MCP2551 Pin8 RS   ---- ground, Slope-Control Input (maximum slew rate)
 // 120 ohm across CANH, CANL on both ends of network
 #include <stdint.h>
@@ -48,7 +48,7 @@
 // reverse these IDs on the other microcontroller
 
 uint32_t RCV_ID=2; // set dynamically at time of CAN0_Open
-uint32_t XMT_ID=4; 
+uint32_t XMT_ID=4;
 
 #define NULL 0
 // reverse these IDs on the other microcontroller
@@ -101,9 +101,9 @@ void static CAN0_Setup_Message_Object( uint32_t MessageID, \
   CANMessageSet(CAN0_BASE, ObjectID, &xTempObject, eMsgType);
 }
 // Initialize CAN port
-void CAN0_Open(uint32_t rcvId, uint32_t xmtID){uint32_t volatile delay; 
-  RCV_ID = rcvId; 
-  XMT_ID = xmtID; 
+void CAN0_Open(uint32_t rcvId, uint32_t xmtID){uint32_t volatile delay;
+  RCV_ID = rcvId;
+  XMT_ID = xmtID;
   MailFlag = false;
 
   SYSCTL_RCGCCAN_R |= 0x00000001;  // CAN0 enable bit 0
@@ -114,7 +114,7 @@ void CAN0_Open(uint32_t rcvId, uint32_t xmtID){uint32_t volatile delay;
   GPIO_PORTE_PCTL_R = (GPIO_PORTE_PCTL_R&0xFF00FFFF)|0x00880000;
   GPIO_PORTE_DEN_R |= 0x30;
   GPIO_PORTE_DIR_R |= 0x20;
-      
+
   CANInit(CAN0_BASE);
   CANBitRateSet(CAN0_BASE, 80000000, CAN_BITRATE);
   CANEnable(CAN0_BASE);
@@ -127,7 +127,7 @@ void CAN0_Open(uint32_t rcvId, uint32_t xmtID){uint32_t volatile delay;
   return;
 }
 
-// send 4 bytes of data to other microcontroller 
+// send 4 bytes of data to other microcontroller
 void CAN0_SendData(uint8_t data[4]){
 // in this case there is just one type, but you could accept multiple ID types
   CAN0_Setup_Message_Object(XMT_ID, NULL, 4, data, XMT_ID, MSG_OBJ_TYPE_TX);
@@ -151,7 +151,7 @@ int CAN0_GetMailNonBlock(uint8_t data[4]){
   }
   return false;
 }
-// if receive data is ready, gets the data 
+// if receive data is ready, gets the data
 // if no receive data is ready, it waits until it is ready
 void CAN0_GetMail(uint8_t data[4]){
   while(MailFlag==false){};
@@ -161,4 +161,3 @@ void CAN0_GetMail(uint8_t data[4]){
   data[3] = RCVData[3];
   MailFlag = false;
 }
-

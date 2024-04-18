@@ -72,9 +72,9 @@
 // CS   - PA3 TFT_CS, active low to enable TFT
 // *CS  - (NC) SDC_CS, active low to enable SDC
 // MISO - (NC) MISO SPI data from SDC to microcontroller
-// SDA  – (NC) I2C data for ADXL345 accelerometer
-// SCL  – (NC) I2C clock for ADXL345 accelerometer
-// SDO  – (NC) I2C alternate address for ADXL345 accelerometer
+// SDA  ï¿½ (NC) I2C data for ADXL345 accelerometer
+// SCL  ï¿½ (NC) I2C clock for ADXL345 accelerometer
+// SDO  ï¿½ (NC) I2C alternate address for ADXL345 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
 
 // **********wide.hk ST7735R with ADXL335 accelerometer *******************
@@ -88,9 +88,9 @@
 // CS   - PA3 TFT_CS, active low to enable TFT
 // *CS  - (NC) SDC_CS, active low to enable SDC
 // MISO - (NC) MISO SPI data from SDC to microcontroller
-// X– (NC) analog input X-axis from ADXL335 accelerometer
-// Y– (NC) analog input Y-axis from ADXL335 accelerometer
-// Z– (NC) analog input Z-axis from ADXL335 accelerometer
+// Xï¿½ (NC) analog input X-axis from ADXL335 accelerometer
+// Yï¿½ (NC) analog input Y-axis from ADXL335 accelerometer
+// Zï¿½ (NC) analog input Z-axis from ADXL335 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
 
 // **********HiLetgo ST7735 TFT and SDC (SDC not tested)*******************
@@ -627,7 +627,7 @@ void static writedata(uint8_t c) {
 void static deselect(void) {
                                         // wait until SSI0 not busy/transmit FIFO empty
   while((SSI0_SR_R&SSI_SR_BSY)==SSI_SR_BSY){};
-  TFT_CS = TFT_CS_HIGH;    
+  TFT_CS = TFT_CS_HIGH;
 }
 
 // Subroutine to wait 1 msec
@@ -1067,7 +1067,7 @@ int16_t const smallCircle[6][3]={
 void ST7735_DrawSmallCircle(int16_t x, int16_t y, uint16_t color) {
   uint32_t i,w;
   uint8_t hi = color >> 8, lo = color;
-  // rudimentary clipping 
+  // rudimentary clipping
   if((x>_width-5)||(y>_height-5)) return; // doesn't fit
   for(i=0; i<6; i++){
     setAddrWindow(x+smallCircle[i][0], y+i, x+smallCircle[i][1], y+i);
@@ -1101,7 +1101,7 @@ int16_t const circle[10][3]={
 void ST7735_DrawCircle(int16_t x, int16_t y, uint16_t color) {
   uint32_t i,w;
   uint8_t hi = color >> 8, lo = color;
-  // rudimentary clipping 
+  // rudimentary clipping
   if((x>_width-9)||(y>_height-9)) return; // doesn't fit
   for(i=0; i<10; i++){
     setAddrWindow(x+circle[i][0], y+i, x+circle[i][1], y+i);
@@ -1355,16 +1355,16 @@ void fillmessage4(uint32_t n){
   if(n>=1000){  // 1000 to 9999
     Messageindex = 0;
   } else if(n>=100){  // 100 to 999
-    Message[0] = ' '; 
+    Message[0] = ' ';
     Messageindex = 1;
-  }else if(n>=10){ // 
+  }else if(n>=10){ //
     Message[0] = ' '; /* n is between 10 and 99 */
-    Message[1] = ' '; 
+    Message[1] = ' ';
     Messageindex = 2;
   }else{
     Message[0] = ' '; /* n is between 0 and 9 */
-    Message[1] = ' '; 
-    Message[2] = ' '; 
+    Message[1] = ' ';
+    Message[2] = ' ';
     Messageindex = 3;
   }
   fillmessage(n);
@@ -1374,22 +1374,22 @@ void fillmessage5(uint32_t n){
   if(n>=10000){  // 10000 to 99999
     Messageindex = 0;
   } else if(n>=1000){  // 1000 to 9999
-    Message[0] = ' '; 
+    Message[0] = ' ';
     Messageindex = 1;
   }else if(n>=100){  // 100 to 999
-    Message[0] = ' '; 
-    Message[1] = ' '; 
+    Message[0] = ' ';
+    Message[1] = ' ';
     Messageindex = 2;
-  }else if(n>=10){ // 
+  }else if(n>=10){ //
     Message[0] = ' '; /* n is between 10 and 99 */
-    Message[1] = ' '; 
-    Message[2] = ' '; 
+    Message[1] = ' ';
+    Message[2] = ' ';
     Messageindex = 3;
   }else{
     Message[0] = ' '; /* n is between 0 and 9 */
-    Message[1] = ' '; 
-    Message[2] = ' '; 
-    Message[3] = ' '; 
+    Message[1] = ' ';
+    Message[2] = ' ';
+    Message[3] = ' ';
     Messageindex = 4;
   }
   fillmessage(n);
@@ -1539,7 +1539,7 @@ void ST7735_InvertDisplay(int i) {
     writecommand(ST7735_INVON);
   } else{
     writecommand(ST7735_INVOFF);
-  }  
+  }
   deselect();
 }
 // graphics routines
@@ -1889,32 +1889,32 @@ void Output_Color(uint32_t newColor){ // Set color of future output
  range -99.99 to +99.99
  Inputs:  signed 32-bit integer part of fixed-point number
  Outputs: none
- send exactly 6 characters to the LCD 
+ send exactly 6 characters to the LCD
 Parameter LCD display
  12345    " **.**"
-  2345    " 23.45"  
+  2345    " 23.45"
  -8100    "-81.00"
-  -102    " -1.02" 
-    31    "  0.31" 
+  -102    " -1.02"
+    31    "  0.31"
 -12345    "-**.**"
- */ 
+ */
 void ST7735_sDecOut2(int32_t n){
-    
 
-    
+
+
 // EE445L lab assignment
 }
 
 
 /**************ST7735_uBinOut6***************
- unsigned 32-bit binary fixed-point with a resolution of 1/64. 
- The full-scale range is from 0 to 999.99. 
- If the integer part is larger than 63999, it signifies an error. 
- The ST7735_uBinOut6 function takes an unsigned 32-bit integer part 
+ unsigned 32-bit binary fixed-point with a resolution of 1/64.
+ The full-scale range is from 0 to 999.99.
+ If the integer part is larger than 63999, it signifies an error.
+ The ST7735_uBinOut6 function takes an unsigned 32-bit integer part
  of the binary fixed-point number and outputs the fixed-point value on the LCD
  Inputs:  unsigned 32-bit integer part of binary fixed-point number
  Outputs: none
- send exactly 6 characters to the LCD 
+ send exactly 6 characters to the LCD
 Parameter LCD display
      0    "  0.00"
      1    "  0.01"
@@ -1928,10 +1928,10 @@ Parameter LCD display
  64000    "***.**"
 */
 void ST7735_uBinOut6(uint32_t n){
-    
+
 // EE445L lab assignment
 
-} 
+}
 
 
 /**************ST7735_XYplotInit***************
@@ -1946,7 +1946,7 @@ void ST7735_uBinOut6(uint32_t n){
  assumes minX < maxX, and miny < maxY
 */
 void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, int32_t maxY){
-  
+
 // EE445L lab assignment
 
 }
@@ -1961,7 +1961,7 @@ void ST7735_XYplotInit(char *title, int32_t minX, int32_t maxX, int32_t minY, in
  neglect any points outside the minX maxY minY maxY bounds
 */
 void ST7735_XYplot(uint32_t num, int32_t bufX[], int32_t bufY[]){
-  
+
 // EE445L lab assignment
 }
 
@@ -1975,9 +1975,9 @@ void plotLineX(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
   // int32_t yi = 1
   // y = y0
   d = 2*abs(dy) - dx;
-  
+
   plotY = y1;
-  
+
   for(int32_t plotX = x1; plotX < x2; plotX++){
     if(abs(dx) > abs(dy)){
       ST7735_DrawPixel(plotX, plotY, color);
@@ -2008,9 +2008,9 @@ void plotLineY(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
   // int32_t yi = 1
   // y = y0
   d = 2*abs(dx) - dy;
-  
+
   plotX = x1;
-  
+
   for(int32_t plotY = y1; plotY < y2; plotY++){
     if(abs(dx) > abs(dy)){
       ST7735_DrawPixel(plotX, plotY, color);
@@ -2041,19 +2041,19 @@ void plotLineY(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t colo
 // y1,y2 are vertical positions, rows from the top edge
 //               must be less than 160
 //               159 is near the wires, 0 is the side opposite the wires
-//        color 16-bit color, which can be produced by ST7735_Color565() 
+//        color 16-bit color, which can be produced by ST7735_Color565()
 // Output: none
 void ST7735_Line(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t color){
 
   if(abs(y2 - y1) < abs(x2 - x1)){ // if dx is greater than dy
-    
+
     if(x1 < x2){  // if x1 is to the left of x2
       plotLineX(x1, y1, x2, y2, color);
     }else{
       plotLineX(x2, y2, x1, y1, color);
     }
   }else{
-    
+
     if(y1 < y2){  // if y1 is below y2
       plotLineY(x1, y1, x2, y2, color);
     }else{

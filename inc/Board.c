@@ -61,7 +61,7 @@
 // Initialize GPIO Port A bit 5 for input
 // Input: none
 // Output: none
-void Switch_Init(void){ 
+void Switch_Init(void){
   SysTick_Init();
   SYSCTL_RCGCGPIO_R |= 0x00000001;     // 1) activate clock for Port A
   while((SYSCTL_PRGPIO_R&0x01) == 0){};// ready?
@@ -72,7 +72,7 @@ void Switch_Init(void){
   GPIO_PORTA_DEN_R |= 0x20;         // 7) enable PA5 digital port
 }
 //------------Switch_Input------------
-// Read and return the status of GPIO Port A bit 5 
+// Read and return the status of GPIO Port A bit 5
 // Input: none
 // Output: 0x20 if PA5 is high
 //         0x00 if PA5 is low
@@ -90,7 +90,7 @@ uint32_t Switch_Input2(void){
 // disabled.
 // Input: none
 // Output: none
-void Board_Init(void){            
+void Board_Init(void){
   SYSCTL_RCGCGPIO_R |= 0x20;     // 1) activate Port F
   while((SYSCTL_PRGPIO_R&0x20) == 0){};// ready?
                                  // 2a) unlock GPIO Port F Commit Register
@@ -130,36 +130,36 @@ void Switch_Init3(void){
   while((SYSCTL_PRGPIO_R&0x02) == 0){};// ready?
   GPIO_PORTB_DIR_R &= ~0x02;        // PB1 is an input
   GPIO_PORTB_AFSEL_R &= ~0x02;      // regular port function
-  GPIO_PORTB_AMSEL_R &= ~0x02;      // disable analog on PB1 
-  GPIO_PORTB_PCTL_R &= ~0x000000F0; // PCTL GPIO on PB1 
+  GPIO_PORTB_AMSEL_R &= ~0x02;      // disable analog on PB1
+  GPIO_PORTB_PCTL_R &= ~0x000000F0; // PCTL GPIO on PB1
   GPIO_PORTB_DEN_R |= 0x02;         // PB3-0 enabled as a digital port
 }
 //------------Switch_Input3------------
-// Read and return the status of GPIO Port B bit 1 
+// Read and return the status of GPIO Port B bit 1
 // Input: none
 // Output: 0x02 if PB1 is high
 //         0x00 if PB1 is low
-uint32_t Switch_Input3(void){ 
+uint32_t Switch_Input3(void){
   return PB1;      // 0x02 if pressed, 0x00 if not pressed
 }
 
 #define DELAY10MS 160000
 #define DELAY10US 160
 //------------Switch_Debounce------------
-// Read and return the status of the switch 
+// Read and return the status of the switch
 // Input: none
 // Output: 0x02 if PB1 is high
 //         0x00 if PB1 is low
 // debounces switch
 uint32_t Switch_Debounce(void){
-uint32_t in,old,time; 
+uint32_t in,old,time;
   time = 1000; // 10 ms
   old = Switch_Input();
   while(time){
     SysTick_Wait(DELAY10US); // 10us
     in = Switch_Input();
     if(in == old){
-      time--; // same value 
+      time--; // same value
     }else{
       time = 1000;  // different
       old = in;
@@ -169,7 +169,7 @@ uint32_t in,old,time;
 }
 
 //------------Switch_Debounce------------
-// wait for the switch to be touched 
+// wait for the switch to be touched
 // Input: none
 // Output: none
 // debounces switch
@@ -181,4 +181,3 @@ void Switch_WaitForTouch(void){
   while(Switch_Input()==0){};
   SysTick_Wait(800000); // 10ms
 }
-  

@@ -13,9 +13,9 @@
  * PE2 nc
  * PE1 output    Pin 7 Reset
  * PE0 input     Pin 3 Rdy IO2
- *               Pin 2 IO0, 10k pullup to 3.3V  
- *               Pin 8 Vcc, 3.3V (separate supply from LaunchPad 
- * Gnd           Pin 4 Gnd  
+ *               Pin 2 IO0, 10k pullup to 3.3V
+ *               Pin 8 Vcc, 3.3V (separate supply from LaunchPad
+ * Gnd           Pin 4 Gnd
  * Place a 4.7uF tantalum and 0.1 ceramic next to ESP8266 3.3V power pin
  * Use LM2937-3.3 and two 4.7 uF capacitors to convert USB +5V to 3.3V for the ESP8266
  * http://www.ti.com/lit/ds/symlink/lm2937-3.3.pdf

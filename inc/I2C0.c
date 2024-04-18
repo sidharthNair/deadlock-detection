@@ -161,7 +161,7 @@ uint32_t I2C_Send2(int8_t slave, uint8_t data1, uint8_t data2){
                        | I2C_MCS_STOP     // stop
                      //  & ~I2C_MCS_START   // no start/restart
                      //  & ~I2C_MCS_RUN    // master disable
-                        );   
+                        );
                                           // return error bits if nonzero
     return (I2C0_MCS_R&(I2C_MCS_DATACK|I2C_MCS_ADRACK|I2C_MCS_ERROR));
   }
@@ -199,7 +199,7 @@ uint32_t I2C_Send3(int8_t slave, uint8_t data1, uint8_t data2, uint8_t data3){
                        | I2C_MCS_STOP     // stop
                      //  & ~I2C_MCS_START   // no start/restart
                      //  & ~I2C_MCS_RUN   // master disable
-                       );   
+                       );
                                           // return error bits if nonzero
     return (I2C0_MCS_R&(I2C_MCS_DATACK|I2C_MCS_ADRACK|I2C_MCS_ERROR));
   }

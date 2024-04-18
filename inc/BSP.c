@@ -43,8 +43,8 @@
 // Connected pins in physical order
 // J1.1 +3.3V (power)
 // J1.2 joystick horizontal (X) (analog)  {TM4C123 PB5/AIN11, MSP432 P6.0}
-// J1.3 UART from Bluetooth to LaunchPad (UART){TM4C123 PB0, MSP432 P3.2} 
-// J1.4 UART from LaunchPad to Bluetooth (UART){TM4C123 PB1, MSP432 P3.3} 
+// J1.3 UART from Bluetooth to LaunchPad (UART){TM4C123 PB0, MSP432 P3.2}
+// J1.4 UART from LaunchPad to Bluetooth (UART){TM4C123 PB1, MSP432 P3.3}
 // J1.5 joystick Select button (digital)  {TM4C123 PE4, MSP432 P4.1}
 // J1.6 microphone (analog)               {TM4C123 PE5/AIN8, MSP432 P4.3}
 // J1.7 LCD SPI clock (SPI)               {TM4C123 PB4, MSP432 P1.5}
@@ -54,10 +54,10 @@
 //--------------------------------------------------
 // J2.11 temperature sensor (TMP006) interrupt (digital) {TM4C123 PA2, MSP432 P3.6}
 // J2.12 nothing           {TM4C123 PA3, MSP432 P5.2}
-// J2.13 LCD SPI CS (SPI)                {TM4C123 PA4, MSP432 P5.0} 
+// J2.13 LCD SPI CS (SPI)                {TM4C123 PA4, MSP432 P5.0}
 // J2.14 nothing           {TM4C123 PB6, MSP432 P1.7}
 // J2.15 LCD SPI data (SPI)              {TM4C123 PB7, MSP432 P1.6}
-// J2.16 nothing (reset)  
+// J2.16 nothing (reset)
 // J2.17 LCD !RST (digital)              {TM4C123 PF0, MSP432 p5.7}
 // J2.18 Profile 4 {TM4C123 PE0, MSP432 P3.0}
 // J2.19 servo PWM         {TM4C123 PB2, MSP432 P2.5}
@@ -91,11 +91,11 @@
 // J3.21 +5V (power)
 // J3.22 GND (ground)
 // J2.20 GND (ground)
-// J2.16 nothing (reset)  
+// J2.16 nothing (reset)
 //--------------------------------------------------
 // LCD graphics
 // J1.7 LCD SPI clock (SPI)              {TM4C123 PB4, MSP432 P1.5}
-// J2.13 LCD SPI CS (SPI)                {TM4C123 PA4, MSP432 P5.0} 
+// J2.13 LCD SPI CS (SPI)                {TM4C123 PA4, MSP432 P5.0}
 // J2.15 LCD SPI data (SPI)              {TM4C123 PB7, MSP432 P1.6}
 // J2.17 LCD !RST (digital)              {TM4C123 PF0, MSP432 P5.7}
 // J4.31 LCD RS (digital)                {TM4C123 PF4, MSP432 P3.7}
@@ -132,8 +132,8 @@
 // J2.11 temperature sensor (TMP006) interrupt (digital) {TM4C123 PA2, MSP432 P3.6}
 //--------------------------------------------------
 // Bluetooth booster
-// J1.3 UART from Bluetooth to LaunchPad (UART){TM4C123 PB0, MSP432 P3.2} 
-// J1.4 UART from LaunchPad to Bluetooth (UART){TM4C123 PB1, MSP432 P3.3} 
+// J1.3 UART from Bluetooth to LaunchPad (UART){TM4C123 PB0, MSP432 P3.2}
+// J1.4 UART from LaunchPad to Bluetooth (UART){TM4C123 PB1, MSP432 P3.3}
 //--------------------------------------------------
 // profile pins
 // J3.27 Profile 0 {TM4C123 PE1, MSP432 P4.5}
@@ -1046,7 +1046,7 @@ void parrotdelay(uint32_t ulCount);
 //#else
 //  //Keil uVision Code
 //void  parrotdelay(uint32_t ulCount){
-//  __asm( 
+//  __asm(
 //    "ll: subs r0, #1\n"
 //    "bne     ll\n"
 //  );

@@ -1,5 +1,5 @@
 // Clock.c
-// Runs on the TM4C123 
+// Runs on the TM4C123
 // Daniel and Jonathan Valvano
 // Jan 3, 2020
 

@@ -2,7 +2,7 @@
  * @file Dump.c
  * @author your name (you@domain.com), Jonathan Valvano, Matthew Yu
  *    <TA NAME and LAB SECTION # HERE>
- * @brief 
+ * @brief
  *    A set of debugging functions that capture data for later inspection.
  *    There are two primary methods:
  *       - DebugCapture will record data and time.
@@ -44,16 +44,16 @@ void DumpCapture(uint32_t data){
     // Use TIMER1_TAR_R as current time
 }
 
-uint32_t DumpCount(void){ 
+uint32_t DumpCount(void){
     /* TODO (EE445L Lab 2): complete this. */
     return 0;
 }
 
-uint32_t* DumpData(void){ 
+uint32_t* DumpData(void){
     return DumpDataBuf;
 }
 
-uint32_t* DumpTime(void){ 
+uint32_t* DumpTime(void){
     return DumpTimeBuffer;
 }
 
@@ -69,7 +69,3 @@ uint32_t JitterGet(void){
     /* TODO (EE445L Lab 2): complete this. */
     return 42;
 }
-
-
-
-

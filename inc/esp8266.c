@@ -5,9 +5,9 @@
 // Steven Prickett (steven.prickett@gmail.com)
 // Modified version by Dung Nguyen, Wally Guzman
 // Modified by Jonathan Valvano, March 28, 2017
-// Consolidated by Andreas Gerstlauer, April 6, 2020 
+// Consolidated by Andreas Gerstlauer, April 6, 2020
 
-/* 
+/*
   THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
   OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE.
@@ -30,11 +30,11 @@
  | Ant                    2   7 |
  | enna       processor   3   6 |
  |                        4   5 |
- \------------------------------/ 
+ \------------------------------/
  Connects (#define below) TM4C123 on either UART1 (PB) or UART2 (PD)
  Reset (#define below) on either PB5 or PB1
- 
- ESP8266    TM4C123 
+
+ ESP8266    TM4C123
   1 URxD    PB1/PD7   UART out of TM4C123, 115200 baud
   2 GPIO0             +3.3V for normal operation (ground to flash)
   3 GPIO2             +3.3V
@@ -97,12 +97,12 @@ bool ESP8266_EchoCommand = false;
 // UART receive control/data & transmit FIFOs (see FIFO.h)
 AddIndexFifo(ESP8266Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
 AddIndexFifo(ESP8266Rx0, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
-#ifndef USE_UART_DRV  
+#ifndef USE_UART_DRV
 AddIndexFifo(ESP8266Tx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
 #endif
 
 // ESP8266 state
-uint16_t ESP8266_Server = 0;   // server port, if any   
+uint16_t ESP8266_Server = 0;   // server port, if any
 uint16_t ESP8266_ConnectionMux = 0;
 uint16_t ESP8266_Segment = 0;  // last segment ID for buffered send
 
@@ -143,7 +143,7 @@ volatile uint32_t ESP8266_DataLoss = 0;       // lost data (for debugging)
 
 //-------------------ReceiveDataFilter -------------------
 // State machine to filter out received data stream from UART Rx input
-// Inputs: character to check 
+// Inputs: character to check
 // Outputs: true if data was filtered out, false otherwise
 bool ReceiveDataFilter(char letter){
   switch(ReceiveDataState) {  // Filter FSM
@@ -153,14 +153,14 @@ bool ReceiveDataFilter(char letter){
           case 0: if(ESP8266Rx0Fifo_Put(letter) == FIFOFAIL){  // overflow, data loss
                     ESP8266_DataAvailable--;
                     ESP8266_DataLoss++;
-                  } 
-                  break;  
+                  }
+                  break;
           // only one connection currently supported
-        }          
+        }
         ReceiveDataLen--;
         return true;
       }
-      ReceiveDataState = 1;   // restart    
+      ReceiveDataState = 1;   // restart
       // fall through to start searching again if data is done
     case 1:  // Look for +IPD
       if (letter == ReceiveDataSearchString[ReceiveDataSearchIndex]){ // match letter?
@@ -181,7 +181,7 @@ bool ReceiveDataFilter(char letter){
       return false;
     case 2:  // look for connection ID (separated by comma)
       if(letter >= '0' && letter <= '9') {
-        ReceiveDataStream = ReceiveDataStream * 10 + (letter - '0');  // add digit to ID    
+        ReceiveDataStream = ReceiveDataStream * 10 + (letter - '0');  // add digit to ID
       } else if (letter == ',') {
         ReceiveDataState = 3;   // ID completed, move on
       } else {
@@ -191,7 +191,7 @@ bool ReceiveDataFilter(char letter){
       return false;
     case 3:   // look for receive data size (separated by colon)
       if(letter >= '0' && letter <= '9') {
-        ReceiveDataLen = ReceiveDataLen * 10 + (letter - '0');  // add digit to length    
+        ReceiveDataLen = ReceiveDataLen * 10 + (letter - '0');  // add digit to length
       } else if(letter == ':') {
         ReceiveDataState = 4;   // size complete, move on
         ESP8266_DataAvailable += ReceiveDataLen; // mark as becoming available
@@ -201,7 +201,7 @@ bool ReceiveDataFilter(char letter){
         ReceiveDataState = 1;   // error, start over
       }
       return false;
-  } 
+  }
   return false;
 }
 
@@ -215,7 +215,7 @@ bool ReceiveDataFilter(char letter){
 #define STR(x)  #x
 #define CONCAT(x,y,z) x ## y ## z
 
-#define UART_STR(uart)  "UART" STR(uart) 
+#define UART_STR(uart)  "UART" STR(uart)
 #define UART_NAME(uart,identifier)  CONCAT(UART,uart,identifier)
 
 #define UART_ESP8266(identifier) UART_NAME(ESP8266_UART,identifier)
@@ -233,9 +233,9 @@ bool ReceiveDataFilter(char letter){
 // Configure UART for 115200bps operation
 // Inputs: none
 // Outputs: none
-void ESP8266_InitUART(int rx_echo, int tx_echo){ 
+void ESP8266_InitUART(int rx_echo, int tx_echo){
   ESP8266RxFifo_Init();
-  ESP8266Rx0Fifo_Init();  
+  ESP8266Rx0Fifo_Init();
   ESP8266_EchoResponse = rx_echo;
   ESP8266_EchoCommand = tx_echo;
   UART_ESP8266(_Init)(BAUDRATE);
@@ -308,7 +308,7 @@ void UART_ESP8266(_Handler)(void){
 void ESP8266_InitUART(int rx_echo, int tx_echo){ volatile int delay;
   ESP8266TxFifo_Init();
   ESP8266RxFifo_Init();
-  ESP8266Rx0Fifo_Init();  
+  ESP8266Rx0Fifo_Init();
   ESP8266_EchoResponse = rx_echo;
   ESP8266_EchoCommand = tx_echo;
 #if ESP8266_UART==1
@@ -324,23 +324,23 @@ void ESP8266_InitUART(int rx_echo, int tx_echo){ volatile int delay;
   SYSCTL_RCGCUART_R |= 0x04; // Enable UART2
   while((SYSCTL_PRUART_R&0x04)==0){};
   SYSCTL_RCGCGPIO_R |= 0x0A; // Enable PORT B,D clock gating
-  while((SYSCTL_PRGPIO_R&0x08)==0){}; 
+  while((SYSCTL_PRGPIO_R&0x08)==0){};
   GPIO_PORTD_LOCK_R = 0x4C4F434B;   // 2) unlock GPIO Port D
   GPIO_PORTD_CR_R = 0xFF;           // allow changes to PD7
   GPIO_PORTD_AFSEL_R |= 0xC0; // PD7,PD6 UART2
   GPIO_PORTD_PCTL_R =(GPIO_PORTD_PCTL_R&0x00FFFFFF)|0x11000000;
-  GPIO_PORTD_DEN_R   |= 0xC0; //PD6,PD7 UART2 
-#endif  
+  GPIO_PORTD_DEN_R   |= 0xC0; //PD6,PD7 UART2
+#endif
   UART_ESP8266(_CTL_R) &= ~UART_CTL_UARTEN;                  // Clear UART enable bit during config
-  UART_ESP8266(_IBRD_R) = (80000000/16)/BAUDRATE;   
-  UART_ESP8266(_FBRD_R) = ((64*((80000000/16)%BAUDRATE))+BAUDRATE/2)/BAUDRATE;      
+  UART_ESP8266(_IBRD_R) = (80000000/16)/BAUDRATE;
+  UART_ESP8266(_FBRD_R) = ((64*((80000000/16)%BAUDRATE))+BAUDRATE/2)/BAUDRATE;
 // UART_ESP8266(_IBRD_R) = 43;   // IBRD = int(80,000,000 / (16 * 115,200)) = int(43.403)
 // UART_ESP8266(_FBRD_R) = 26;   // FBRD = round(0.4028 * 64 ) = 26
   UART_ESP8266(_LCRH_R) = (UART_LCRH_WLEN_8|UART_LCRH_FEN);  // 8 bit word length, 1 stop, no parity, FIFOs enabled
   UART_ESP8266(_IFLS_R) &= ~0x3F;                            // Clear TX and RX interrupt FIFO level fields
   UART_ESP8266(_IFLS_R) += (UART_IFLS_TX1_8|UART_IFLS_RX1_8);// RX and TX FIFO interrupt threshold >= 1/8th full
   UART_ESP8266(_IM_R)  |= (UART_IM_RXIM|UART_IM_TXIM|UART_IM_RTIM); // Enable interupt on TX, RX and RX transmission end
-  UART_ESP8266(_CTL_R) |= (UART_CTL_UARTEN|UART_CTL_RXE|UART_CTL_TXE); // Set UART enable bit 
+  UART_ESP8266(_CTL_R) |= (UART_CTL_UARTEN|UART_CTL_RXE|UART_CTL_TXE); // Set UART enable bit
 }
 
 //--------ESP8266_EnableInterrupt--------
@@ -354,7 +354,7 @@ void ESP8266_EnableInterrupt(void){
 #else
   NVIC_PRI8_R = (NVIC_PRI1_R&0xFFFF00FF)|0x00004000; // bits 15-13
   NVIC_EN1_R = 1<<1;           // enable interrupt 33 in NVIC
-#endif    
+#endif
 }
 
 //--------ESP8266_DisableInterrupt--------
@@ -366,7 +366,7 @@ void ESP8266_DisableInterrupt(void){
   NVIC_DIS0_R = 1<<6;           // disable interrupt 6 in NVIC
 #else
   NVIC_DIS1_R = 1<<1;           // disable interrupt 33 in NVIC
-#endif    
+#endif
 }
 
 //----------ESP8266BufferToTx----------
@@ -466,7 +466,7 @@ int ESP8266_WaitForResponse(const char *success, const char* failure) {
   const char *s = success;
   const char *f = failure;
   while((!s || *s) && (!f || *f)) {   // end of search string reached?
-    d = ESP8266_InChar(); 
+    d = ESP8266_InChar();
     if(s && (d == *s)) {
       s++;
     } else {
@@ -477,11 +477,11 @@ int ESP8266_WaitForResponse(const char *success, const char* failure) {
       f++;
     } else {
       f = failure;  // start over
-      if(f && (d == *f)) f++;  // match first char? 
+      if(f && (d == *f)) f++;  // match first char?
     }
   }
   if(failure && !(*f)) return FAILURE;
-  return SUCCESS;  
+  return SUCCESS;
 }
 
 /*
@@ -497,27 +497,27 @@ int ESP8266_WaitForResponse(const char *success, const char* failure) {
 int ESP8266_Init(int rx_echo, int tx_echo){ char c; const char* s; uint32_t timer = 1;
   // Disable interrupt during initialization
   ESP8266_DisableInterrupt();
-  
+
   // Initialize UART to communicate with ESP
   ESP8266_InitUART(rx_echo, tx_echo);
-  
+
   // Initialize reset port
   GPIO_PORTB_DIR_R |= (0x01 << ESP8266_PB_RST); // PB output to reset
   GPIO_PORTB_PCTL_R =GPIO_PORTB_PCTL_R & ~(0x0F << (ESP8266_PB_RST*4));
-  GPIO_PORTB_DEN_R |= (0x01 << ESP8266_PB_RST); //PB output 
+  GPIO_PORTB_DEN_R |= (0x01 << ESP8266_PB_RST); //PB output
 
   // Hard reset
   GPIO_PORTB_DATA_R &= ~(0x01 << ESP8266_PB_RST); // reset low
   DelayMs(10);
   GPIO_PORTB_DATA_R |= (0x01 << ESP8266_PB_RST); // reset high
-  
+
   // Wait for ready status with timeout
   // Use low-level UART communication, interrupts disabled
   s = ESP8266_READY_RESPONSE;
   timer = 5000000;  // around a 1-2s total timeout
   while(*s) {
     while(timer && ((UART_ESP8266(_FR_R)&UART_FR_RXFE) != 0)) { timer--; }
-    if(!timer) break;  
+    if(!timer) break;
     c = (char)(UART_ESP8266(_DR_R)&0xFF);
     if(rx_echo) UART_OutCharNonBlock(c); // echo, requires UART0 to be operational, will print garbage
     if(c == *s) {
@@ -527,10 +527,10 @@ int ESP8266_Init(int rx_echo, int tx_echo){ char c; const char* s; uint32_t time
       if(c == *s) s++;
     }
   }
-  
+
   // Finally enable interrupt
   ESP8266_EnableInterrupt();
-  
+
   if(!timer) return FAILURE;
   return SUCCESS;
 }
@@ -540,26 +540,26 @@ int ESP8266_Init(int rx_echo, int tx_echo){ char c; const char* s; uint32_t time
 // Inputs: enable debug output
 // Outputs: 1 on success, 0 on failure
 int ESP8266_Connect(int verbose){
-  if(ESP8266_Reset()==FAILURE) return FAILURE; 
-    
+  if(ESP8266_Reset()==FAILURE) return FAILURE;
+
   if(verbose)  // debug output: MAC address oF ESP8266
-    ESP8266_GetMACAddress(); 
+    ESP8266_GetMACAddress();
 
 #if SOFTAP
-  if(ESP8266_SoftAccessPoint(SSID_NAME,PASSKEY)==FAILURE) return FAILURE; 
-  if(ESP8266_SetWifiMode(ESP8266_WIFI_MODE_AP)==FAILURE) return FAILURE; 
+  if(ESP8266_SoftAccessPoint(SSID_NAME,PASSKEY)==FAILURE) return FAILURE;
+  if(ESP8266_SetWifiMode(ESP8266_WIFI_MODE_AP)==FAILURE) return FAILURE;
 #else
-  if(ESP8266_SetWifiMode(ESP8266_WIFI_MODE_CLIENT)==FAILURE) return FAILURE; 
+  if(ESP8266_SetWifiMode(ESP8266_WIFI_MODE_CLIENT)==FAILURE) return FAILURE;
 
   if(verbose)  // debug output: see APs in area
-    ESP8266_ListAccessPoints(); 
-  
-  if(ESP8266_JoinAccessPoint(SSID_NAME,PASSKEY)==FAILURE) return FAILURE; 
+    ESP8266_ListAccessPoints();
+
+  if(ESP8266_JoinAccessPoint(SSID_NAME,PASSKEY)==FAILURE) return FAILURE;
 #endif
 
   if(verbose)  // debug output: our IP address
     ESP8266_GetIPAddress();
-  
+
   return SUCCESS;
 }
 
@@ -570,7 +570,7 @@ int ESP8266_Connect(int verbose){
 int ESP8266_StartServer(uint16_t port, uint16_t timeout){
   if(ESP8266_SetConnectionMux(1)==FAILURE) return FAILURE;
   if(ESP8266_EnableServer(port)==FAILURE) return FAILURE;
-  if(ESP8266_SetServerTimeout(timeout)==FAILURE) return FAILURE; 
+  if(ESP8266_SetServerTimeout(timeout)==FAILURE) return FAILURE;
   return SUCCESS;
 }
 
@@ -594,7 +594,7 @@ int ESP8266_Reset(void){ int try=MAXTRY;
     if(ESP8266_WaitForResponse(ESP8266_READY_RESPONSE,0)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
 
 //---------ESP8266_Restore-----
@@ -607,14 +607,14 @@ int ESP8266_Restore(void) { int try=MAXTRY;
     if(ESP8266_WaitForResponse(ESP8266_READY_RESPONSE,0)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
 
 
 //---------ESP8266_GetVersionNumber----------
 // Get status
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_GetVersionNumber(void){ int try=MAXTRY;
   while(try){
     ESP8266_SendCommand("AT+GMR\r\n");
@@ -627,7 +627,7 @@ int ESP8266_GetVersionNumber(void){ int try=MAXTRY;
 //---------ESP8266_GetMACAddress----------
 // Get MAC address
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_GetMACAddress(void){ int try=MAXTRY;
   while(try){
     ESP8266_SendCommand("AT+CIPSTAMAC?\r\n");
@@ -640,7 +640,7 @@ int ESP8266_GetMACAddress(void){ int try=MAXTRY;
 //---------ESP8266_SetWifiMode----------
 // Configures the esp8266 to operate as a wifi client, access point, or both
 // Input: mode accepts ESP8266_WIFI_MODE constants
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_SetWifiMode(uint8_t mode){ int try=MAXTRY;
   char TXBuffer[32];
   while(try){
@@ -649,13 +649,13 @@ int ESP8266_SetWifiMode(uint8_t mode){ int try=MAXTRY;
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,0)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
- 
+
 //---------ESP8266_SetConnectionMux----------
 // Enables the esp8266 connection mux, required for starting tcp server
 // Input: 0 (single) or 1 (multiple)
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_SetConnectionMux(uint8_t enabled){ int try=MAXTRY;
   char TXBuffer[32];
   while(try){
@@ -673,7 +673,7 @@ int ESP8266_SetConnectionMux(uint8_t enabled){ int try=MAXTRY;
 //---------ESP8266_ListAccessPoints----------
 // Lists available wifi access points
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_ListAccessPoints(void){ int try=MAXTRY;
   while(try){
     ESP8266_SendCommand("AT+CWLAP\r\n");
@@ -693,24 +693,24 @@ int ESP8266_JoinAccessPoint(const char* ssid, const char* password){ int try=MAX
     ESP8266_SendCommand(ssid);
     ESP8266_SendCommand("\",\"");
     ESP8266_SendCommand(password);
-    ESP8266_SendCommand("\"\r\n");    
+    ESP8266_SendCommand("\"\r\n");
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,ESP8266_FAIL_RESPONSE)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
 
 // ----------ESP8266_QuitAccessPoint-------------
 // Disconnects from currently connected wifi access point
 // Inputs: none
-// Outputs: 1 if success, 0 if fail 
+// Outputs: 1 if success, 0 if fail
 int ESP8266_QuitAccessPoint(void){ int try=MAXTRY;
   while(try){
     ESP8266_SendCommand("AT+CWQAP\r\n");
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,0)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
 
 //----------ESP8266_ConfigureAccessPoint------------
@@ -737,21 +737,21 @@ int ESP8266_ConfigureAccessPoint(const char* ssid, const char* password, uint8_t
 //---------ESP8266_GetIPAddress----------
 // Get local IP address
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_GetIPAddress(void){ int try=MAXTRY;
   while(try){
-    ESP8266_SendCommand("AT+CIFSR\r\n");   
+    ESP8266_SendCommand("AT+CIFSR\r\n");
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,ESP8266_ERROR_RESPONSE)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
 
 //---------ESP8266_SetSSLClientConfiguration----------
 // Set SSL client configuration
 // Requires certificates to be flashed into the ESP firmware
 // Inputs: enable/disable client/server certificate checks
-// output: 1 if success, 0 if fail 
+// output: 1 if success, 0 if fail
 int ESP8266_SetSSLClientConfiguration(int verifyClient, int verifyServer){ int try=MAXTRY;
   char TXBuffer[32];
   while(try){
@@ -766,7 +766,7 @@ int ESP8266_SetSSLClientConfiguration(int verifyClient, int verifyServer){ int t
 //---------ESP8266_SetSSLBufferSize----------
 // Set SSL buffer size
 // Inputs: buffer size between 2048 and 4096
-// output: 1 if success, 0 if fail 
+// output: 1 if success, 0 if fail
 int ESP8266_SetSSLBufferSize(uint16_t bufferSize){ int try=MAXTRY;
   char TXBuffer[32];
   while(try){
@@ -782,7 +782,7 @@ int ESP8266_SetSSLBufferSize(uint16_t bufferSize){ int try=MAXTRY;
 // Establish TCP or SSL connection
 // The ESP only seems to have limited SSL support, does not work with all servers
 // Inputs: IP address or web page as a string, port, and keepalive time (0 if none)
-// output: 1 if success, 0 if fail 
+// output: 1 if success, 0 if fail
 int ESP8266_MakeTCPConnection(char *IPaddress, uint16_t port, uint16_t keepalive, int ssl){ int try=MAXTRY;
   char TXBuffer[32];
   while(try){
@@ -801,13 +801,13 @@ int ESP8266_MakeTCPConnection(char *IPaddress, uint16_t port, uint16_t keepalive
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,ESP8266_ERROR_RESPONSE)) return SUCCESS;
     try--;
   }
-  return FAILURE; 
+  return FAILURE;
 }
 
 //---------ESP8266_Send----------
-// Send a string to server 
+// Send a string to server
 // Input: payload to send
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_Send(const char* fetch){
   char TXBuffer[32];
   if(ESP8266_ConnectionMux) {
@@ -815,17 +815,17 @@ int ESP8266_Send(const char* fetch){
   } else {
     sprintf(TXBuffer, "AT+CIPSEND=%d\r\n", strlen(fetch));
   }
-  ESP8266_SendCommand(TXBuffer);  
+  ESP8266_SendCommand(TXBuffer);
   if(!ESP8266_WaitForResponse(">",ESP8266_ERROR_RESPONSE)) return FAILURE;
   ESP8266_SendCommand(fetch);
   if(ESP8266_WaitForResponse(ESP8266_SENDOK_RESPONSE,ESP8266_ERROR_RESPONSE)) return SUCCESS;
-  return FAILURE; 
+  return FAILURE;
 }
 
 //---------ESP8266_SendBuffered----------
 // Send a string to server using ESP TCP-send buffer
 // Input: payload to send
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_SendBuffered(const char* fetch){
   char TXBuffer[32];
   if(ESP8266_ConnectionMux) {
@@ -833,19 +833,19 @@ int ESP8266_SendBuffered(const char* fetch){
   } else {
     sprintf(TXBuffer, "AT+CIPSENDBUF=%d\r\n", strlen(fetch));
   }
-  ESP8266_SendCommand(TXBuffer);  
+  ESP8266_SendCommand(TXBuffer);
   if(!ESP8266_WaitForResponse(">",ESP8266_ERROR_RESPONSE)) return FAILURE;
   ESP8266_Segment++;
   ESP8266_SendCommand(fetch);
   sprintf(TXBuffer, "Recv %d bytes", strlen(fetch));
   if(ESP8266_WaitForResponse(TXBuffer,ESP8266_ERROR_RESPONSE)) return SUCCESS;
-  return FAILURE; 
+  return FAILURE;
 }
 
 //---------ESP8266_SendBufferedStatus----------
 // Check status of last buffered segment
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_SendBufferedStatus(void){
   char OKBuffer[16];
   char FailBuffer[24];
@@ -857,11 +857,11 @@ int ESP8266_SendBufferedStatus(void){
     sprintf(FailBuffer, "\n%d,SEND FAIL\r\n", ESP8266_Segment);
   }
   if(ESP8266_WaitForResponse(OKBuffer,FailBuffer)) return SUCCESS;
-  return FAILURE; 
+  return FAILURE;
 }
 
 //---------ESP8266_Receive----------
-// Receive a string from server 
+// Receive a string from server
 // Reads from data input until end of line or max length is reached
 // Input: buffer and max length
 // Output: 1 and null-terminated string if success, 0 if fail (disconnected)
@@ -871,10 +871,10 @@ int ESP8266_Receive(char* fetch, uint32_t max){ long sr; const char* s;
     if(ESP8266Rx0Fifo_Size() || ESP8266_DataAvailable) { // data (about to be) available?
       while(ESP8266Rx0Fifo_Get(&letter) == FIFOFAIL){};
       // ESP8266_DisableInterrupt();  // critical section
-      sr = StartCritical();  
+      sr = StartCritical();
       if(ESP8266_DataAvailable) ESP8266_DataAvailable--;
-      EndCritical(sr); 
-      // ESP8266_EnableInterrupt();         
+      EndCritical(sr);
+      // ESP8266_EnableInterrupt();
       if(letter == '\r') continue;
       if(letter == '\n') break;
       *fetch = letter;
@@ -891,23 +891,23 @@ int ESP8266_Receive(char* fetch, uint32_t max){ long sr; const char* s;
         return FAILURE;
       }
       while(ESP8266_InChar() != ':') {}  // wait for DataAvailable to be updated
-    }        
+    }
   }
   *fetch = 0;  // terminate with null character
   return SUCCESS;
 }
 
 //---------ESP8266_CloseTCPConnection----------
-// Close TCP connection 
+// Close TCP connection
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_CloseTCPConnection(void){ int try=MAXTRY;
   while(try){
     if(ESP8266_ConnectionMux) {
       ESP8266_SendCommand("AT+CIPCLOSE=0\r\n");
     } else {
       ESP8266_SendCommand("AT+CIPCLOSE\r\n");
-    }      
+    }
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,ESP8266_ERROR_RESPONSE)) {
       ESP8266Rx0Fifo_Init();  // Discard any data
       return SUCCESS;
@@ -920,8 +920,8 @@ int ESP8266_CloseTCPConnection(void){ int try=MAXTRY;
 
 //---------ESP8266_SetDataTransmissionMode----------
 // Set data transmission passthrough mode
-// Input: 0 not data mode, 1 data mode; return "Link is builded" 
-// Output: 1 if success, 0 if fail 
+// Input: 0 not data mode, 1 data mode; return "Link is builded"
+// Output: 1 if success, 0 if fail
 int ESP8266_SetDataTransmissionMode(uint8_t mode){ int try=MAXTRY;
   char TXBuffer[32];
   while(try){
@@ -936,7 +936,7 @@ int ESP8266_SetDataTransmissionMode(uint8_t mode){ int try=MAXTRY;
 //---------ESP8266_GetStatus----------
 // Get network connection status
 // Input: none
-// Output: 1 if success, 0 if fail 
+// Output: 1 if success, 0 if fail
 int ESP8266_GetStatus(void){ int try=MAXTRY;
   while(try){
     ESP8266_SendCommand("AT+CIPSTATUS\r\n");
@@ -995,11 +995,11 @@ int ESP8266_WaitForConnection(void){
 
 //---------ESP8266_DisableServer----------
 // Disables tcp server
-// Input: none 
-// Output: 1 if success, 0 if fail 
+// Input: none
+// Output: 1 if success, 0 if fail
 int ESP8266_DisableServer(void){ int try=MAXTRY;
   while(try){
-    ESP8266_SendCommand("AT+CIPSERVER=0\r\n"); 
+    ESP8266_SendCommand("AT+CIPSERVER=0\r\n");
     if(ESP8266_WaitForResponse(ESP8266_OK_RESPONSE,0)) {
       ESP8266_Server = 0;
       return SUCCESS;

@@ -46,7 +46,7 @@
 // sample code  http://www.azdisplays.com/PDF/agm1264f_code.pdf
 // data sheet   http://www.azdisplays.com/PDF/agm1264f.pdf
 
-// Sparkfun LCD-00710      GDM12864H.pdf 
+// Sparkfun LCD-00710      GDM12864H.pdf
 // HardwareADM12864H (tested):
 // +5V    =  1- Vdd
 // gnd    =  2- Vss

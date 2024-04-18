@@ -41,7 +41,7 @@ int Done;
 // Inputs:  none
 // Outputs: none
 void FreqMeasure_Init(void){long sr;
-  sr = StartCritical(); 
+  sr = StartCritical();
   SYSCTL_RCGCTIMER_R |= 0x01;     // activate timer0
   SYSCTL_RCGCGPIO_R |= 0x02;      // activate port B
   Freq = 0;                       // allow time to finish activating
@@ -58,7 +58,7 @@ void FreqMeasure_Init(void){long sr;
   TIMER0_TBMR_R = 0x00000003;     // edge count mode
   // bits 11-10 are 0 for rising edge counting on PB7
   TIMER0_TBILR_R = 0xFFFFFFFF;    // start value
-  TIMER0_TBPR_R = 0xFF;           // activate prescale, creating 24-bit 
+  TIMER0_TBPR_R = 0xFF;           // activate prescale, creating 24-bit
   TIMER0_IMR_R &= ~0x700;         // disable all interrupts for timer0B
   TIMER0_ICR_R = 0x00000001;      // clear TIMER0A timeout flag
   TIMER0_IMR_R = 0x00000001;      // arm timeout interrupt
@@ -76,6 +76,6 @@ void Timer0A_Handler(void){
   Done = -1;
   TIMER0_CTL_R &= ~0x00000100;    // disable TIMER0B
   TIMER0_TBILR_R = 0xFFFFFFFF;    // start value
-  TIMER0_TBPR_R = 0xFF;           // activate prescale, creating 24-bit 
+  TIMER0_TBPR_R = 0xFF;           // activate prescale, creating 24-bit
   TIMER0_CTL_R |= 0x00000100;     // enable TIMER0B
 }

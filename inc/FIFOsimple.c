@@ -3,7 +3,7 @@
 // Provide functions that initialize a FIFO, put data in, get data out,
 // and return the current size.  The file includes a transmit FIFO
 // using index implementation and a receive FIFO using pointer
-// implementation.  Implementations provided here are equivalent to using 
+// implementation.  Implementations provided here are equivalent to using
 // these macros from FIFO.h:
 // AddIndexFifo(Tx, TXFIFOSIZE, char, 1, 0)
 // AddPointerFifo(Rx, RXFIFOSIZE, char, 1, 0)
@@ -38,7 +38,7 @@ uint32_t volatile TxGetI;// get next
 txDataType static TxFifo[TXFIFOSIZE];
 
 // initialize index FIFO
-void TxFifo_Init(void){ 
+void TxFifo_Init(void){
   TxPutI = TxGetI = 0;  // Empty
 
 }
@@ -76,7 +76,7 @@ rxDataType volatile *RxGetPt; // get next
 rxDataType static RxFifo[RXFIFOSIZE];
 
 // initialize pointer FIFO
-void RxFifo_Init(void){ 
+void RxFifo_Init(void){
   RxPutPt = RxGetPt = &RxFifo[0]; // Empty
 
 }

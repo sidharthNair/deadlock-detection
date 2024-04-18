@@ -69,7 +69,7 @@ void Clock_Delay(uint32_t ulCount){
 }
 
 
-  
+
 // ------------Clock_Delay1ms------------
 // Simple delay function which delays about n milliseconds.
 // Inputs: n, number of msec to wait
@@ -80,5 +80,3 @@ void Clock_Delay1ms(uint32_t n){
     n--;
   }
 }
-
-

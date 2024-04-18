@@ -106,7 +106,7 @@ void DMA_Init(uint16_t period, uint32_t *destination){
   for(i=0; i<256; i++){
     ucControlTable[i] = 0;
   }
-  SYSCTL_RCGCDMA_R = 0x01;    // µDMA Module Run Mode Clock Gating Control
+  SYSCTL_RCGCDMA_R = 0x01;    // ï¿½DMA Module Run Mode Clock Gating Control
                               // allow time to finish
   while((SYSCTL_PRDMA_R&SYSCTL_PRDMA_R0) == 0){};
   UDMA_CFG_R = 0x01;          // MASTEN Controller Master Enable
@@ -115,7 +115,7 @@ void DMA_Init(uint16_t period, uint32_t *destination){
   UDMA_PRIOSET_R |= BIT8;     // use high priority
   UDMA_ALTCLR_R = BIT8;       // use primary control initially
   UDMA_USEBURSTCLR_R = BIT8;  // responds to both burst and single requests
-  UDMA_REQMASKCLR_R = BIT8;   // allow the µDMA controller to recognize requests for this channel
+  UDMA_REQMASKCLR_R = BIT8;   // allow the ï¿½DMA controller to recognize requests for this channel
   Timer5A_Init(period);
   Status = IDLE;
 }
@@ -136,7 +136,7 @@ void static setRegular(void){
    NXTUSEBURST       3       0     N/A for this transfer type
    XFERMODE          2:0     011   Use ping-pong transfer mode
   */
-//  UDMA_ENASET_R |= BIT8;  // µDMA Channel 8 is enabled.
+//  UDMA_ENASET_R |= BIT8;  // ï¿½DMA Channel 8 is enabled.
   // bit 8 in UDMA_ENASET_R become clear when done
   // bits 2:0 ucControlTable[CH8+2] become clear when done
   SourcePt = SourcePt+BlockSize;
@@ -180,7 +180,7 @@ void DMA_Transfer(uint8_t *source, uint32_t blocksize,
   NVIC_EN2_R = 0x10000000;         // 9) enable interrupt 92 in NVIC
   // vector number 108, interrupt number 92
   TIMER5_CTL_R |= 0x00000001;      // 10) enable timer5A
-  UDMA_ENASET_R |= BIT8;  // µDMA Channel 8 is enabled
+  UDMA_ENASET_R |= BIT8;  // ï¿½DMA Channel 8 is enabled
   EnableInterrupts();     // re-enable interrupts and be ready for ping-pong interrupt
 }
 
@@ -189,7 +189,7 @@ void DMA_Transfer(uint8_t *source, uint32_t blocksize,
 // Inputs:  none
 // Outputs: none
 void DMA_Stop(void){
-  UDMA_ENACLR_R = BIT8;        // µDMA Channel 8 is disabled
+  UDMA_ENACLR_R = BIT8;        // ï¿½DMA Channel 8 is disabled
   NVIC_DIS2_R = 0x10000000;    // 9) disable interrupt 92 in NVIC
   TIMER5_CTL_R &= ~0x00000001; // 10) disable timer5A
   Status = IDLE;
@@ -234,4 +234,3 @@ void Timer5A_Handler(void){ // interrupts after each block is transferred
 enum ch8status DMA_Status(void){
   return Status;
 }
-

@@ -2,7 +2,7 @@
 // Runs on LM4F120/TM4C123
 // Periodic timer triggered DMA transfer
 // Uses Timer5A to trigger the DMA, read from a 16-bit buffer, and then write to a fixed port address
-// There is a Timer5A interrupt after the buffer has been transferred. 
+// There is a Timer5A interrupt after the buffer has been transferred.
 // This example runs continuously, outputing the buffer over and over.
 // Jonathan Valvano
 // May 2, 2015
@@ -64,19 +64,19 @@ void Timer5A_Init(uint16_t period){ volatile uint32_t Delay;
 // Inputs:  period in 12.5nsec
 // Outputs: none
 void DMA_Init(uint16_t period){int i;
-  volatile uint32_t delay; 
+  volatile uint32_t delay;
   for(i=0; i<256; i++){
     ucControlTable[i] = 0;
   }
-  SYSCTL_RCGCDMA_R = 0x01;    // µDMA Module Run Mode Clock Gating Control
-  delay = SYSCTL_RCGCDMA_R;   // allow time to finish 
+  SYSCTL_RCGCDMA_R = 0x01;    // ï¿½DMA Module Run Mode Clock Gating Control
+  delay = SYSCTL_RCGCDMA_R;   // allow time to finish
   UDMA_CFG_R = 0x01;          // MASTEN Controller Master Enable
   UDMA_CTLBASE_R = (uint32_t)ucControlTable;
   UDMA_CHMAP1_R = (UDMA_CHMAP1_R&0xFFFFFFF0)|0x00000003;  // timer5A
   UDMA_PRIOCLR_R = BIT8;     // default, not high priority
   UDMA_ALTCLR_R = BIT8;      // use primary control
   UDMA_USEBURSTCLR_R = BIT8; // responds to both burst and single requests
-  UDMA_REQMASKCLR_R = BIT8;  // allow the µDMA controller to recognize requests for this channel
+  UDMA_REQMASKCLR_R = BIT8;  // allow the ï¿½DMA controller to recognize requests for this channel
   Timer5A_Init(period);
 }
 uint16_t *SourcePt;               // last address of the source buffer, incremented by 2
@@ -92,7 +92,7 @@ void static setRegular(void){
    DSTSIZE           29:28   01    16-bit destination data size
    SRCINC            27:26   01    16-bit source address increment, +2
    SRCSIZE           25:24   01    16-bit source data size
-   reserved          23:18   0     Reserved  
+   reserved          23:18   0     Reserved
    ARBSIZE           17:14   0     Arbitrates after 1 transfer
    XFERSIZE          13:4  count-1 Transfer count items
    NXTUSEBURST       3       0     N/A for this transfer type
@@ -109,7 +109,7 @@ void static setAlternate(void){
    DSTSIZE           29:28   01    16-bit destination data size
    SRCINC            27:26   01    16-bit source address increment, +2
    SRCSIZE           25:24   01    16-bit source data size
-   reserved          23:18   0     Reserved  
+   reserved          23:18   0     Reserved
    ARBSIZE           17:14   0     Arbitrates after 1 transfer
    XFERSIZE          13:4  count-1 Transfer count items
    NXTUSEBURST       3       0     N/A for this transfer type
@@ -128,22 +128,22 @@ void DMA_Start(uint16_t *source, volatile uint32_t *destination, uint32_t count)
   SourcePt = source+count-1;  // last address of source buffer
   DestinationPt = destination;
   Count = count;  // number of halfwords to transmit
-  setRegular();  
-  setAlternate();  
+  setRegular();
+  setAlternate();
   NVIC_EN2_R = 0x10000000;         // 9) enable interrupt 92 in NVIC
   // vector number 108, interrupt number 92
   TIMER5_CTL_R |= 0x00000001;      // 10) enable timer5A
-  UDMA_ENASET_R |= BIT8;  // µDMA Channel 8 is enabled
+  UDMA_ENASET_R |= BIT8;  // ï¿½DMA Channel 8 is enabled
   // bits 2:0 ucControlTable[CH8+2] become clear when regular structure done
   // bits 2:0 ucControlTable[CH8ALT+2] become clear when alternate structure done
 }
 
-uint32_t NumberOfBuffersSent=0; 
+uint32_t NumberOfBuffersSent=0;
 // ************DMA_Status*****************
 // Can be used to check the status of the continuous DMA transfer
 // Inputs:  none
 // Outputs: the number of buffers transferred
-uint32_t DMA_Status(void){ 
+uint32_t DMA_Status(void){
   return NumberOfBuffersSent;
 }
 
@@ -163,7 +163,7 @@ void Timer5A_Handler(void){ // interrupts after each block is transferred
 // Inputs:  none
 // Outputs: none
 void DMA_Stop(void){
-  UDMA_ENACLR_R = BIT8;  // µDMA Channel 8 is disabled
+  UDMA_ENACLR_R = BIT8;  // ï¿½DMA Channel 8 is disabled
   NVIC_DIS2_R = 0x10000000;         // 9) disable interrupt 92 in NVIC
   TIMER5_CTL_R &= ~0x00000001;      // 10) disable timer5A
 }

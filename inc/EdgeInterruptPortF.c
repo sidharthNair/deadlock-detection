@@ -10,7 +10,7 @@
    "Embedded Systems: Introduction to ARM Cortex M Microcontrollers"
    ISBN: 978-1469998749, Jonathan Valvano, copyright (c) 2019
    Volume 1, Program 9.4
-   
+
    "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
    ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2019
    Volume 2, Program 5.6, Section 5.5
@@ -39,15 +39,15 @@
 // global variable visible in Watch window of debugger
 // increments at least once per button press
 volatile uint32_t FallingEdges = 0;
-void EdgeCounterPortF_Init(void){                          
+void EdgeCounterPortF_Init(void){
   SYSCTL_RCGCGPIO_R |= 0x00000020; // (a) activate clock for port F
   FallingEdges = 0;             // (b) initialize counter
   GPIO_PORTF_LOCK_R = 0x4C4F434B;   // 2) unlock GPIO Port F
   GPIO_PORTF_CR_R = 0x1F;           // allow changes to PF4-0
-  GPIO_PORTF_DIR_R |=  0x0E;    // output on PF3,2,1 
+  GPIO_PORTF_DIR_R |=  0x0E;    // output on PF3,2,1
   GPIO_PORTF_DIR_R &= ~0x11;    // (c) make PF4,0 in (built-in button)
   GPIO_PORTF_AFSEL_R &= ~0x1F;  //     disable alt funct on PF4,0
-  GPIO_PORTF_DEN_R |= 0x1F;     //     enable digital I/O on PF4   
+  GPIO_PORTF_DEN_R |= 0x1F;     //     enable digital I/O on PF4
   GPIO_PORTF_PCTL_R &= ~0x000FFFFF; // configure PF4 as GPIO
   GPIO_PORTF_AMSEL_R = 0;       //     disable analog functionality on PF
   GPIO_PORTF_PUR_R |= 0x11;     //     enable weak pull-up on PF4
@@ -64,5 +64,3 @@ void GPIOPortF_Handler(void){
   FallingEdges = FallingEdges + 1;
   PF1 ^= 0x02; // profile
 }
-
-
