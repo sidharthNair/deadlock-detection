@@ -62,7 +62,6 @@
  */
 void OPT3101_Init(uint32_t frameCount);
 
-
 /**
  * Writes some settings to the OPT3101 which are generally necessary to use
  * the other parts of this library.

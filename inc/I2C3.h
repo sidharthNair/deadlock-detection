@@ -20,7 +20,6 @@
 </table>
  ******************************************************************************/
 
-
 /* This example accompanies the books
    "Embedded Systems: Introduction to ARM Cortex M Microcontrollers",
       ISBN: 978-1469998749, Jonathan Valvano, copyright (c) 2020
@@ -50,7 +49,7 @@
  *  SCL -------- PB2 | SCL -------- PA6 | SCL -------- PE4 | SCL -------- PD0
  *  SDA -------- PB3 | SDA -------- PA7 | SDA -------- PE5 | SDA -------- PD1
  */
- #ifndef _I2C3_H_
+#ifndef _I2C3_H_
 #define _I2C3_H_
 #include <stdint.h>
 
@@ -59,11 +58,11 @@
  * ----------
  * let t be bus period, let F be bus frequency,
  * let f be I2C frequency.
- * at F=80 MHz, I2C period = (TPR+1)*250ns.<br> 
+ * at F=80 MHz, I2C period = (TPR+1)*250ns.<br>
  * f=400kHz,    I2C period = 20*(TPR+1)*12.5ns = 2.5us, with TPR=9<br>
  * I2C period, 1/f = 20*(TPR+1)*t <br>
  * F/f = 20*(TPR+1)<br>
- * TPR = (F/f/20)-1 
+ * TPR = (F/f/20)-1
  * @param  I2Cfreq  desired frequency of I2C in Hz.
  * @param  busFreq  bus frequency in Hz.
  * ----------
@@ -90,9 +89,9 @@ int I2C3_Send(uint8_t slaveAddr, uint8_t *pData, uint32_t count);
  * ----------
  * @brief write 1 byte to I2C3.
  */
- int I2C3_Send1(uint8_t slaveAddr, uint8_t data);
- 
- /**
+int I2C3_Send1(uint8_t slaveAddr, uint8_t data);
+
+/**
  * I2C3_Send2
  * ----------
  * @param  slaveAddr  address of slave device.
@@ -101,7 +100,7 @@ int I2C3_Send(uint8_t slaveAddr, uint8_t *pData, uint32_t count);
  * ----------
  * @brief write 1 byte to I2C3.
  */
- int I2C3_Send2(int8_t slave, uint8_t data1, uint8_t data2);
+int I2C3_Send2(int8_t slave, uint8_t data1, uint8_t data2);
 /**
  * I2C3_Send4
  * ----------
@@ -113,7 +112,7 @@ int I2C3_Send(uint8_t slaveAddr, uint8_t *pData, uint32_t count);
  * ----------
  * @brief write 4 bytes to I2C3.
  */
- int I2C3_Send4(uint8_t slaveAddr, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
+int I2C3_Send4(uint8_t slaveAddr, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);
 
 /**
  * I2C3_Recv
@@ -146,6 +145,5 @@ int I2C3_Recv3(uint8_t slaveAddr, uint8_t data[3]);
  * @brief write many bytes to I2C3.
  */
 int I2C3_SendData(uint8_t slaveAddr, uint8_t *pData, uint32_t count);
-
 
 #endif //_I2C3_H_

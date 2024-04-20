@@ -47,34 +47,34 @@
 // identifier.
 //
 //*****************************************************************************
-#define CAN_MAX_11BIT_MSG_ID    (0x7ff)
+#define CAN_MAX_11BIT_MSG_ID (0x7ff)
 
 //*****************************************************************************
 //
 // This is used as the loop delay for accessing the CAN controller registers.
 //
 //*****************************************************************************
-#define CAN_RW_DELAY            (5)
+#define CAN_RW_DELAY (5)
 
 //
 // The maximum CAN bit timing divisor is 13.
 //
-#define CAN_MAX_BIT_DIVISOR     (13)
+#define CAN_MAX_BIT_DIVISOR (13)
 
 //
 // The minimum CAN bit timing divisor is 5.
 //
-#define CAN_MIN_BIT_DIVISOR     (5)
+#define CAN_MIN_BIT_DIVISOR (5)
 
 //
 // The maximum CAN pre-divisor is 1024.
 //
-#define CAN_MAX_PRE_DIVISOR     (1024)
+#define CAN_MAX_PRE_DIVISOR (1024)
 
 //
 // The minimum CAN pre-divisor is 1.
 //
-#define CAN_MIN_PRE_DIVISOR     (1)
+#define CAN_MIN_PRE_DIVISOR (1)
 
 //*****************************************************************************
 //
@@ -83,16 +83,16 @@
 //
 //*****************************************************************************
 static const uint16_t g_usCANBitValues[] =
-{
-    0x1100, // TSEG2 2, TSEG1 2, SJW 1, Divide 5
-    0x1200, // TSEG2 2, TSEG1 3, SJW 1, Divide 6
-    0x2240, // TSEG2 3, TSEG1 3, SJW 2, Divide 7
-    0x2340, // TSEG2 3, TSEG1 4, SJW 2, Divide 8
-    0x3340, // TSEG2 4, TSEG1 4, SJW 2, Divide 9
-    0x3440, // TSEG2 4, TSEG1 5, SJW 2, Divide 10
-    0x3540, // TSEG2 4, TSEG1 6, SJW 2, Divide 11
-    0x3640, // TSEG2 4, TSEG1 7, SJW 2, Divide 12
-    0x3740  // TSEG2 4, TSEG1 8, SJW 2, Divide 13
+    {
+        0x1100, // TSEG2 2, TSEG1 2, SJW 1, Divide 5
+        0x1200, // TSEG2 2, TSEG1 3, SJW 1, Divide 6
+        0x2240, // TSEG2 3, TSEG1 3, SJW 2, Divide 7
+        0x2340, // TSEG2 3, TSEG1 4, SJW 2, Divide 8
+        0x3340, // TSEG2 4, TSEG1 4, SJW 2, Divide 9
+        0x3440, // TSEG2 4, TSEG1 5, SJW 2, Divide 10
+        0x3540, // TSEG2 4, TSEG1 6, SJW 2, Divide 11
+        0x3640, // TSEG2 4, TSEG1 7, SJW 2, Divide 12
+        0x3740  // TSEG2 4, TSEG1 8, SJW 2, Divide 13
 };
 
 //*****************************************************************************
@@ -112,8 +112,8 @@ static const uint16_t g_usCANBitValues[] =
 static tBoolean
 CANBaseValid(uint32_t ulBase)
 {
-    return((ulBase == CAN0_BASE) || (ulBase == CAN1_BASE) ||
-           (ulBase == CAN2_BASE));
+    return ((ulBase == CAN0_BASE) || (ulBase == CAN1_BASE) ||
+            (ulBase == CAN2_BASE));
 }
 #endif
 
@@ -143,44 +143,44 @@ CANIntNumberGet(uint32_t ulBase)
     //
     // Return the interrupt number for the given CAN controller.
     //
-    switch(ulBase)
+    switch (ulBase)
     {
-        //
-        // Return the interrupt number for CAN 0
-        //
-        case CAN0_BASE:
-        {
-            lIntNumber = INT_CAN0;
-            break;
-        }
-
-        //
-        // Return the interrupt number for CAN 1
-        //
-        case CAN1_BASE:
-        {
-            lIntNumber = INT_CAN1;
-            break;
-        }
-
-//        //
-//        // Return the interrupt number for CAN 2
-//        //
-//        case CAN2_BASE:
-//        {
-//            lIntNumber = INT_CAN2;
-//            break;
-//        }
-
-        //
-        // Return -1 to indicate a bad address was passed in.
-        //
-        default:
-        {
-            lIntNumber = -1;
-        }
+    //
+    // Return the interrupt number for CAN 0
+    //
+    case CAN0_BASE:
+    {
+        lIntNumber = INT_CAN0;
+        break;
     }
-    return(lIntNumber);
+
+    //
+    // Return the interrupt number for CAN 1
+    //
+    case CAN1_BASE:
+    {
+        lIntNumber = INT_CAN1;
+        break;
+    }
+
+        //        //
+        //        // Return the interrupt number for CAN 2
+        //        //
+        //        case CAN2_BASE:
+        //        {
+        //            lIntNumber = INT_CAN2;
+        //            break;
+        //        }
+
+    //
+    // Return -1 to indicate a bad address was passed in.
+    //
+    default:
+    {
+        lIntNumber = -1;
+    }
+    }
+    return (lIntNumber);
 }
 
 //*****************************************************************************
@@ -231,7 +231,7 @@ CANRegRead(uint32_t ulRegAddress)
     //
     // If the CAN interrupt was enabled then disable it.
     //
-    if(ulReenableInts)
+    if (ulReenableInts)
     {
         IntDisable(ulIntNumber);
     }
@@ -245,7 +245,7 @@ CANRegRead(uint32_t ulRegAddress)
     //
     // This delay is necessary for the CAN have the correct data on the bus.
     //
-    for(iDelay = 0; iDelay < CAN_RW_DELAY; iDelay++)
+    for (iDelay = 0; iDelay < CAN_RW_DELAY; iDelay++)
     {
     }
 
@@ -257,12 +257,12 @@ CANRegRead(uint32_t ulRegAddress)
     //
     // Enable CAN interrupts if they were enabled before this call.
     //
-    if(ulReenableInts)
+    if (ulReenableInts)
     {
         IntEnable(ulIntNumber);
     }
 
-    return(ulRetVal);
+    return (ulRetVal);
 }
 
 //*****************************************************************************
@@ -302,7 +302,7 @@ CANRegWrite(uint32_t ulRegAddress, uint32_t ulRegValue)
     //
     // Delay to allow the CAN controller to receive the new data.
     //
-    for(iDelay = 0; iDelay < CAN_RW_DELAY; iDelay++)
+    for (iDelay = 0; iDelay < CAN_RW_DELAY; iDelay++)
     {
     }
 }
@@ -342,7 +342,7 @@ CANDataRegWrite(unsigned char *pucData, uint32_t *pulRegister, int iSize)
     //
     // Loop always copies 1 or 2 bytes per iteration.
     //
-    for(iIdx = 0; iIdx < iSize; )
+    for (iIdx = 0; iIdx < iSize;)
     {
 
         //
@@ -354,7 +354,7 @@ CANDataRegWrite(unsigned char *pucData, uint32_t *pulRegister, int iSize)
         //
         // Only write the second byte if needed otherwise it will be zero.
         //
-        if(iIdx < iSize)
+        if (iIdx < iSize)
         {
             ulValue |= (pucData[iIdx++] << 8);
         }
@@ -397,7 +397,7 @@ CANDataRegRead(unsigned char *pucData, uint32_t *pulRegister, int iSize)
     //
     // Loop always copies 1 or 2 bytes per iteration.
     //
-    for(iIdx = 0; iIdx < iSize; )
+    for (iIdx = 0; iIdx < iSize;)
     {
         //
         // Read out the data 16 bits at a time since this is how the registers
@@ -413,7 +413,7 @@ CANDataRegRead(unsigned char *pucData, uint32_t *pulRegister, int iSize)
         //
         // Only read the second byte if needed.
         //
-        if(iIdx < iSize)
+        if (iIdx < iSize)
         {
             pucData[iIdx++] = (unsigned char)(ulValue >> 8);
         }
@@ -436,8 +436,7 @@ CANDataRegRead(unsigned char *pucData, uint32_t *pulRegister, int iSize)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANInit(uint32_t ulBase)
+void CANInit(uint32_t ulBase)
 {
     int iMsg;
 
@@ -456,7 +455,7 @@ CANInit(uint32_t ulBase)
     //
     // Wait for busy bit to clear
     //
-    while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+    while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
     {
     }
 
@@ -466,19 +465,19 @@ CANInit(uint32_t ulBase)
     // object.  The same arb reg is used to program all the message objects.
     //
     CANRegWrite(ulBase + CAN_O_IF1CMSK, CAN_IF1CMSK_WRNRD | CAN_IF1CMSK_ARB |
-                CAN_IF1CMSK_CONTROL);
+                                            CAN_IF1CMSK_CONTROL);
     CANRegWrite(ulBase + CAN_O_IF1ARB2, 0);
     CANRegWrite(ulBase + CAN_O_IF1MCTL, 0);
 
     //
     // Loop through to program all 32 message objects
     //
-    for(iMsg = 1; iMsg <= 32; iMsg++)
+    for (iMsg = 1; iMsg <= 32; iMsg++)
     {
         //
         // Wait for busy bit to clear
         //
-        while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+        while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
         {
         }
 
@@ -493,17 +492,17 @@ CANInit(uint32_t ulBase)
     // message objects.
     //
     CANRegWrite(ulBase + CAN_O_IF1CMSK, CAN_IF1CMSK_NEWDAT |
-                CAN_IF1CMSK_CLRINTPND);
+                                            CAN_IF1CMSK_CLRINTPND);
 
     //
     // Loop through to program all 32 message objects
     //
-    for(iMsg = 1; iMsg <= 32; iMsg++)
+    for (iMsg = 1; iMsg <= 32; iMsg++)
     {
         //
         // Wait for busy bit to clear.
         //
-        while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+        while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
         {
         }
 
@@ -535,8 +534,7 @@ CANInit(uint32_t ulBase)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANEnable(uint32_t ulBase)
+void CANEnable(uint32_t ulBase)
 {
     //
     // Check the arguments.
@@ -565,8 +563,7 @@ CANEnable(uint32_t ulBase)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANDisable(uint32_t ulBase)
+void CANDisable(uint32_t ulBase)
 {
     //
     // Check the arguments.
@@ -695,7 +692,7 @@ CANBitRateSet(uint32_t ulBase, uint32_t ulSourceClock,
     // Make sure that the Desired Ratio is not too large.  This enforces the
     // requirement that the bit rate is larger than requested.
     //
-    if((ulSourceClock / ulDesiredRatio) > ulBitRate)
+    if ((ulSourceClock / ulDesiredRatio) > ulBitRate)
     {
         ulDesiredRatio += 1;
     }
@@ -703,13 +700,13 @@ CANBitRateSet(uint32_t ulBase, uint32_t ulSourceClock,
     //
     // Check all possible values to find a matching value.
     //
-    while(ulDesiredRatio <= CAN_MAX_PRE_DIVISOR * CAN_MAX_BIT_DIVISOR)
+    while (ulDesiredRatio <= CAN_MAX_PRE_DIVISOR * CAN_MAX_BIT_DIVISOR)
     {
         //
         // Loop through all possible CAN bit divisors.
         //
-        for(ulCANBits = CAN_MAX_BIT_DIVISOR; ulCANBits >= CAN_MIN_BIT_DIVISOR;
-            ulCANBits--)
+        for (ulCANBits = CAN_MAX_BIT_DIVISOR; ulCANBits >= CAN_MIN_BIT_DIVISOR;
+             ulCANBits--)
         {
             //
             // For a given CAN bit divisor save the pre divisor.
@@ -720,7 +717,7 @@ CANBitRateSet(uint32_t ulBase, uint32_t ulSourceClock,
             // If the calculated divisors match the desired clock ratio then
             // return these bit rate and set the CAN bit timing.
             //
-            if((ulPreDivide * ulCANBits) == ulDesiredRatio)
+            if ((ulPreDivide * ulCANBits) == ulDesiredRatio)
             {
                 //
                 // Start building the bit timing value by adding the bit timing
@@ -736,12 +733,12 @@ CANBitRateSet(uint32_t ulBase, uint32_t ulSourceClock,
                 //
                 usCANCTL = CANRegRead(ulBase + CAN_O_CTL);
                 CANRegWrite(ulBase + CAN_O_CTL, usCANCTL | CAN_CTL_INIT |
-                                                CAN_CTL_CCE);
+                                                    CAN_CTL_CCE);
 
                 //
                 // Now add in the pre-scalar on the bit rate.
                 //
-                ulRegValue |= ((ulPreDivide - 1)& CAN_BIT_BRP_M);
+                ulRegValue |= ((ulPreDivide - 1) & CAN_BIT_BRP_M);
 
                 //
                 // Set the clock bits in the and the lower bits of the
@@ -763,7 +760,7 @@ CANBitRateSet(uint32_t ulBase, uint32_t ulSourceClock,
                 //
                 // Return the computed bit rate.
                 //
-                return(ulSourceClock / ( ulPreDivide * ulCANBits));
+                return (ulSourceClock / (ulPreDivide * ulCANBits));
             }
         }
 
@@ -773,7 +770,7 @@ CANBitRateSet(uint32_t ulBase, uint32_t ulSourceClock,
         //
         ulDesiredRatio++;
     }
-    return(0);
+    return (0);
 }
 
 //*****************************************************************************
@@ -914,8 +911,7 @@ CANBitTimingSet(uint32_t ulBase, tCANBitClkParms *pClkParms)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANIntRegister(uint32_t ulBase, void (*pfnHandler)(void))
+void CANIntRegister(uint32_t ulBase, void (*pfnHandler)(void))
 {
     uint32_t ulIntNumber;
 
@@ -955,8 +951,7 @@ CANIntRegister(uint32_t ulBase, void (*pfnHandler)(void))
 //! \return None.
 //
 //*****************************************************************************
-void
-CANIntUnregister(uint32_t ulBase)
+void CANIntUnregister(uint32_t ulBase)
 {
     uint32_t ulIntNumber;
 
@@ -1011,8 +1006,7 @@ CANIntUnregister(uint32_t ulBase)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANIntEnable(uint32_t ulBase, uint32_t ulIntFlags)
+void CANIntEnable(uint32_t ulBase, uint32_t ulIntFlags)
 {
     //
     // Check the arguments.
@@ -1043,8 +1037,7 @@ CANIntEnable(uint32_t ulBase, uint32_t ulIntFlags)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANIntDisable(uint32_t ulBase, uint32_t ulIntFlags)
+void CANIntDisable(uint32_t ulBase, uint32_t ulIntFlags)
 {
     //
     // Check the arguments.
@@ -1108,46 +1101,46 @@ CANIntStatus(uint32_t ulBase, tCANIntStsReg eIntStsReg)
     //
     // See which status the caller is looking for.
     //
-    switch(eIntStsReg)
+    switch (eIntStsReg)
+    {
+    //
+    // The caller wants the global interrupt status for the CAN controller
+    // specified by ulBase.
+    //
+    case CAN_INT_STS_CAUSE:
+    {
+        ulStatus = CANRegRead(ulBase + CAN_O_INT);
+        break;
+    }
+
+    //
+    // The caller wants the current message status interrupt for all
+    // messages.
+    //
+    case CAN_INT_STS_OBJECT:
     {
         //
-        // The caller wants the global interrupt status for the CAN controller
-        // specified by ulBase.
+        // Read and combine both 16 bit values into one 32bit status.
         //
-        case CAN_INT_STS_CAUSE:
-        {
-            ulStatus = CANRegRead(ulBase + CAN_O_INT);
-            break;
-        }
+        ulStatus = (CANRegRead(ulBase + CAN_O_MSG1INT) &
+                    CAN_MSG1INT_INTPND_M);
+        ulStatus |= (CANRegRead(ulBase + CAN_O_MSG2INT) << 16);
+        break;
+    }
 
-        //
-        // The caller wants the current message status interrupt for all
-        // messages.
-        //
-        case CAN_INT_STS_OBJECT:
-        {
-            //
-            // Read and combine both 16 bit values into one 32bit status.
-            //
-            ulStatus = (CANRegRead(ulBase + CAN_O_MSG1INT) &
-                        CAN_MSG1INT_INTPND_M);
-            ulStatus |= (CANRegRead(ulBase + CAN_O_MSG2INT) << 16);
-            break;
-        }
-
-        //
-        // Request was for unknown status so just return 0.
-        //
-        default:
-        {
-            ulStatus = 0;
-            break;
-        }
+    //
+    // Request was for unknown status so just return 0.
+    //
+    default:
+    {
+        ulStatus = 0;
+        break;
+    }
     }
     //
     // Return the interrupt status value
     //
-    return(ulStatus);
+    return (ulStatus);
 }
 
 //*****************************************************************************
@@ -1183,17 +1176,16 @@ CANIntStatus(uint32_t ulBase, tCANIntStsReg eIntStsReg)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANIntClear(uint32_t ulBase, uint32_t ulIntClr)
+void CANIntClear(uint32_t ulBase, uint32_t ulIntClr)
 {
     //
     // Check the arguments.
     //
     ASSERT(CANBaseValid(ulBase));
     ASSERT((ulIntClr == CAN_INT_INTID_STATUS) ||
-           ((ulIntClr>=1) && (ulIntClr <=32)));
+           ((ulIntClr >= 1) && (ulIntClr <= 32)));
 
-    if(ulIntClr == CAN_INT_INTID_STATUS)
+    if (ulIntClr == CAN_INT_INTID_STATUS)
     {
         //
         // Simply read and discard the status to clear the interrupt.
@@ -1205,7 +1197,7 @@ CANIntClear(uint32_t ulBase, uint32_t ulIntClr)
         //
         // Wait to be sure that this interface is not busy.
         //
-        while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+        while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
         {
         }
 
@@ -1223,7 +1215,7 @@ CANIntClear(uint32_t ulBase, uint32_t ulIntClr)
         //
         // Wait to be sure that this interface is not busy.
         //
-        while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+        while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
         {
         }
     }
@@ -1243,8 +1235,7 @@ CANIntClear(uint32_t ulBase, uint32_t ulIntClr)
 //! \return None.
 //
 //*****************************************************************************
-void
-CANRetrySet(uint32_t ulBase, tBoolean bAutoRetry)
+void CANRetrySet(uint32_t ulBase, tBoolean bAutoRetry)
 {
     uint32_t ulCtlReg;
 
@@ -1258,7 +1249,7 @@ CANRetrySet(uint32_t ulBase, tBoolean bAutoRetry)
     //
     // Conditionally set the DAR bit to enable/disable auto-retry.
     //
-    if(bAutoRetry)
+    if (bAutoRetry)
     {
         //
         // Clearing the DAR bit tells the controller to not disable the
@@ -1303,18 +1294,18 @@ CANRetryGet(uint32_t ulBase)
     //
     // Read the disable automatic retry setting from the CAN controller.
     //
-    if(CANRegRead(ulBase + CAN_O_CTL) & CAN_CTL_DAR)
+    if (CANRegRead(ulBase + CAN_O_CTL) & CAN_CTL_DAR)
     {
         //
         // Automatic data retransmission is not enabled.
         //
-        return(false);
+        return (false);
     }
 
     //
     // Automatic data retransmission is enabled.
     //
-    return(true);
+    return (true);
 }
 
 //*****************************************************************************
@@ -1383,60 +1374,60 @@ CANStatusGet(uint32_t ulBase, tCANStsReg eStatusReg)
     //
     ASSERT(CANBaseValid(ulBase));
 
-    switch(eStatusReg)
+    switch (eStatusReg)
     {
-        //
-        // Just return the global CAN status register since that is what was
-        // requested.
-        //
-        case CAN_STS_CONTROL:
-        {
-            ulStatus = CANRegRead(ulBase + CAN_O_STS);
-            CANRegWrite(ulBase + CAN_O_STS,
-                        ~(CAN_STS_RXOK | CAN_STS_TXOK | CAN_STS_LEC_M));
-            break;
-        }
-
-        //
-        // Combine the Transmit status bits into one 32bit value.
-        //
-        case CAN_STS_TXREQUEST:
-        {
-            ulStatus = CANRegRead(ulBase + CAN_O_TXRQ1);
-            ulStatus |= CANRegRead(ulBase + CAN_O_TXRQ2) << 16;
-            break;
-        }
-
-        //
-        // Combine the New Data status bits into one 32bit value.
-        //
-        case CAN_STS_NEWDAT:
-        {
-            ulStatus = CANRegRead(ulBase + CAN_O_NWDA1);
-            ulStatus |= CANRegRead(ulBase + CAN_O_NWDA2) << 16;
-            break;
-        }
-
-        //
-        // Combine the Message valid status bits into one 32bit value.
-        //
-        case CAN_STS_MSGVAL:
-        {
-            ulStatus = CANRegRead(ulBase + CAN_O_MSG1VAL);
-            ulStatus |= CANRegRead(ulBase + CAN_O_MSG2VAL) << 16;
-            break;
-        }
-
-        //
-        // Unknown CAN status requested so return 0.
-        //
-        default:
-        {
-            ulStatus = 0;
-            break;
-        }
+    //
+    // Just return the global CAN status register since that is what was
+    // requested.
+    //
+    case CAN_STS_CONTROL:
+    {
+        ulStatus = CANRegRead(ulBase + CAN_O_STS);
+        CANRegWrite(ulBase + CAN_O_STS,
+                    ~(CAN_STS_RXOK | CAN_STS_TXOK | CAN_STS_LEC_M));
+        break;
     }
-    return(ulStatus);
+
+    //
+    // Combine the Transmit status bits into one 32bit value.
+    //
+    case CAN_STS_TXREQUEST:
+    {
+        ulStatus = CANRegRead(ulBase + CAN_O_TXRQ1);
+        ulStatus |= CANRegRead(ulBase + CAN_O_TXRQ2) << 16;
+        break;
+    }
+
+    //
+    // Combine the New Data status bits into one 32bit value.
+    //
+    case CAN_STS_NEWDAT:
+    {
+        ulStatus = CANRegRead(ulBase + CAN_O_NWDA1);
+        ulStatus |= CANRegRead(ulBase + CAN_O_NWDA2) << 16;
+        break;
+    }
+
+    //
+    // Combine the Message valid status bits into one 32bit value.
+    //
+    case CAN_STS_MSGVAL:
+    {
+        ulStatus = CANRegRead(ulBase + CAN_O_MSG1VAL);
+        ulStatus |= CANRegRead(ulBase + CAN_O_MSG2VAL) << 16;
+        break;
+    }
+
+    //
+    // Unknown CAN status requested so return 0.
+    //
+    default:
+    {
+        ulStatus = 0;
+        break;
+    }
+    }
+    return (ulStatus);
 }
 
 //*****************************************************************************
@@ -1483,11 +1474,11 @@ CANErrCntrGet(uint32_t ulBase, uint32_t *pulRxCount,
     *pulRxCount = (ulCANError & CAN_ERR_REC_M) >> CAN_ERR_REC_S;
     *pulTxCount = (ulCANError & CAN_ERR_TEC_M) >> CAN_ERR_TEC_S;
 
-    if(ulCANError & CAN_ERR_RP)
+    if (ulCANError & CAN_ERR_RP)
     {
-        return(true);
+        return (true);
     }
-    return(false);
+    return (false);
 }
 
 //*****************************************************************************
@@ -1570,9 +1561,8 @@ CANErrCntrGet(uint32_t ulBase, uint32_t *pulRxCount,
 //! \return None.
 //
 //*****************************************************************************
-void
-CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
-              tCANMsgObject *pMsgObject, tMsgObjType eMsgType)
+void CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
+                   tCANMsgObject *pMsgObject, tMsgObjType eMsgType)
 {
     uint16_t usCmdMaskReg;
     uint16_t usMaskReg0, usMaskReg1;
@@ -1598,15 +1588,15 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Wait for busy bit to clear
     //
-    while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+    while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
     {
     }
 
     //
     // See if we need to use an extended identifier or not.
     //
-    if((pMsgObject->ulMsgID > CAN_MAX_11BIT_MSG_ID) ||
-       (pMsgObject->ulFlags & MSG_OBJ_EXTENDED_ID))
+    if ((pMsgObject->ulMsgID > CAN_MAX_11BIT_MSG_ID) ||
+        (pMsgObject->ulFlags & MSG_OBJ_EXTENDED_ID))
     {
         bUseExtendedID = 1;
     }
@@ -1634,124 +1624,124 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     usMaskReg0 = 0;
     usMaskReg1 = 0;
 
-    switch(eMsgType)
+    switch (eMsgType)
+    {
+    //
+    // Transmit message object.
+    //
+    case MSG_OBJ_TYPE_TX:
     {
         //
-        // Transmit message object.
+        // Set the TXRQST bit and the reset the rest of the register.
         //
-        case MSG_OBJ_TYPE_TX:
-        {
-            //
-            // Set the TXRQST bit and the reset the rest of the register.
-            //
-            usMsgCtrl |= CAN_IF1MCTL_TXRQST;
-            usArbReg1 = CAN_IF1ARB2_DIR;
-            bTransferData = 1;
-            break;
-        }
+        usMsgCtrl |= CAN_IF1MCTL_TXRQST;
+        usArbReg1 = CAN_IF1ARB2_DIR;
+        bTransferData = 1;
+        break;
+    }
+
+    //
+    // Transmit remote request message object
+    //
+    case MSG_OBJ_TYPE_TX_REMOTE:
+    {
+        //
+        // Set the TXRQST bit and the reset the rest of the register.
+        //
+        usMsgCtrl |= CAN_IF1MCTL_TXRQST;
+        usArbReg1 = 0;
+        break;
+    }
+
+    //
+    // Receive message object.
+    //
+    case MSG_OBJ_TYPE_RX:
+    {
+        //
+        // This clears the DIR bit along with everything else.  The TXRQST
+        // bit was cleared by defaulting usMsgCtrl to 0.
+        //
+        usArbReg1 = 0;
+        break;
+    }
+
+    //
+    // Receive remote request message object.
+    //
+    case MSG_OBJ_TYPE_RX_REMOTE:
+    {
+        //
+        // The DIR bit is set to one for remote receivers.  The TXRQST bit
+        // was cleared by defaulting usMsgCtrl to 0.
+        //
+        usArbReg1 = CAN_IF1ARB2_DIR;
 
         //
-        // Transmit remote request message object
+        // Set this object so that it only indicates that a remote frame
+        // was received and allow for software to handle it by sending back
+        // a data frame.
         //
-        case MSG_OBJ_TYPE_TX_REMOTE:
-        {
-            //
-            // Set the TXRQST bit and the reset the rest of the register.
-            //
-            usMsgCtrl |= CAN_IF1MCTL_TXRQST;
-            usArbReg1 = 0;
-            break;
-        }
+        usMsgCtrl = CAN_IF1MCTL_UMASK;
 
         //
-        // Receive message object.
+        // Use the full Identifier by default.
         //
-        case MSG_OBJ_TYPE_RX:
-        {
-            //
-            // This clears the DIR bit along with everything else.  The TXRQST
-            // bit was cleared by defaulting usMsgCtrl to 0.
-            //
-            usArbReg1 = 0;
-            break;
-        }
+        usMaskReg0 = 0xffff;
+        usMaskReg1 = 0x1fff;
 
         //
-        // Receive remote request message object.
+        // Make sure to send the mask to the message object.
         //
-        case MSG_OBJ_TYPE_RX_REMOTE:
-        {
-            //
-            // The DIR bit is set to one for remote receivers.  The TXRQST bit
-            // was cleared by defaulting usMsgCtrl to 0.
-            //
-            usArbReg1 = CAN_IF1ARB2_DIR;
+        usCmdMaskReg |= CAN_IF1CMSK_MASK;
+        break;
+    }
 
-            //
-            // Set this object so that it only indicates that a remote frame
-            // was received and allow for software to handle it by sending back
-            // a data frame.
-            //
-            usMsgCtrl = CAN_IF1MCTL_UMASK;
-
-            //
-            // Use the full Identifier by default.
-            //
-            usMaskReg0 = 0xffff;
-            usMaskReg1 = 0x1fff;
-
-            //
-            // Make sure to send the mask to the message object.
-            //
-            usCmdMaskReg |= CAN_IF1CMSK_MASK;
-            break;
-        }
+    //
+    // Remote frame receive remote, with auto-transmit message object.
+    //
+    case MSG_OBJ_TYPE_RXTX_REMOTE:
+    {
+        //
+        // Oddly the DIR bit is set to one for remote receivers.
+        //
+        usArbReg1 = CAN_IF1ARB2_DIR;
 
         //
-        // Remote frame receive remote, with auto-transmit message object.
+        // Set this object to auto answer if a matching identifier is seen.
         //
-        case MSG_OBJ_TYPE_RXTX_REMOTE:
-        {
-            //
-            // Oddly the DIR bit is set to one for remote receivers.
-            //
-            usArbReg1 = CAN_IF1ARB2_DIR;
-
-            //
-            // Set this object to auto answer if a matching identifier is seen.
-            //
-            usMsgCtrl = CAN_IF1MCTL_RMTEN | CAN_IF1MCTL_UMASK;
-
-            //
-            // The data to be returned needs to be filled in.
-            //
-            bTransferData = 1;
-            break;
-        }
+        usMsgCtrl = CAN_IF1MCTL_RMTEN | CAN_IF1MCTL_UMASK;
 
         //
-        // This case should never happen due to the ASSERT statement at the
-        // beginning of this function.
+        // The data to be returned needs to be filled in.
         //
-        default:
-        {
-            return;
-        }
+        bTransferData = 1;
+        break;
+    }
+
+    //
+    // This case should never happen due to the ASSERT statement at the
+    // beginning of this function.
+    //
+    default:
+    {
+        return;
+    }
     }
 
     //
     // Configure the Mask Registers.
     //
-    if(pMsgObject->ulFlags & MSG_OBJ_USE_ID_FILTER)
+    if (pMsgObject->ulFlags & MSG_OBJ_USE_ID_FILTER)
     {
-        if(bUseExtendedID)
+        if (bUseExtendedID)
         {
             //
             // Set the 29 bits of Identifier mask that were requested.
             //
             usMaskReg0 = pMsgObject->ulMsgIDMask & CAN_IF1MSK1_IDMSK_M;
             usMaskReg1 = ((pMsgObject->ulMsgIDMask >> 16) &
-                            CAN_IF1MSK2_IDMSK_M);
+                          CAN_IF1MSK2_IDMSK_M);
         }
         else
         {
@@ -1765,15 +1755,15 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
             // in the register.
             //
             usMaskReg1 = ((pMsgObject->ulMsgIDMask << 2) &
-                            CAN_IF1MSK2_IDMSK_M);
+                          CAN_IF1MSK2_IDMSK_M);
         }
     }
 
     //
     // If the caller wants to filter on the extended ID bit then set it.
     //
-    if((pMsgObject->ulFlags & MSG_OBJ_USE_EXT_FILTER) ==
-       MSG_OBJ_USE_EXT_FILTER)
+    if ((pMsgObject->ulFlags & MSG_OBJ_USE_EXT_FILTER) ==
+        MSG_OBJ_USE_EXT_FILTER)
     {
         usMaskReg1 |= CAN_IF1MSK2_MXTD;
     }
@@ -1781,14 +1771,14 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // The caller wants to filter on the message direction field.
     //
-    if((pMsgObject->ulFlags & MSG_OBJ_USE_DIR_FILTER) ==
-       MSG_OBJ_USE_DIR_FILTER)
+    if ((pMsgObject->ulFlags & MSG_OBJ_USE_DIR_FILTER) ==
+        MSG_OBJ_USE_DIR_FILTER)
     {
         usMaskReg1 |= CAN_IF1MSK2_MDIR;
     }
 
-    if(pMsgObject->ulFlags & (MSG_OBJ_USE_ID_FILTER | MSG_OBJ_USE_DIR_FILTER |
-                              MSG_OBJ_USE_EXT_FILTER))
+    if (pMsgObject->ulFlags & (MSG_OBJ_USE_ID_FILTER | MSG_OBJ_USE_DIR_FILTER |
+                               MSG_OBJ_USE_EXT_FILTER))
     {
         //
         // Set the UMASK bit to enable using the mask register.
@@ -1809,7 +1799,7 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Configure the Arbitration registers.
     //
-    if(bUseExtendedID)
+    if (bUseExtendedID)
     {
         //
         // Set the 29 bit version of the Identifier for this message object.
@@ -1845,7 +1835,7 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Mark this as the last entry if this is not the last entry in a FIFO.
     //
-    if((pMsgObject->ulFlags & MSG_OBJ_FIFO) == 0)
+    if ((pMsgObject->ulFlags & MSG_OBJ_FIFO) == 0)
     {
         usMsgCtrl |= CAN_IF1MCTL_EOB;
     }
@@ -1853,7 +1843,7 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Enable transmit interrupts if they should be enabled.
     //
-    if(pMsgObject->ulFlags & MSG_OBJ_TX_INT_ENABLE)
+    if (pMsgObject->ulFlags & MSG_OBJ_TX_INT_ENABLE)
     {
         usMsgCtrl |= CAN_IF1MCTL_TXIE;
     }
@@ -1861,7 +1851,7 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Enable receive interrupts if they should be enabled.
     //
-    if(pMsgObject->ulFlags & MSG_OBJ_RX_INT_ENABLE)
+    if (pMsgObject->ulFlags & MSG_OBJ_RX_INT_ENABLE)
     {
         usMsgCtrl |= CAN_IF1MCTL_RXIE;
     }
@@ -1869,7 +1859,7 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Write the data out to the CAN Data registers if needed.
     //
-    if(bTransferData)
+    if (bTransferData)
     {
         CANDataRegWrite(pMsgObject->pucMsgData,
                         (uint32_t *)(ulBase + CAN_O_IF1DA1),
@@ -1930,9 +1920,8 @@ CANMessageSet(uint32_t ulBase, uint32_t ulObjID,
 //! \return None.
 //
 //*****************************************************************************
-void
-CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
-              tCANMsgObject *pMsgObject, tBoolean bClrPendingInt)
+void CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
+                   tCANMsgObject *pMsgObject, tBoolean bClrPendingInt)
 {
     uint16_t usCmdMaskReg;
     uint16_t usMaskReg0, usMaskReg1;
@@ -1955,7 +1944,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Clear a pending interrupt and new data in a message object.
     //
-    if(bClrPendingInt)
+    if (bClrPendingInt)
     {
         usCmdMaskReg |= CAN_IF1CMSK_CLRINTPND;
     }
@@ -1973,7 +1962,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Wait for busy bit to clear
     //
-    while(CANRegRead(ulBase + CAN_O_IF2CRQ) & CAN_IF1CRQ_BUSY)
+    while (CANRegRead(ulBase + CAN_O_IF2CRQ) & CAN_IF1CRQ_BUSY)
     {
     }
 
@@ -1991,8 +1980,8 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Determine if this is a remote frame by checking the TXRQST and DIR bits.
     //
-    if((!(usMsgCtrl & CAN_IF1MCTL_TXRQST) && (usArbReg1 & CAN_IF1ARB2_DIR)) ||
-       ((usMsgCtrl & CAN_IF1MCTL_TXRQST) && (!(usArbReg1 & CAN_IF1ARB2_DIR))))
+    if ((!(usMsgCtrl & CAN_IF1MCTL_TXRQST) && (usArbReg1 & CAN_IF1ARB2_DIR)) ||
+        ((usMsgCtrl & CAN_IF1MCTL_TXRQST) && (!(usArbReg1 & CAN_IF1ARB2_DIR))))
     {
         pMsgObject->ulFlags |= MSG_OBJ_REMOTE_FRAME;
     }
@@ -2001,13 +1990,13 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     // Get the identifier out of the register, the format depends on size of
     // the mask.
     //
-    if(usArbReg1 & CAN_IF1ARB2_XTD)
+    if (usArbReg1 & CAN_IF1ARB2_XTD)
     {
         //
         // Set the 29 bit version of the Identifier for this message object.
         //
         pMsgObject->ulMsgID = ((usArbReg1 & CAN_IF1ARB2_ID_M) << 16) |
-            usArbReg0;
+                              usArbReg0;
 
         pMsgObject->ulFlags |= MSG_OBJ_EXTENDED_ID;
     }
@@ -2022,7 +2011,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Indicate that we lost some data.
     //
-    if(usMsgCtrl & CAN_IF1MCTL_MSGLST)
+    if (usMsgCtrl & CAN_IF1MCTL_MSGLST)
     {
         pMsgObject->ulFlags |= MSG_OBJ_DATA_LOST;
     }
@@ -2030,9 +2019,9 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Set the flag to indicate if ID masking was used.
     //
-    if(usMsgCtrl & CAN_IF1MCTL_UMASK)
+    if (usMsgCtrl & CAN_IF1MCTL_UMASK)
     {
-        if(usArbReg1 & CAN_IF1ARB2_XTD)
+        if (usArbReg1 & CAN_IF1ARB2_XTD)
         {
             //
             // The Identifier Mask is assumed to also be a 29 bit value.
@@ -2045,8 +2034,8 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
             // set the MSG_OBJ_USE_ID_FILTER because the ID was not really
             // filtered.
             //
-            if((pMsgObject->ulMsgIDMask != 0x1fffffff) ||
-               ((pMsgObject->ulFlags & MSG_OBJ_REMOTE_FRAME) == 0))
+            if ((pMsgObject->ulMsgIDMask != 0x1fffffff) ||
+                ((pMsgObject->ulFlags & MSG_OBJ_REMOTE_FRAME) == 0))
             {
                 pMsgObject->ulFlags |= MSG_OBJ_USE_ID_FILTER;
             }
@@ -2064,8 +2053,8 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
             // set the MSG_OBJ_USE_ID_FILTER because the ID was not really
             // filtered.
             //
-            if((pMsgObject->ulMsgIDMask != 0x7ff) ||
-               ((pMsgObject->ulFlags & MSG_OBJ_REMOTE_FRAME) == 0))
+            if ((pMsgObject->ulMsgIDMask != 0x7ff) ||
+                ((pMsgObject->ulFlags & MSG_OBJ_REMOTE_FRAME) == 0))
             {
                 pMsgObject->ulFlags |= MSG_OBJ_USE_ID_FILTER;
             }
@@ -2074,7 +2063,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
         //
         // Indicate if the extended bit was used in filtering.
         //
-        if(usMaskReg1 & CAN_IF1MSK2_MXTD)
+        if (usMaskReg1 & CAN_IF1MSK2_MXTD)
         {
             pMsgObject->ulFlags |= MSG_OBJ_USE_EXT_FILTER;
         }
@@ -2082,7 +2071,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
         //
         // Indicate if direction filtering was enabled.
         //
-        if(usMaskReg1 & CAN_IF1MSK2_MDIR)
+        if (usMaskReg1 & CAN_IF1MSK2_MDIR)
         {
             pMsgObject->ulFlags |= MSG_OBJ_USE_DIR_FILTER;
         }
@@ -2091,11 +2080,11 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // Set the interrupt flags.
     //
-    if(usMsgCtrl & CAN_IF1MCTL_TXIE)
+    if (usMsgCtrl & CAN_IF1MCTL_TXIE)
     {
         pMsgObject->ulFlags |= MSG_OBJ_TX_INT_ENABLE;
     }
-    if(usMsgCtrl & CAN_IF1MCTL_RXIE)
+    if (usMsgCtrl & CAN_IF1MCTL_RXIE)
     {
         pMsgObject->ulFlags |= MSG_OBJ_RX_INT_ENABLE;
     }
@@ -2103,7 +2092,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
     //
     // See if there is new data available.
     //
-    if(usMsgCtrl & CAN_IF1MCTL_NEWDAT)
+    if (usMsgCtrl & CAN_IF1MCTL_NEWDAT)
     {
         //
         // Get the amount of data needed to be read.
@@ -2114,7 +2103,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
         // Don't read any data for a remote frame, there is nothing valid in
         // that buffer anyway.
         //
-        if((pMsgObject->ulFlags & MSG_OBJ_REMOTE_FRAME) == 0)
+        if ((pMsgObject->ulFlags & MSG_OBJ_REMOTE_FRAME) == 0)
         {
             //
             // Read out the data from the CAN registers.
@@ -2138,7 +2127,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
         //
         // Wait for busy bit to clear
         //
-        while(CANRegRead(ulBase + CAN_O_IF2CRQ) & CAN_IF1CRQ_BUSY)
+        while (CANRegRead(ulBase + CAN_O_IF2CRQ) & CAN_IF1CRQ_BUSY)
         {
         }
 
@@ -2171,8 +2160,7 @@ CANMessageGet(uint32_t ulBase, uint32_t ulObjID,
 //! \return None.
 //
 //*****************************************************************************
-void
-CANMessageClear(uint32_t ulBase, uint32_t ulObjID)
+void CANMessageClear(uint32_t ulBase, uint32_t ulObjID)
 {
     //
     // Check the arguments.
@@ -2183,7 +2171,7 @@ CANMessageClear(uint32_t ulBase, uint32_t ulObjID)
     //
     // Wait for busy bit to clear
     //
-    while(CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
+    while (CANRegRead(ulBase + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
     {
     }
 

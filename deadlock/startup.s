@@ -5,24 +5,24 @@
 ;
 ; Copyright (c) 2012 Texas Instruments Incorporated.  All rights reserved.
 ; Software License Agreement
-; 
+;
 ; Texas Instruments (TI) is supplying this software for use solely and
 ; exclusively on TI's microcontroller products. The software is owned by
 ; TI and/or its suppliers, and is protected under applicable copyright
 ; laws. You may not combine this software with "viral" open-source
 ; software in order to form a larger program.
-; 
+;
 ; THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 ; NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 ; NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 ; A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 ; CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 ; DAMAGES, FOR ANY REASON WHATSOEVER.
-; 
+;
 ; This is part of revision 9453 of the EK-LM4F120XL Firmware Package.
 ;
 ;******************************************************************************
-; Edited to conform with ISR names as described in 
+; Edited to conform with ISR names as described in
 ;   "Embedded Systems: Introduction to ARM Cortex M Microcontrollers",
 ;   ISBN: 978-1469998749, Jonathan Valvano, copyright (c) 2012
 ;   "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
@@ -640,24 +640,24 @@ WaitForInterrupt
 SVC_OS_Id
    SVC #0
    BX  LR
-    
+
    EXPORT  SVC_OS_Kill
 SVC_OS_Kill
    SVC #1
    BX  LR
-    
+
    EXPORT  SVC_OS_Sleep
 ;R0 is input t
 SVC_OS_Sleep
    SVC #2
    BX  LR
-   
+
    EXPORT  SVC_OS_Time
 ;returns result in R0
 SVC_OS_Time
    SVC #3
    BX  LR
-    
+
    EXPORT  SVC_OS_AddThread
 ;R0 is void(*t)(void)
 ;R1 is s

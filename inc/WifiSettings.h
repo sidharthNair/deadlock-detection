@@ -3,30 +3,35 @@
 // Wally Guzman
 
 // Launchpad or TM4C123
-#define LAUNCHPAD 		1
- 
+#define LAUNCHPAD 1
+
 // Baudrate for UART connection to ESP8266
-//#define BAUDRATE			74880    // The ESP first boots with 74880 baud and then switches
-#define BAUDRATE 			115200
+// #define BAUDRATE			74880    // The ESP first boots with 74880 baud and then switches
+#define BAUDRATE 115200
 
 // Return values
-#define NORESPONSE		(-1)
-#define BADVALUE			(-1)
-#define SUCCESS				1
-#define FAILURE				0
+#define NORESPONSE (-1)
+#define BADVALUE (-1)
+#define SUCCESS 1
+#define FAILURE 0
 
-enum Menu_Status {RX=0, TX, CONNECTED};
+enum Menu_Status
+{
+    RX = 0,
+    TX,
+    CONNECTED
+};
 
 // Station or soft access point mode
 // 0 means regular station, 1 means act as soft AP
-#define SOFTAP        0
+#define SOFTAP 0
 
 // Access Point Parameters
-#define SSID_NAME  "YourAP"
-#define PASSKEY    "YourPassword"
+#define SSID_NAME "YourAP"
+#define PASSKEY "YourPassword"
 
-//#define SSID_NAME  "utexas-iot"
-//#define PASSKEY    ""
+// #define SSID_NAME  "utexas-iot"
+// #define PASSKEY    ""
 
 /* To get the password for the "utexas-iot" network:
 
@@ -43,4 +48,4 @@ On your IoT device:
     Select utexas-iot from the available wireless networks
     Enter the WPA2 key provided to you in step 5 above
 
-*/ 
+*/

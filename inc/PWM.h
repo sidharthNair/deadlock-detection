@@ -25,7 +25,6 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
-
 // period is 16-bit number of PWM clock cycles in one period (3<=period)
 // period for PB6 and PB7 must be the same
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)

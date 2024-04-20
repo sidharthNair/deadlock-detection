@@ -38,12 +38,13 @@
 #define HEAP_ERROR_POINTER_OUT_OF_RANGE 2
 
 // struct for holding statistics on the state of the heap
-typedef struct heap_stats {
-  int32_t wordsAllocated;
-  int32_t wordsAvailable;
-  int32_t wordsOverhead;
-  int32_t blocksUsed;
-  int32_t blocksUnused;
+typedef struct heap_stats
+{
+    int32_t wordsAllocated;
+    int32_t wordsAvailable;
+    int32_t wordsOverhead;
+    int32_t blocksUsed;
+    int32_t blocksUnused;
 } heap_stats_t;
 
 //******** Heap_Init ***************
@@ -54,15 +55,13 @@ typedef struct heap_stats {
 //  is allocated.
 int32_t Heap_Init(void);
 
-
 //******** Heap_Malloc ***************
 // Allocate memory, data not initialized
 // input:
 //   desiredBytes: desired number of bytes to allocate
 // output: void* pointing to the allocated memory or will return NULL
 //   if there isn't sufficient space to satisfy allocation request
-void* Heap_Malloc(int32_t desiredBytes);
-
+void *Heap_Malloc(int32_t desiredBytes);
 
 //******** Heap_Calloc ***************
 // Allocate memory, data are initialized to 0
@@ -70,13 +69,12 @@ void* Heap_Malloc(int32_t desiredBytes);
 //   desiredBytes: desired number of bytes to allocate
 // output: void* pointing to the allocated memory block or will return NULL
 //   if there isn't sufficient space to satisfy allocation request
-//notes: the allocated memory block will be zeroed out
-void* Heap_Calloc(int32_t desiredBytes);
-
+// notes: the allocated memory block will be zeroed out
+void *Heap_Calloc(int32_t desiredBytes);
 
 //******** Heap_Realloc ***************
 // Reallocate buffer to a new size
-//input:
+// input:
 //  oldBlock: pointer to a block
 //  desiredBytes: a desired number of bytes for a new block
 //    where the contents of the old block will be copied to
@@ -84,8 +82,7 @@ void* Heap_Calloc(int32_t desiredBytes);
 //   if there is any reason the reallocation can't be completed
 // notes: the given block will be unallocated after its contents
 //   are copied to the new block
-void* Heap_Realloc(void* oldBlock, int32_t desiredBytes);
-
+void *Heap_Realloc(void *oldBlock, int32_t desiredBytes);
 
 //******** Heap_Free ***************
 // return a block to the heap
@@ -94,8 +91,7 @@ void* Heap_Realloc(void* oldBlock, int32_t desiredBytes);
 //  HEAP_ERROR_POINTER_OUT_OF_RANGE if pointer points outside the heap;
 //  HEAP_ERROR_CORRUPTED_HEAP if heap has been corrupted or trying to
 //  unallocate memory that has already been unallocated;
-int32_t Heap_Free(void* pointer);
-
+int32_t Heap_Free(void *pointer);
 
 //******** Heap_Test ***************
 // Test the heap
@@ -103,12 +99,10 @@ int32_t Heap_Free(void* pointer);
 // output: validity of the heap - either HEAP_OK or HEAP_ERROR_HEAP_CORRUPTED
 int32_t Heap_Test(void);
 
-
 //******** Heap_Stats ***************
 // return the current status of the heap
 // input: none
 // output: a heap_stats_t that describes the current usage of the heap
 heap_stats_t Heap_Stats(void);
 
-
-#endif //#ifndef HEAP_H
+#endif // #ifndef HEAP_H

@@ -27,17 +27,18 @@
  */
 #include <stdint.h>
 
-enum TExaSmode{
-  SCOPE, // PD3
-  SCOPE_PD2,
-  SCOPE_PE2,
-  SCOPE_PB5,
-  LOGICANALYZERA,
-  LOGICANALYZERB,
-  LOGICANALYZERC,
-  LOGICANALYZERE,
-  LOGICANALYZERF,
-  NONE
+enum TExaSmode
+{
+    SCOPE, // PD3
+    SCOPE_PD2,
+    SCOPE_PE2,
+    SCOPE_PB5,
+    LOGICANALYZERA,
+    LOGICANALYZERB,
+    LOGICANALYZERC,
+    LOGICANALYZERE,
+    LOGICANALYZERF,
+    NONE
 };
 
 // ************TExaS_Init*****************
@@ -54,6 +55,3 @@ void TExaS_Init(enum TExaSmode mode);
 // Inputs:  none
 // Outputs: none
 void TExaS_Stop(void);
-
-
-

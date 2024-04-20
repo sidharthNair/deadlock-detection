@@ -11,10 +11,6 @@
 
  ******************************************************************************/
 
-
-
-
-
 /**
  * @details  Run the user interface.
  * @param  none
@@ -22,4 +18,3 @@
  * @brief  Interpreter
  */
 void Interpreter(void);
-

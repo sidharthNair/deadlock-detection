@@ -36,102 +36,112 @@
 #include "../common/FIFOsimple.h"
 #include "../common/UART0int.h"
 
-#define NVIC_EN0_INT5           0x00000020  // Interrupt 5 enable
+#define NVIC_EN0_INT5 0x00000020 // Interrupt 5 enable
 
-#define UART_FR_RXFF            0x00000040  // UART Receive FIFO Full
-#define UART_FR_TXFF            0x00000020  // UART Transmit FIFO Full
-#define UART_FR_RXFE            0x00000010  // UART Receive FIFO Empty
-#define UART_LCRH_WLEN_8        0x00000060  // 8 bit word length
-#define UART_LCRH_FEN           0x00000010  // UART Enable FIFOs
-#define UART_CTL_UARTEN         0x00000001  // UART Enable
-#define UART_IFLS_RX1_8         0x00000000  // RX FIFO >= 1/8 full
-#define UART_IFLS_TX1_8         0x00000000  // TX FIFO <= 1/8 full
-#define UART_IM_RTIM            0x00000040  // UART Receive Time-Out Interrupt
-                                            // Mask
-#define UART_IM_TXIM            0x00000020  // UART Transmit Interrupt Mask
-#define UART_IM_RXIM            0x00000010  // UART Receive Interrupt Mask
-#define UART_RIS_RTRIS          0x00000040  // UART Receive Time-Out Raw
-                                            // Interrupt Status
-#define UART_RIS_TXRIS          0x00000020  // UART Transmit Raw Interrupt
-                                            // Status
-#define UART_RIS_RXRIS          0x00000010  // UART Receive Raw Interrupt
-                                            // Status
-#define UART_ICR_RTIC           0x00000040  // Receive Time-Out Interrupt Clear
-#define UART_ICR_TXIC           0x00000020  // Transmit Interrupt Clear
-#define UART_ICR_RXIC           0x00000010  // Receive Interrupt Clear
+#define UART_FR_RXFF 0x00000040     // UART Receive FIFO Full
+#define UART_FR_TXFF 0x00000020     // UART Transmit FIFO Full
+#define UART_FR_RXFE 0x00000010     // UART Receive FIFO Empty
+#define UART_LCRH_WLEN_8 0x00000060 // 8 bit word length
+#define UART_LCRH_FEN 0x00000010    // UART Enable FIFOs
+#define UART_CTL_UARTEN 0x00000001  // UART Enable
+#define UART_IFLS_RX1_8 0x00000000  // RX FIFO >= 1/8 full
+#define UART_IFLS_TX1_8 0x00000000  // TX FIFO <= 1/8 full
+#define UART_IM_RTIM 0x00000040     // UART Receive Time-Out Interrupt
+                                    // Mask
+#define UART_IM_TXIM 0x00000020     // UART Transmit Interrupt Mask
+#define UART_IM_RXIM 0x00000010     // UART Receive Interrupt Mask
+#define UART_RIS_RTRIS 0x00000040   // UART Receive Time-Out Raw
+                                    // Interrupt Status
+#define UART_RIS_TXRIS 0x00000020   // UART Transmit Raw Interrupt
+                                    // Status
+#define UART_RIS_RXRIS 0x00000010   // UART Receive Raw Interrupt
+                                    // Status
+#define UART_ICR_RTIC 0x00000040    // Receive Time-Out Interrupt Clear
+#define UART_ICR_TXIC 0x00000020    // Transmit Interrupt Clear
+#define UART_ICR_RXIC 0x00000010    // Receive Interrupt Clear
 
 // This version of the driver uses FIFOs from FIFOsimple.c
-#define FIFOSIZE    RXFIFOSIZE  // size of the FIFOs (must be power of 2)
-#define FIFOSUCCESS 1         // return value on success
-#define FIFOFAIL    0         // return value on failure
-                              // create index implementation FIFO
-//AddIndexFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
-//AddIndexFifo(Tx, 1024, char, FIFOSUCCESS, FIFOFAIL)
+#define FIFOSIZE RXFIFOSIZE // size of the FIFOs (must be power of 2)
+#define FIFOSUCCESS 1       // return value on success
+#define FIFOFAIL 0          // return value on failure
+                            // create index implementation FIFO
+// AddIndexFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
+// AddIndexFifo(Tx, 1024, char, FIFOSUCCESS, FIFOFAIL)
 
 // Initialize UART0
 // Baud rate is 115200 bits/sec
-void UART_Init(void){
-  SYSCTL_RCGCUART_R |= 0x01;            // activate UART0
-  SYSCTL_RCGCGPIO_R |= 0x01;            // activate port A
-  RxFifo_Init();                        // initialize empty FIFOs
-  TxFifo_Init();
-  UART0_CTL_R &= ~UART_CTL_UARTEN;      // disable UART
-  UART0_IBRD_R = 43;                    // IBRD = int(80,000,000 / (16 * 115,200)) = int(43.403)
-  UART0_FBRD_R = 26;                    // FBRD = round(0.4028 * 64 ) = 26
-                                        // 8 bit word length (no parity bits, one stop bit, FIFOs)
-  UART0_LCRH_R = (UART_LCRH_WLEN_8|UART_LCRH_FEN);
-  UART0_IFLS_R &= ~0x3F;                // clear TX and RX interrupt FIFO level fields
-                                        // configure interrupt for TX FIFO <= 1/8 full
-                                        // configure interrupt for RX FIFO >= 1/8 full
-  UART0_IFLS_R += (UART_IFLS_TX1_8|UART_IFLS_RX1_8);
-                                        // enable TX and RX FIFO interrupts and RX time-out interrupt
-  UART0_IM_R |= (UART_IM_RXIM|UART_IM_TXIM|UART_IM_RTIM);
-  UART0_CTL_R |= 0x301;                 // enable UART
-  GPIO_PORTA_AFSEL_R |= 0x03;           // enable alt funct on PA1-0
-  GPIO_PORTA_DEN_R |= 0x03;             // enable digital I/O on PA1-0
-                                        // configure PA1-0 as UART
-  GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0xFFFFFF00)+0x00000011;
-  GPIO_PORTA_AMSEL_R = 0;               // disable analog functionality on PA
-                                        // UART0=priority 2
-  NVIC_PRI1_R = (NVIC_PRI1_R&0xFFFF00FF)|0x00004000; // bits 13-15
-  NVIC_EN0_R = NVIC_EN0_INT5;           // enable interrupt 5 in NVIC
+void UART_Init(void)
+{
+    SYSCTL_RCGCUART_R |= 0x01; // activate UART0
+    SYSCTL_RCGCGPIO_R |= 0x01; // activate port A
+    RxFifo_Init();             // initialize empty FIFOs
+    TxFifo_Init();
+    UART0_CTL_R &= ~UART_CTL_UARTEN; // disable UART
+    UART0_IBRD_R = 43;               // IBRD = int(80,000,000 / (16 * 115,200)) = int(43.403)
+    UART0_FBRD_R = 26;               // FBRD = round(0.4028 * 64 ) = 26
+                                     // 8 bit word length (no parity bits, one stop bit, FIFOs)
+    UART0_LCRH_R = (UART_LCRH_WLEN_8 | UART_LCRH_FEN);
+    UART0_IFLS_R &= ~0x3F; // clear TX and RX interrupt FIFO level fields
+                           // configure interrupt for TX FIFO <= 1/8 full
+                           // configure interrupt for RX FIFO >= 1/8 full
+    UART0_IFLS_R += (UART_IFLS_TX1_8 | UART_IFLS_RX1_8);
+    // enable TX and RX FIFO interrupts and RX time-out interrupt
+    UART0_IM_R |= (UART_IM_RXIM | UART_IM_TXIM | UART_IM_RTIM);
+    UART0_CTL_R |= 0x301;       // enable UART
+    GPIO_PORTA_AFSEL_R |= 0x03; // enable alt funct on PA1-0
+    GPIO_PORTA_DEN_R |= 0x03;   // enable digital I/O on PA1-0
+                                // configure PA1-0 as UART
+    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFFFF00) + 0x00000011;
+    GPIO_PORTA_AMSEL_R = 0;                                // disable analog functionality on PA
+                                                           // UART0=priority 2
+    NVIC_PRI1_R = (NVIC_PRI1_R & 0xFFFF00FF) | 0x00004000; // bits 13-15
+    NVIC_EN0_R = NVIC_EN0_INT5;                            // enable interrupt 5 in NVIC
 }
 // copy from hardware RX FIFO to software RX FIFO
 // stop when hardware RX FIFO is empty or software RX FIFO is full
-void static copyHardwareToSoftware(void){
-  char letter;
-  while(((UART0_FR_R&UART_FR_RXFE) == 0) && (RxFifo_Size() < (FIFOSIZE - 1))){
-    letter = UART0_DR_R;
-    RxFifo_Put(letter);
-  }
+void static copyHardwareToSoftware(void)
+{
+    char letter;
+    while (((UART0_FR_R & UART_FR_RXFE) == 0) && (RxFifo_Size() < (FIFOSIZE - 1)))
+    {
+        letter = UART0_DR_R;
+        RxFifo_Put(letter);
+    }
 }
 // copy from software TX FIFO to hardware TX FIFO
 // stop when software TX FIFO is empty or hardware TX FIFO is full
-void static copySoftwareToHardware(void){
-  char letter;
-  while(((UART0_FR_R&UART_FR_TXFF) == 0) && (TxFifo_Size() > 0)){
-    TxFifo_Get(&letter);
-    UART0_DR_R = letter;
-  }
+void static copySoftwareToHardware(void)
+{
+    char letter;
+    while (((UART0_FR_R & UART_FR_TXFF) == 0) && (TxFifo_Size() > 0))
+    {
+        TxFifo_Get(&letter);
+        UART0_DR_R = letter;
+    }
 }
 // input ASCII character from UART
 // spin if RxFifo is empty
-char UART_InChar(void){
-  char letter;
-  while(RxFifo_Get(&letter) == FIFOFAIL){};
-  return(letter);
+char UART_InChar(void)
+{
+    char letter;
+    while (RxFifo_Get(&letter) == FIFOFAIL)
+    {
+    };
+    return (letter);
 }
 
 //------------UART_InCharNonBlock------------
 // input ASCII character from UART
 // output: 0 if RxFifo is empty
 //         character if
-char UART_InCharNonBlock(void){
-  char letter;
-  if(RxFifo_Get(&letter) == FIFOFAIL){
-    return 0;  // empty
-  };
-  return(letter);
+char UART_InCharNonBlock(void)
+{
+    char letter;
+    if (RxFifo_Get(&letter) == FIFOFAIL)
+    {
+        return 0; // empty
+    };
+    return (letter);
 }
 
 //------------UART_OutChar------------
@@ -139,11 +149,14 @@ char UART_InCharNonBlock(void){
 // Input: letter is an 8-bit ASCII character to be transferred
 // Output: none
 // spin if TxFifo full
-void UART_OutChar(char data){
-  while(TxFifo_Put(data) == FIFOFAIL){};
-  UART0_IM_R &= ~UART_IM_TXIM;          // disable TX FIFO interrupt
-  copySoftwareToHardware();
-  UART0_IM_R |= UART_IM_TXIM;           // enable TX FIFO interrupt
+void UART_OutChar(char data)
+{
+    while (TxFifo_Put(data) == FIFOFAIL)
+    {
+    };
+    UART0_IM_R &= ~UART_IM_TXIM; // disable TX FIFO interrupt
+    copySoftwareToHardware();
+    UART0_IM_R |= UART_IM_TXIM; // enable TX FIFO interrupt
 }
 
 //------------UART_OutCharNonBlock------------
@@ -151,47 +164,56 @@ void UART_OutChar(char data){
 // Input: letter is an 8-bit ASCII character to be transferred
 // Output: none
 // Error: return with lost data if TxFifo is full
-void UART_OutCharNonBlock(char data){
-  if(TxFifo_Put(data) == FIFOFAIL) return; // lost data
-  UART0_IM_R &= ~UART_IM_TXIM;          // disable TX FIFO interrupt
-  copySoftwareToHardware();
-  UART0_IM_R |= UART_IM_TXIM;           // enable TX FIFO interrupt
+void UART_OutCharNonBlock(char data)
+{
+    if (TxFifo_Put(data) == FIFOFAIL)
+        return;                  // lost data
+    UART0_IM_R &= ~UART_IM_TXIM; // disable TX FIFO interrupt
+    copySoftwareToHardware();
+    UART0_IM_R |= UART_IM_TXIM; // enable TX FIFO interrupt
 }
 
 // at least one of three things has happened:
 // hardware TX FIFO goes from 3 to 2 or less items
 // hardware RX FIFO goes from 1 to 2 or more items
 // UART receiver has timed out
-void UART0_Handler(void){
-  if(UART0_RIS_R&UART_RIS_TXRIS){       // hardware TX FIFO <= 2 items
-    UART0_ICR_R = UART_ICR_TXIC;        // acknowledge TX FIFO
-    // copy from software TX FIFO to hardware TX FIFO
-    copySoftwareToHardware();
-    if(TxFifo_Size() == 0){             // software TX FIFO is empty
-      UART0_IM_R &= ~UART_IM_TXIM;      // disable TX FIFO interrupt
+void UART0_Handler(void)
+{
+    if (UART0_RIS_R & UART_RIS_TXRIS)
+    {                                // hardware TX FIFO <= 2 items
+        UART0_ICR_R = UART_ICR_TXIC; // acknowledge TX FIFO
+        // copy from software TX FIFO to hardware TX FIFO
+        copySoftwareToHardware();
+        if (TxFifo_Size() == 0)
+        {                                // software TX FIFO is empty
+            UART0_IM_R &= ~UART_IM_TXIM; // disable TX FIFO interrupt
+        }
     }
-  }
-  if(UART0_RIS_R&UART_RIS_RXRIS){       // hardware RX FIFO >= 2 items
-    UART0_ICR_R = UART_ICR_RXIC;        // acknowledge RX FIFO
-    // copy from hardware RX FIFO to software RX FIFO
-    copyHardwareToSoftware();
-  }
-  if(UART0_RIS_R&UART_RIS_RTRIS){       // receiver timed out
-    UART0_ICR_R = UART_ICR_RTIC;        // acknowledge receiver time out
-    // copy from hardware RX FIFO to software RX FIFO
-    copyHardwareToSoftware();
-  }
+    if (UART0_RIS_R & UART_RIS_RXRIS)
+    {                                // hardware RX FIFO >= 2 items
+        UART0_ICR_R = UART_ICR_RXIC; // acknowledge RX FIFO
+        // copy from hardware RX FIFO to software RX FIFO
+        copyHardwareToSoftware();
+    }
+    if (UART0_RIS_R & UART_RIS_RTRIS)
+    {                                // receiver timed out
+        UART0_ICR_R = UART_ICR_RTIC; // acknowledge receiver time out
+        // copy from hardware RX FIFO to software RX FIFO
+        copyHardwareToSoftware();
+    }
 }
 
 //------------UART_OutString------------
 // Output String (NULL termination)
 // Input: pointer to a NULL-terminated string to be transferred
 // Output: none
-void UART_OutString(char *pt){
-  while(*pt){
-    UART_OutChar(*pt);
-    pt++;
-  }
+void UART_OutString(char *pt)
+{
+    while (*pt)
+    {
+        UART_OutChar(*pt);
+        pt++;
+    }
 }
 
 //------------UART_InUDec------------
@@ -202,28 +224,32 @@ void UART_OutString(char *pt){
 // Output: 32-bit unsigned number
 // If you enter a number above 4294967295, it will return an incorrect value
 // Backspace will remove last digit typed
-uint32_t UART_InUDec(void){
-uint32_t number=0, length=0;
-char character;
-  character = UART_InChar();
-  while(character != CR){ // accepts until <enter> is typed
-// The next line checks that the input is a digit, 0-9.
-// If the character is not 0-9, it is ignored and not echoed
-    if((character>='0') && (character<='9')) {
-      number = 10*number+(character-'0');   // this line overflows if above 4294967295
-      length++;
-      UART_OutChar(character);
-    }
-// If the input is a backspace, then the return number is
-// changed and a backspace is outputted to the screen
-    else if((character==BS) && length){
-      number /= 10;
-      length--;
-      UART_OutChar(character);
-    }
+uint32_t UART_InUDec(void)
+{
+    uint32_t number = 0, length = 0;
+    char character;
     character = UART_InChar();
-  }
-  return number;
+    while (character != CR)
+    {   // accepts until <enter> is typed
+        // The next line checks that the input is a digit, 0-9.
+        // If the character is not 0-9, it is ignored and not echoed
+        if ((character >= '0') && (character <= '9'))
+        {
+            number = 10 * number + (character - '0'); // this line overflows if above 4294967295
+            length++;
+            UART_OutChar(character);
+        }
+        // If the input is a backspace, then the return number is
+        // changed and a backspace is outputted to the screen
+        else if ((character == BS) && length)
+        {
+            number /= 10;
+            length--;
+            UART_OutChar(character);
+        }
+        character = UART_InChar();
+    }
+    return number;
 }
 
 //-----------------------UART_OutUDec-----------------------
@@ -231,14 +257,16 @@ char character;
 // Input: 32-bit number to be transferred
 // Output: none
 // Variable format 1-10 digits with no space before or after
-void UART_OutUDec(uint32_t n){
-// This function uses recursion to convert decimal number
-//   of unspecified length as an ASCII string
-  if(n >= 10){
-    UART_OutUDec(n/10);
-    n = n%10;
-  }
-  UART_OutChar(n+'0'); /* n is between 0 and 9 */
+void UART_OutUDec(uint32_t n)
+{
+    // This function uses recursion to convert decimal number
+    //   of unspecified length as an ASCII string
+    if (n >= 10)
+    {
+        UART_OutUDec(n / 10);
+        n = n % 10;
+    }
+    UART_OutChar(n + '0'); /* n is between 0 and 9 */
 }
 
 //-----------------------UART_OutSDec-----------------------
@@ -246,12 +274,14 @@ void UART_OutUDec(uint32_t n){
 // Input: 32-bit number to be transferred
 // Output: none
 // Variable format 1-10 digits with no space before or after
-void UART_OutSDec(long n){
-  if(n<0){
-    UART_OutChar('-');
-    n = -n;
-  }
-  UART_OutUDec((unsigned long)n);
+void UART_OutSDec(long n)
+{
+    if (n < 0)
+    {
+        UART_OutChar('-');
+        n = -n;
+    }
+    UART_OutUDec((unsigned long)n);
 }
 
 //---------------------UART_InUHex----------------------------------------
@@ -264,36 +294,43 @@ void UART_OutSDec(long n){
 //     value range is 0 to FFFFFFFF
 // If you enter a number above FFFFFFFF, it will return an incorrect value
 // Backspace will remove last digit typed
-uint32_t UART_InUHex(void){
-uint32_t number=0, digit, length=0;
-char character;
-  character = UART_InChar();
-  while(character != CR){
-    digit = 0x10; // assume bad
-    if((character>='0') && (character<='9')){
-      digit = character-'0';
-    }
-    else if((character>='A') && (character<='F')){
-      digit = (character-'A')+0xA;
-    }
-    else if((character>='a') && (character<='f')){
-      digit = (character-'a')+0xA;
-    }
-// If the character is not 0-9 or A-F, it is ignored and not echoed
-    if(digit <= 0xF){
-      number = number*0x10+digit;
-      length++;
-      UART_OutChar(character);
-    }
-// Backspace outputted and return value changed if a backspace is inputted
-    else if((character==BS) && length){
-      number /= 0x10;
-      length--;
-      UART_OutChar(character);
-    }
+uint32_t UART_InUHex(void)
+{
+    uint32_t number = 0, digit, length = 0;
+    char character;
     character = UART_InChar();
-  }
-  return number;
+    while (character != CR)
+    {
+        digit = 0x10; // assume bad
+        if ((character >= '0') && (character <= '9'))
+        {
+            digit = character - '0';
+        }
+        else if ((character >= 'A') && (character <= 'F'))
+        {
+            digit = (character - 'A') + 0xA;
+        }
+        else if ((character >= 'a') && (character <= 'f'))
+        {
+            digit = (character - 'a') + 0xA;
+        }
+        // If the character is not 0-9 or A-F, it is ignored and not echoed
+        if (digit <= 0xF)
+        {
+            number = number * 0x10 + digit;
+            length++;
+            UART_OutChar(character);
+        }
+        // Backspace outputted and return value changed if a backspace is inputted
+        else if ((character == BS) && length)
+        {
+            number /= 0x10;
+            length--;
+            UART_OutChar(character);
+        }
+        character = UART_InChar();
+    }
+    return number;
 }
 
 //--------------------------UART_OutUHex----------------------------
@@ -301,21 +338,26 @@ char character;
 // Input: 32-bit number to be transferred
 // Output: none
 // Variable format 1 to 8 digits with no space before or after
-void UART_OutUHex(uint32_t number){
-// This function uses recursion to convert the number of
-//   unspecified length as an ASCII string
-  if(number >= 0x10){
-    UART_OutUHex(number/0x10);
-    UART_OutUHex(number%0x10);
-  }
-  else{
-    if(number < 0xA){
-      UART_OutChar(number+'0');
-     }
-    else{
-      UART_OutChar((number-0x0A)+'A');
+void UART_OutUHex(uint32_t number)
+{
+    // This function uses recursion to convert the number of
+    //   unspecified length as an ASCII string
+    if (number >= 0x10)
+    {
+        UART_OutUHex(number / 0x10);
+        UART_OutUHex(number % 0x10);
     }
-  }
+    else
+    {
+        if (number < 0xA)
+        {
+            UART_OutChar(number + '0');
+        }
+        else
+        {
+            UART_OutChar((number - 0x0A) + 'A');
+        }
+    }
 }
 
 /****************Fixed_Fix2Str***************
@@ -332,51 +374,68 @@ void UART_OutUHex(uint32_t number){
      31 to "   0.31"
  -32768 to " ***.**"
  */
-void Fixed_Fix2Str(long const num,char *string){
-  short n;
-  if((num>99999)||(num<-99990)){
-    strcpy((char *)string," ***.**");
-    return;
-  }
-  if(num<0){
-    n = -num;
-    string[0] = '-';
-  } else{
-    n = num;
-    string[0] = ' ';
-  }
-  if(n>9999){
-    string[1] = '0'+n/10000;
-    n = n%10000;
-    string[2] = '0'+n/1000;
-  } else{
-    if(n>999){
-      if(num<0){
-        string[0] = ' ';
-        string[1] = '-';
-      } else {
-        string[1] = ' ';
-      }
-      string[2] = '0'+n/1000;
-    } else{
-      if(num<0){
-        string[0] = ' ';
-        string[1] = ' ';
-        string[2] = '-';
-      } else {
-        string[1] = ' ';
-        string[2] = ' ';
-      }
+void Fixed_Fix2Str(long const num, char *string)
+{
+    short n;
+    if ((num > 99999) || (num < -99990))
+    {
+        strcpy((char *)string, " ***.**");
+        return;
     }
-  }
-  n = n%1000;
-  string[3] = '0'+n/100;
-  n = n%100;
-  string[4] = '.';
-  string[5] = '0'+n/10;
-  n = n%10;
-  string[6] = '0'+n;
-  string[7] = 0;
+    if (num < 0)
+    {
+        n = -num;
+        string[0] = '-';
+    }
+    else
+    {
+        n = num;
+        string[0] = ' ';
+    }
+    if (n > 9999)
+    {
+        string[1] = '0' + n / 10000;
+        n = n % 10000;
+        string[2] = '0' + n / 1000;
+    }
+    else
+    {
+        if (n > 999)
+        {
+            if (num < 0)
+            {
+                string[0] = ' ';
+                string[1] = '-';
+            }
+            else
+            {
+                string[1] = ' ';
+            }
+            string[2] = '0' + n / 1000;
+        }
+        else
+        {
+            if (num < 0)
+            {
+                string[0] = ' ';
+                string[1] = ' ';
+                string[2] = '-';
+            }
+            else
+            {
+                string[1] = ' ';
+                string[2] = ' ';
+            }
+        }
+    }
+    n = n % 1000;
+    string[3] = '0' + n / 100;
+    n = n % 100;
+    string[4] = '.';
+    string[5] = '0' + n / 10;
+    n = n % 10;
+    string[6] = '0' + n;
+    string[7] = 0;
 }
 
 //--------------------------UART_Fix2----------------------------
@@ -389,10 +448,11 @@ void Fixed_Fix2Str(long const num,char *string){
 //   -102 to "  -1.02"
 //     31 to "   0.31"
 // error     " ***.**"
-void UART_Fix2(long number){
-  char message[10];
-  Fixed_Fix2Str(number,message);
-  UART_OutString(message);
+void UART_Fix2(long number)
+{
+    char message[10];
+    Fixed_Fix2Str(number, message);
+    UART_OutString(message);
 }
 
 //------------UART_InString------------
@@ -407,27 +467,32 @@ void UART_Fix2(long number){
 // Input: pointer to empty buffer, size of buffer
 // Output: Null terminated string
 // -- Modified by Agustinus Darmawan + Mingjie Qiu --
-void UART_InString(char *bufPt, uint16_t max) {
-int length=0;
-char character;
-  character = UART_InChar();
-  while(character != CR){
-    if(character == BS || character == DEL){
-      if(length){
-        bufPt--;
-        length--;
-        UART_OutChar(character);
-      }
-    }
-    else if(length < max){
-      *bufPt = character;
-      bufPt++;
-      length++;
-      UART_OutChar(character);
-    }
+void UART_InString(char *bufPt, uint16_t max)
+{
+    int length = 0;
+    char character;
     character = UART_InChar();
-  }
-  *bufPt = 0;
+    while (character != CR)
+    {
+        if (character == BS || character == DEL)
+        {
+            if (length)
+            {
+                bufPt--;
+                length--;
+                UART_OutChar(character);
+            }
+        }
+        else if (length < max)
+        {
+            *bufPt = character;
+            bufPt++;
+            length++;
+            UART_OutChar(character);
+        }
+        character = UART_InChar();
+    }
+    *bufPt = 0;
 }
 
 /* -------- Redirection support is in OS.c --------------

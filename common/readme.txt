@@ -1,5 +1,5 @@
 This folder contains files for labs associated with the book
-   
+
 
    "Embedded Systems: Real-Time Operating Systems for ARM Cortex M Microcontrollers",
    ISBN: 978-1466468863, Jonathan Valvano, copyright (c) 2020
@@ -7,7 +7,7 @@ This folder contains files for labs associated with the book
 The files in this folder are not complete, and will be completed my students doing the labs. For the most recent information on these labs search "EE445M/EE380L.12 utexas", which is currently being taught by Andreas Gerstlauer.
 
 Copyright 2020 by Jonathan W. Valvano, valvano@mail.utexas.edu
-    
+
 
 You may use, edit, run or distribute these file
 s  as long as the above copyright notice remains

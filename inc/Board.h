@@ -87,10 +87,10 @@ void Switch_Init3(void);
 // Input: none
 // Output: 0x02 if PB1 is high
 //         0x00 if PB1 is low
-uint32_t Switch_Input3(void); 
+uint32_t Switch_Input3(void);
 
 //------------Switch_Debounce------------
-// Read and return the status of the switch 
+// Read and return the status of the switch
 // Input: none
 // Output: 0x02 if PB1 is high
 //         0x00 if PB1 is low
@@ -98,7 +98,7 @@ uint32_t Switch_Input3(void);
 uint32_t Switch_Debounce(void);
 
 //------------Switch_Debounce------------
-// wait for the switch to be touched 
+// wait for the switch to be touched
 // Input: none
 // Output: none
 // debounces switch

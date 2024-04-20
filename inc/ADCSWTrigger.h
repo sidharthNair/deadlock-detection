@@ -116,15 +116,13 @@ void ADC_Init89(void);
 // Busy-wait Analog to digital conversion
 // Input: none
 // Output: two 12-bit result of ADC conversions
-// Samples ADC8 and ADC9 
+// Samples ADC8 and ADC9
 // 125k max sampling
 // software trigger, busy-wait sampling
 // data returned by reference
 // data[0] is ADC8 (PE5) 0 to 4095
 // data[1] is ADC9 (PE4) 0 to 4095
 void ADC_In89(uint32_t data[2]);
-
-
 
 // SS2 triggering event: software trigger, busy-wait sampling
 // SS2 1st sample source: AIN6 (PD1)
@@ -134,7 +132,7 @@ void ADC_In89(uint32_t data[2]);
 // 'task' is a pointer to a user function called in SS2 interrupt
 // the user function has three parameters that get the x-, y-, and
 // z-values from the accelerometer passed by value
-void ADC0_InitSWTriggerSeq2(void(*task)(uint32_t x, uint32_t y, uint32_t z));
+void ADC0_InitSWTriggerSeq2(void (*task)(uint32_t x, uint32_t y, uint32_t z));
 
 //------------ADC0_InSeq2------------
 // Busy-wait Analog to digital conversion initiates SS2 and
@@ -181,7 +179,7 @@ void ADC_Init3210(void);
 // Busy-wait Analog to digital conversion
 // Input: none
 // Output: four 12-bit result of ADC conversions
-// Samples ADC0(PE3), ADC1(PE2), ADC2(PE1) and ADC3(PE0) 
+// Samples ADC0(PE3), ADC1(PE2), ADC2(PE1) and ADC3(PE0)
 // 125k max sampling
 // software trigger, busy-wait sampling
 // data returned by reference
@@ -192,16 +190,13 @@ void ADC_Init3210(void);
 void ADC_In3210(uint32_t data[4]);
 
 /* Calibration data
-distance measured from front of the sensor to the wall                
+distance measured from front of the sensor to the wall
 d(cm) 1/d    bL     al     aR   bR  adcSample d (0.01cm)  error
 10    0.100  2813  2830  2820  2830  2823.25  1006        0.06
 15    0.067  1935  1976  1986  1978  1968.75  1482       -0.18
 20    0.050  1520  1500  1520  1550  1522.5   1966       -0.34
 30    0.033  1040  1096  1028   933  1024.25  3099        0.99
-  
-      adcSample = 26813/d+159      2681300    
-      d = 26813/(adcSample-159)      -159    
+
+      adcSample = 26813/d+159      2681300
+      d = 26813/(adcSample-159)      -159
 */
-
-
-

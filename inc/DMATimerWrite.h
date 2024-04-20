@@ -23,7 +23,6 @@
 // Jonathan Valvano
 // May 2, 2015
 
-
 /* This example accompanies the book
    "Embedded Systems: Real Time Operating Systems for ARM Cortex M Microcontrollers",
    ISBN: 978-1466468863, Jonathan Valvano, copyright (c) 2015
@@ -40,8 +39,6 @@
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
  */
-
-
 
 // ************DMA_Init*****************
 // Main program must initialize used for destination
@@ -64,7 +61,7 @@ void DMA_Init(uint16_t period, uint32_t *destination);
 // Outputs: none
 // This routine does not wait for completion
 void DMA_Transfer(uint8_t *source, uint32_t blocksize,
-                   uint32_t numblocks);
+                  uint32_t numblocks);
 
 // ************DMA_Stop*****************
 // Stop the transfer bytes from source to destination
@@ -77,9 +74,10 @@ void DMA_Stop(void);
 // enumerated type.
 // Inputs:  none
 // Outputs: enumerated type status of the DMA Channel 8
-enum ch8status{
-  IDLE = 0,           // ready to start a new transfer
-  BUSY = 1,           // transfer is pending or in progress
-  UNINITIALIZED = 2   // DMA_Init() has not been called
+enum ch8status
+{
+    IDLE = 0,         // ready to start a new transfer
+    BUSY = 1,         // transfer is pending or in progress
+    UNINITIALIZED = 2 // DMA_Init() has not been called
 };
 enum ch8status DMA_Status(void);

@@ -1,6 +1,6 @@
 /****************************************************************************
  * ARMv7M ELF loader
- * Copyright (c) 2013-2015 Martin Ribelotta 
+ * Copyright (c) 2013-2015 Martin Ribelotta
  * Copyright (c) 2016 Andreas Gerstlauer
  * All rights reserved.
  *
@@ -48,26 +48,34 @@
 #include "../common/OS.h"
 
 // Declare extern OS_AddProcess function (implemented in OS.c)
-int OS_AddProcess(void(*entry)(void), void *text, void *data, 
-  unsigned long stackSize, unsigned long priority);
+int OS_AddProcess(void (*entry)(void), void *text, void *data,
+                  unsigned long stackSize, unsigned long priority);
 
 typedef unsigned long int off_t;
 typedef void(entry_t)(void);
 
 #define LOADER_FD_T FIL *
-FIL* LOADER_OPEN_FOR_RD(const TCHAR* path) { 
-	static FIL fd;		// only one open file at a time
-  if(f_open(&fd, path, FA_READ)) return NULL;
-  return &fd;
+FIL *LOADER_OPEN_FOR_RD(const TCHAR *path)
+{
+    static FIL fd; // only one open file at a time
+    if (f_open(&fd, path, FA_READ))
+        return NULL;
+    return &fd;
 }
 #define LOADER_FD_VALID(fd) (fd != NULL)
-UINT LOADER_READ(FIL* fd, void *buffer, size_t size) { UINT r;
-  if(f_read(fd, buffer, size, &r)) return 0;
-  return r;
+UINT LOADER_READ(FIL *fd, void *buffer, size_t size)
+{
+    UINT r;
+    if (f_read(fd, buffer, size, &r))
+        return 0;
+    return r;
 }
-UINT LOADER_WRITE(FIL* fd, void* buffer, size_t size) { UINT w;
-  if(f_write(fd, buffer, size, &w)) return 0;
-  return w;
+UINT LOADER_WRITE(FIL *fd, void *buffer, size_t size)
+{
+    UINT w;
+    if (f_write(fd, buffer, size, &w))
+        return 0;
+    return w;
 }
 #define LOADER_CLOSE(fd) f_close(fd)
 #define LOADER_SEEK_FROM_START(fd, off) f_lseek(fd, off)
@@ -75,8 +83,12 @@ UINT LOADER_WRITE(FIL* fd, void* buffer, size_t size) { UINT w;
 
 #define LOADER_ALIGN_ALLOC(size, align, perm) Heap_Malloc(size)
 #define LOADER_FREE(ptr) Heap_Free(ptr)
-void LOADER_CLEAR(void* ptr, size_t size) { int i; int32_t *p;
-  for(p = ptr, i = 0; i < size/sizeof(int32_t); i++, p++) *p = 0;
+void LOADER_CLEAR(void *ptr, size_t size)
+{
+    int i;
+    int32_t *p;
+    for (p = ptr, i = 0; i < size / sizeof(int32_t); i++, p++)
+        *p = 0;
 }
 #define LOADER_STREQ(s1, s2) (strcmp(s1, s2) == 0)
 
@@ -114,7 +126,7 @@ void LOADER_CLEAR(void* ptr, size_t size) { int i; int32_t *p;
 #endif
 
 #if 0
-#define LOADER_ALIGN_ALLOC(size, align, perm) ((void*) memalign(align, size))
+#define LOADER_ALIGN_ALLOC(size, align, perm) ((void *)memalign(align, size))
 #else
 
 extern void *do_alloc(size_t size, size_t align, ELFSecPerm_t perm);
@@ -140,10 +152,15 @@ extern void arch_jumpTo(entry_t entry);
 #endif
 
 #define DBG(...) printf("ELF: " __VA_ARGS__)
-#define ERR(msg) do { perror("ELF: " msg); __asm__ volatile ("bkpt"); } while(0)
+#define ERR(msg)                  \
+    do                            \
+    {                             \
+        perror("ELF: " msg);      \
+        __asm__ volatile("bkpt"); \
+    } while (0)
 #define MSG(msg) puts("ELF: " msg)
 
-#endif  // VALVANOWARE
+#endif // VALVANOWARE
 
 #else
 

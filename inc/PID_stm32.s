@@ -24,8 +24,8 @@
   IMPORT IntTerm
   IMPORT PrevError
 
-Err     RN R0    				; 1st function input: Error  
-Coeff   RN R1    				; 2nd fct input: Address of coefficient table 
+Err     RN R0    				; 1st function input: Error
+Coeff   RN R1    				; 2nd fct input: Address of coefficient table
 Kd      RN R1
 Ki      RN R2
 Kp      RN R3
@@ -50,20 +50,20 @@ PID_stm32
   LDR R12, =IntTerm
   LDR R9, =PrevError
 
-  LDRH Kp, [Coeff, #0]  		; Load Kp 
-  LDRH Ki, [Coeff, #2]  		; Load Ki 
+  LDRH Kp, [Coeff, #0]  		; Load Kp
+  LDRH Ki, [Coeff, #2]  		; Load Ki
   LDRH Kd, [Coeff, #4]  		; Load Kd and destroy Coeff
-  LDRH Integ, [R12, #0]  		; Last Integral Term 
-  LDRH PrevErr, [R9, #0]  		; Previous Error 
+  LDRH Integ, [R12, #0]  		; Last Integral Term
+  LDRH PrevErr, [R9, #0]  		; Previous Error
 
-  MLA Integ, Ki, Err, Integ   	; IntTerm += Ki*error 
-  MLA Out, Kp, Err, Integ      	; Output = (Kp * error) + InTerm 
-  SUBS PrevErr, Err, PrevErr    ; PrevErr now holds DeltaError = Error - PrevError 
-  MLA Result, Kd, PrevErr, Out  ; Output += Kd * DeltaError 
+  MLA Integ, Ki, Err, Integ   	; IntTerm += Ki*error
+  MLA Out, Kp, Err, Integ      	; Output = (Kp * error) + InTerm
+  SUBS PrevErr, Err, PrevErr    ; PrevErr now holds DeltaError = Error - PrevError
+  MLA Result, Kd, PrevErr, Out  ; Output += Kd * DeltaError
 
   LDR R12, =IntTerm
-  STRH Integ, [R12, #0]       	; Write back InTerm 
-  STRH Err, [R9, #0]         	; Write back PrevError 
+  STRH Integ, [R12, #0]       	; Write back InTerm
+  STRH Err, [R9, #0]         	; Write back PrevError
 
   MOV R0, Result
   UXTH R0, R0

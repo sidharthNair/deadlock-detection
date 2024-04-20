@@ -54,32 +54,35 @@
 // Initialize MRDY (out), SRDY (in), RESET (out) GPIO pins
 // Input: none
 // Output: none
-void GPIO_Init(void){
-  SYSCTL_RCGCGPIO_R |= 0x0006;     // activate clock for Ports B and C
-  while((SYSCTL_PRGPIO_R&0x06) != 0x06){};// wait for clocks to stabilize
+void GPIO_Init(void)
+{
+    SYSCTL_RCGCGPIO_R |= 0x0006; // activate clock for Ports B and C
+    while ((SYSCTL_PRGPIO_R & 0x06) != 0x06)
+    {
+    }; // wait for clocks to stabilize
 
-  GPIO_PORTB_AFSEL_R &= ~0x04;     // SRDY is PB2, J2.19
-  GPIO_PORTB_AMSEL_R &= ~0x04;     // disable analog functionality on PB2
-  GPIO_PORTB_DEN_R |= 0x04;        // enable digital I/O on PB2
-  GPIO_PORTB_PUR_R |= 0x04;        // enable pullup on PB2
-  GPIO_PORTB_DIR_R &= ~0x04;       // input on PB2
-  GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xFFFFF0FF);
+    GPIO_PORTB_AFSEL_R &= ~0x04; // SRDY is PB2, J2.19
+    GPIO_PORTB_AMSEL_R &= ~0x04; // disable analog functionality on PB2
+    GPIO_PORTB_DEN_R |= 0x04;    // enable digital I/O on PB2
+    GPIO_PORTB_PUR_R |= 0x04;    // enable pullup on PB2
+    GPIO_PORTB_DIR_R &= ~0x04;   // input on PB2
+    GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xFFFFF0FF);
 
-  GPIO_PORTC_AFSEL_R &= ~0x40;     // J4.35 Reset to CC2650 {TM4C123 PC6, MSP432 P6.7}
-  GPIO_PORTC_AMSEL_R &= ~0x40;     // disable analog functionality on PC6
-  GPIO_PORTC_DEN_R |= 0x40;        // enable digital I/O on PC6
-  GPIO_PORTC_DIR_R |= 0x40;        // output on PC6
-  GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R&0xF0FFFFFF);
+    GPIO_PORTC_AFSEL_R &= ~0x40; // J4.35 Reset to CC2650 {TM4C123 PC6, MSP432 P6.7}
+    GPIO_PORTC_AMSEL_R &= ~0x40; // disable analog functionality on PC6
+    GPIO_PORTC_DEN_R |= 0x40;    // enable digital I/O on PC6
+    GPIO_PORTC_DIR_R |= 0x40;    // output on PC6
+    GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R & 0xF0FFFFFF);
 
-  GPIO_PORTB_AFSEL_R &= ~0x20;     // J1.2 MRDY {TM4C123 PB5, MSP432 P6.0}
-  GPIO_PORTB_AMSEL_R &= ~0x20;     // disable analog functionality on PB5
-  GPIO_PORTB_DEN_R |= 0x20;        // enable digital I/O on PB5
-  GPIO_PORTB_DIR_R |= 0x20;        // output on PB5
-  GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xFF0FFFFF);
+    GPIO_PORTB_AFSEL_R &= ~0x20; // J1.2 MRDY {TM4C123 PB5, MSP432 P6.0}
+    GPIO_PORTB_AMSEL_R &= ~0x20; // disable analog functionality on PB5
+    GPIO_PORTB_DEN_R |= 0x20;    // enable digital I/O on PB5
+    GPIO_PORTB_DIR_R |= 0x20;    // output on PB5
+    GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xFF0FFFFF);
 
-  SetMRDY();        //   MRDY=1
+    SetMRDY(); //   MRDY=1
 
-  ClearReset();     // RESET=0
+    ClearReset(); // RESET=0
 }
 #else
 // These three options require either reprogramming the CC2650LP/CC2650BP or using a 7-wire tether
@@ -126,32 +129,34 @@ void GPIO_Init(void){
 // Initialize MRDY (out), SRDY (in), RESET (out) GPIO pins
 // Input: none
 // Output: none
-void GPIO_Init(void){
-  SYSCTL_RCGCGPIO_R |= 0x0007;     // activate clock for Ports A B and C
-  while((SYSCTL_PRGPIO_R&0x07) != 0x07){};// wait for clocks to stabilize
+void GPIO_Init(void)
+{
+    SYSCTL_RCGCGPIO_R |= 0x0007; // activate clock for Ports A B and C
+    while ((SYSCTL_PRGPIO_R & 0x07) != 0x07)
+    {
+    }; // wait for clocks to stabilize
 
-  GPIO_PORTA_AFSEL_R &= ~0x08;     // SRDY   J2.12 TM4C123 PA3, MSP432 P5.2}
-  GPIO_PORTA_AMSEL_R &= ~0x08;     // disable analog functionality on PA3
-  GPIO_PORTA_DEN_R |= 0x08;        // enable digital I/O on PA3
-  GPIO_PORTA_PUR_R |= 0x08;        // enable pullup on PA3
-  GPIO_PORTA_DIR_R &= ~0x08;       // input on PA3
-  GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0xFFFF0FFF);
+    GPIO_PORTA_AFSEL_R &= ~0x08; // SRDY   J2.12 TM4C123 PA3, MSP432 P5.2}
+    GPIO_PORTA_AMSEL_R &= ~0x08; // disable analog functionality on PA3
+    GPIO_PORTA_DEN_R |= 0x08;    // enable digital I/O on PA3
+    GPIO_PORTA_PUR_R |= 0x08;    // enable pullup on PA3
+    GPIO_PORTA_DIR_R &= ~0x08;   // input on PA3
+    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFF0FFF);
 
-  GPIO_PORTC_AFSEL_R &= ~0x40;     // J4.35 Reset to CC2650 {TM4C123 PC6, MSP432 P6.7}
-  GPIO_PORTC_AMSEL_R &= ~0x40;     // disable analog functionality on PC6
-  GPIO_PORTC_DEN_R |= 0x40;        // enable digital I/O on PC6
-  GPIO_PORTC_DIR_R |= 0x40;        // output on PC6
-  GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R&0xF0FFFFFF);
+    GPIO_PORTC_AFSEL_R &= ~0x40; // J4.35 Reset to CC2650 {TM4C123 PC6, MSP432 P6.7}
+    GPIO_PORTC_AMSEL_R &= ~0x40; // disable analog functionality on PC6
+    GPIO_PORTC_DEN_R |= 0x40;    // enable digital I/O on PC6
+    GPIO_PORTC_DIR_R |= 0x40;    // output on PC6
+    GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R & 0xF0FFFFFF);
 
-  GPIO_PORTB_AFSEL_R &= ~0x40;     // MRDY {J2.14 TM4C123 PB6, MSP432 P1.7}
-  GPIO_PORTB_AMSEL_R &= ~0x40;     // disable analog functionality on PB6
-  GPIO_PORTB_DEN_R |= 0x40;        // enable digital I/O on PB6
-  GPIO_PORTB_DIR_R |= 0x40;        // output on PB6
-  GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xF0FFFFFF);
+    GPIO_PORTB_AFSEL_R &= ~0x40; // MRDY {J2.14 TM4C123 PB6, MSP432 P1.7}
+    GPIO_PORTB_AMSEL_R &= ~0x40; // disable analog functionality on PB6
+    GPIO_PORTB_DEN_R |= 0x40;    // enable digital I/O on PB6
+    GPIO_PORTB_DIR_R |= 0x40;    // output on PB6
+    GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xF0FFFFFF);
 
-  SetMRDY();        //   MRDY=1
+    SetMRDY(); //   MRDY=1
 
-  ClearReset();     // RESET=0
-
+    ClearReset(); // RESET=0
 }
 #endif

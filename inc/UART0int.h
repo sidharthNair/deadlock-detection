@@ -30,12 +30,12 @@
 #include <stdint.h>
 
 // standard ASCII symbols
-#define CR   0x0D
-#define LF   0x0A
-#define BS   0x08
-#define ESC  0x1B
-#define SP   0x20
-#define DEL  0x7F
+#define CR 0x0D
+#define LF 0x0A
+#define BS 0x08
+#define ESC 0x1B
+#define SP 0x20
+#define DEL 0x7F
 
 //------------UART_Init------------
 // Initialize the UART for 115,200 baud rate (assuming 80 MHz clock),
@@ -92,7 +92,6 @@ uint32_t UART_InUDec(void);
 // Variable format 1-10 digits with no space before or after
 void UART_OutUDec(uint32_t n);
 
-
 /**
  * @details  Output a 32-bit number in signed decimal format
  * @param  n 32-bit number to be transferred
@@ -142,7 +141,7 @@ void UART_InString(char *bufPt, uint16_t max);
   -22100 to "-221.00"<br>
   -102 to "  -1.02" <br>
      31 to "   0.31" <br>
-  error     " ***.**" <br>  
+  error     " ***.**" <br>
  * @return none
  * @brief  Fixed-point output.
  */

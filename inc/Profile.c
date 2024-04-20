@@ -54,43 +54,50 @@
 // This function should be called once at the beginning.
 // Input: none
 // Output: none
-void Profile_Init(void){
-  SYSCTL_RCGCGPIO_R |= 0x00000004; // 1) activate clock for Port C
-  while((SYSCTL_PRGPIO_R&0x04) == 0){};// allow time for clock to stabilize
-                                   // 2) no need to unlock PC6-5
-  GPIO_PORTC_AMSEL_R &= ~0x60;     // 3) disable analog on PC6-5
-                                   // 4) configure PC6-5 as GPIO
-  GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R&0xF00FFFFF)+0x00000000;
-  GPIO_PORTC_DIR_R |= 0x60;        // 5) make PC6-5 output
-  GPIO_PORTC_AFSEL_R &= ~0x60;     // 6) disable alt funct on PC6-5
-  GPIO_PORTC_PUR_R &= ~0x60;       // disable pull-up on PC6-5
-  GPIO_PORTC_PDR_R &= ~0x60;       // disable pull-down on PC6-5
-  GPIO_PORTC_DEN_R |= 0x60;        // 7) enable digital I/O on PC6-5
-  GPIO_PORTC_DATA_R &= ~0x60;      // 8) initialize PC6-5 low
-  SYSCTL_RCGCGPIO_R |= 0x00000010; // 1) activate clock for Port E
-  while((SYSCTL_PRGPIO_R&0x10) == 0){};// allow time for clock to stabilize
-                                   // 2) no need to unlock PE3-0
-  GPIO_PORTE_AMSEL_R &= ~0x0F;     // 3) disable analog on PE3-0
-                                   // 4) configure PE3-0 as GPIO
-  GPIO_PORTE_PCTL_R = (GPIO_PORTE_PCTL_R&0xFFFF0000)+0x00000000;
-  GPIO_PORTE_DIR_R |= 0x0F;        // 5) make PE3-0 output
-  GPIO_PORTE_AFSEL_R &= ~0x0F;     // 6) disable alt funct on PE3-0
-  GPIO_PORTE_PUR_R &= ~0x0F;       // disable pull-up on PE3-0
-  GPIO_PORTE_PDR_R &= ~0x0F;       // disable pull-down on PE3-0
-  GPIO_PORTE_DEN_R |= 0x0F;        // 7) enable digital I/O on PE3-0
-  GPIO_PORTE_DATA_R &= ~0x0F;      // 8) initialize PE3-0 low
-  SYSCTL_RCGCGPIO_R |= 0x00000020; // 1) activate clock for Port F
-  while((SYSCTL_PRGPIO_R&0x20) == 0){};// allow time for clock to stabilize
-                                   // 2) no need to unlock PF1
-  GPIO_PORTF_AMSEL_R &= ~0x02;     // 3) disable analog on PF1
-                                   // 4) configure PF1 as GPIO
-  GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R&0xFFFFFF0F)+0x00000000;
-  GPIO_PORTF_DIR_R |= 0x02;        // 5) make PF1 output
-  GPIO_PORTF_AFSEL_R &= ~0x02;     // 6) disable alt funct on PF1
-  GPIO_PORTF_PUR_R &= ~0x02;       // disable pull-up on PF1
-  GPIO_PORTF_PDR_R &= ~0x02;       // disable pull-down on PF1
-  GPIO_PORTF_DEN_R |= 0x02;        // 7) enable digital I/O on PF1
-  GPIO_PORTF_DATA_R &= ~0x02;      // 8) initialize PF1 low
+void Profile_Init(void)
+{
+    SYSCTL_RCGCGPIO_R |= 0x00000004; // 1) activate clock for Port C
+    while ((SYSCTL_PRGPIO_R & 0x04) == 0)
+    {
+    };                           // allow time for clock to stabilize
+                                 // 2) no need to unlock PC6-5
+    GPIO_PORTC_AMSEL_R &= ~0x60; // 3) disable analog on PC6-5
+                                 // 4) configure PC6-5 as GPIO
+    GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R & 0xF00FFFFF) + 0x00000000;
+    GPIO_PORTC_DIR_R |= 0x60;        // 5) make PC6-5 output
+    GPIO_PORTC_AFSEL_R &= ~0x60;     // 6) disable alt funct on PC6-5
+    GPIO_PORTC_PUR_R &= ~0x60;       // disable pull-up on PC6-5
+    GPIO_PORTC_PDR_R &= ~0x60;       // disable pull-down on PC6-5
+    GPIO_PORTC_DEN_R |= 0x60;        // 7) enable digital I/O on PC6-5
+    GPIO_PORTC_DATA_R &= ~0x60;      // 8) initialize PC6-5 low
+    SYSCTL_RCGCGPIO_R |= 0x00000010; // 1) activate clock for Port E
+    while ((SYSCTL_PRGPIO_R & 0x10) == 0)
+    {
+    };                           // allow time for clock to stabilize
+                                 // 2) no need to unlock PE3-0
+    GPIO_PORTE_AMSEL_R &= ~0x0F; // 3) disable analog on PE3-0
+                                 // 4) configure PE3-0 as GPIO
+    GPIO_PORTE_PCTL_R = (GPIO_PORTE_PCTL_R & 0xFFFF0000) + 0x00000000;
+    GPIO_PORTE_DIR_R |= 0x0F;        // 5) make PE3-0 output
+    GPIO_PORTE_AFSEL_R &= ~0x0F;     // 6) disable alt funct on PE3-0
+    GPIO_PORTE_PUR_R &= ~0x0F;       // disable pull-up on PE3-0
+    GPIO_PORTE_PDR_R &= ~0x0F;       // disable pull-down on PE3-0
+    GPIO_PORTE_DEN_R |= 0x0F;        // 7) enable digital I/O on PE3-0
+    GPIO_PORTE_DATA_R &= ~0x0F;      // 8) initialize PE3-0 low
+    SYSCTL_RCGCGPIO_R |= 0x00000020; // 1) activate clock for Port F
+    while ((SYSCTL_PRGPIO_R & 0x20) == 0)
+    {
+    };                           // allow time for clock to stabilize
+                                 // 2) no need to unlock PF1
+    GPIO_PORTF_AMSEL_R &= ~0x02; // 3) disable analog on PF1
+                                 // 4) configure PF1 as GPIO
+    GPIO_PORTF_PCTL_R = (GPIO_PORTF_PCTL_R & 0xFFFFFF0F) + 0x00000000;
+    GPIO_PORTF_DIR_R |= 0x02;    // 5) make PF1 output
+    GPIO_PORTF_AFSEL_R &= ~0x02; // 6) disable alt funct on PF1
+    GPIO_PORTF_PUR_R &= ~0x02;   // disable pull-up on PF1
+    GPIO_PORTF_PDR_R &= ~0x02;   // disable pull-down on PF1
+    GPIO_PORTF_DEN_R |= 0x02;    // 7) enable digital I/O on PF1
+    GPIO_PORTF_DATA_R &= ~0x02;  // 8) initialize PF1 low
 }
 
 // ------------Profile_Get------------
@@ -103,10 +110,11 @@ void Profile_Init(void){
 // Input: none
 // Output: 7-bit status of all Profile pins
 // Assumes: Profile_Init() has been called
-uint8_t Profile_Get(void){
-  return (((GPIO_PORTE_DATA_R)&0x0E)>>1) | // Profiles 2, 1, 0
-         (((GPIO_PORTF_DATA_R)&0x02)<<2) | // Profile 3
-         (((GPIO_PORTE_DATA_R)&0x01)<<4) | // Profile 4
-         (((GPIO_PORTC_DATA_R)&0x60))    | // Profiles 5, 6
-         0x80;                             // set most significant bit
+uint8_t Profile_Get(void)
+{
+    return (((GPIO_PORTE_DATA_R) & 0x0E) >> 1) | // Profiles 2, 1, 0
+           (((GPIO_PORTF_DATA_R) & 0x02) << 2) | // Profile 3
+           (((GPIO_PORTE_DATA_R) & 0x01) << 4) | // Profile 4
+           (((GPIO_PORTC_DATA_R) & 0x60)) |      // Profiles 5, 6
+           0x80;                                 // set most significant bit
 }

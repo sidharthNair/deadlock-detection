@@ -3,12 +3,12 @@
 // Provide pulse measurement functions for Timer0, Timer1, Timer2 and Timer3,
 
 // Daniel Valvano, Jonathan Valvano
-// January 15, 2020 
+// January 15, 2020
 
 /* This example accompanies the books
    "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
    ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2020
-   "Embedded Systems: Real-Time Operating Systems for ARM Cortex-M Microcontrollers", 
+   "Embedded Systems: Real-Time Operating Systems for ARM Cortex-M Microcontrollers",
    ISBN: 978-1466468863, Jonathan Valvano, copyright (c) 2020
  Copyright 2020 by Jonathan W. Valvano, valvano@mail.utexas.edu
     You may use, edit, run or distribute this file
@@ -21,7 +21,7 @@
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
  */
-// HC-SR04 Ultrasonic Range Finder 
+// HC-SR04 Ultrasonic Range Finder
 // J9X  Trigger0 to PB7 output (10us pulse)
 // J9X  Echo0    to PB6 T0CCP0
 // J10X Trigger1 to PB5 output (10us pulse)
@@ -31,12 +31,11 @@
 // J12X Trigger3 to PC5 output (10us pulse) ***used by OPT3101***
 // J12X Echo3    to PF4 T2CCP0 (not connected, no software for this)
 
-// Ping))) Ultrasonic Range Finder 
+// Ping))) Ultrasonic Range Finder
 // J9Y  Trigger/Echo0 to PB6 T0CCP0
 // J10Y Trigger/Echo1 to PB4 T1CCP0
 // J11Y Trigger/Echo2 to PB2 T3CCP0   ***used by OPT3101***
 // J12Y Trigger/Echo3 to PF4 T2CCP0 (not connected, no software for this)
-
 
 // Subroutine to wait 10 usec
 // Inputs: None
@@ -140,13 +139,13 @@ uint32_t Timer3_Read(void);
 //------------Cycles2milliInch------------
 // convert time in bus cycles to distance in 0.001 in
 // speed of sound is 13,560 in/sec
-// Input: cycles 
+// Input: cycles
 // Output: distance in 0.001in
 uint32_t Cycles2milliInch(uint32_t cycles);
 
 //------------Cycles2millimeter------------
 // convert time in bus cycles to distance in mm
 // speed of sound is 340.29 m/sec
-// Input: cycles 
+// Input: cycles
 // Output: distance in mm
 uint32_t Cycles2millimeter(uint32_t cycles);

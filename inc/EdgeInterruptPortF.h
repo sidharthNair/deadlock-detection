@@ -10,7 +10,7 @@
    "Embedded Systems: Introduction to ARM Cortex M Microcontrollers"
    ISBN: 978-1469998749, Jonathan Valvano, copyright (c) 2019
    Volume 1, Program 9.4
-   
+
    "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
    ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2019
    Volume 2, Program 5.6, Section 5.5
@@ -29,6 +29,4 @@
 
 // user button connected to PF4 (increment counter on falling edge)
 
-
 void EdgeCounterPortF_Init(void);
-

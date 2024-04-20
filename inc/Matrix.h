@@ -1,6 +1,6 @@
 // Matrix.h
 // Runs on  LM4F120/TM4C123
-// Provide functions that initialize GPIO ports and SysTick 
+// Provide functions that initialize GPIO ports and SysTick
 // Use periodic polling
 // Daniel Valvano
 // August 11, 2014
@@ -46,12 +46,9 @@ Copyright 2015 by Jonathan W. Valvano, valvano@mail.utexas.edu
 // Pin 7 -> Row 2 (row starting with 7)
 // Pin 8 -> Row 3 (row starting with *)
 
-
 // Initialization of Matrix keypad
 void Matrix_Init(void);
-       
+
 // input ASCII character from keypad
 // spin if Fifo is empty
 char Matrix_InChar(void);
-
-

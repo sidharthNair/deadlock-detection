@@ -1,8 +1,7 @@
 // Clock.h
-// Runs on the TM4C123 
+// Runs on the TM4C123
 // Daniel and Jonathan Valvano
 // July 21, 2016
-
 
 /* This example accompanies the books
    "Embedded Systems: Introduction to ARM Cortex M Microcontrollers",
@@ -23,7 +22,6 @@
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
  */
-
 
 // ------------Clock_InitFastest------------
 // Configure the system clock to run at the fastest

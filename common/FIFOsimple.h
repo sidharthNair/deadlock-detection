@@ -32,7 +32,7 @@
 // can hold 0 to TXFIFOSIZE elements
 #define TXFIFOSIZE 1024 // must be a power of 2
 #define TXFIFOSUCCESS 1
-#define TXFIFOFAIL    0
+#define TXFIFOFAIL 0
 typedef char txDataType;
 
 // initialize FIFO
@@ -51,7 +51,7 @@ uint32_t TxFifo_Size(void);
 // can hold 0 to RXFIFOSIZE-1 elements
 #define RXFIFOSIZE 1024 // can be any size
 #define RXFIFOSUCCESS 1
-#define RXFIFOFAIL    0
+#define RXFIFOFAIL 0
 
 typedef char rxDataType;
 
@@ -66,6 +66,5 @@ int RxFifo_Get(rxDataType *datapt);
 // number of elements in FIFO
 // 0 to RXFIFOSIZE-1
 uint32_t RxFifo_Size(void);
-
 
 #endif //  __FIFOSIMPLE_H__

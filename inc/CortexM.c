@@ -37,7 +37,6 @@
 // Outputs: none
 // implemented in startup_TM4C123.s
 
-
 //******StartCritical************
 // StartCritical saves a copy of PRIMASK and disables interrupts
 // Code between StartCritical and EndCritical is run atomically
@@ -45,14 +44,12 @@
 // Outputs: copy of the PRIMASK (I bit) before StartCritical called
 // implemented in startup_TM4C123.s
 
-
 //******EndCritical************
 // EndCritical sets PRIMASK with value passed in
 // Code between StartCritical and EndCritical is run atomically
 // Inputs: PRIMASK (I bit) before StartCritical called
 // Outputs: none
 // implemented in startup_TM4C123.s
-
 
 //******WaitForInterrupt************
 // enters low power sleep mode waiting for interrupt (WFI instruction)
@@ -62,21 +59,23 @@
 // Outputs: none
 // implemented in startup_TM4C123.s
 
-void Clock_Delay(uint32_t ulCount){
-  while(ulCount){
-    ulCount--;
-  }
+void Clock_Delay(uint32_t ulCount)
+{
+    while (ulCount)
+    {
+        ulCount--;
+    }
 }
-
-
 
 // ------------Clock_Delay1ms------------
 // Simple delay function which delays about n milliseconds.
 // Inputs: n, number of msec to wait
 // Outputs: none
-void Clock_Delay1ms(uint32_t n){
-  while(n){
-    Clock_Delay(23746);  // 1 msec, tuned at 80 MHz, originally part of LCD module
-    n--;
-  }
+void Clock_Delay1ms(uint32_t n)
+{
+    while (n)
+    {
+        Clock_Delay(23746); // 1 msec, tuned at 80 MHz, originally part of LCD module
+        n--;
+    }
 }

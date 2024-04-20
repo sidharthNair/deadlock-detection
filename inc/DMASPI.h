@@ -2,7 +2,7 @@
 // Runs on LM4F120/TM4C123
 // Periodic timer triggered DMA transfer
 // Uses Timer5A to trigger the DMA, read from a 16-bit buffer, and then write to a fixed port address
-// There is a Timer5A interrupt after the buffer has been transferred. 
+// There is a Timer5A interrupt after the buffer has been transferred.
 // This example runs continuously, outputing the buffer over and over.
 // Jonathan Valvano
 // May 2, 2015
@@ -42,13 +42,13 @@ void DMA_Init(uint16_t period);
 //          count is the number of halfwords to transfer (max is 1024 halfwords)
 // Outputs: none
 // This routine does not wait for completion, runs continuously
-void DMA_Start(uint16_t *source, volatile uint32_t *destination, uint32_t  count);
+void DMA_Start(uint16_t *source, volatile uint32_t *destination, uint32_t count);
 
 // ************DMA_Status*****************
 // Can be used to check the status of the continuous DMA transfer
 // Inputs:  none
 // Outputs: the number of buffers transferred
-uint32_t  DMA_Status(void);
+uint32_t DMA_Status(void);
 
 // ************DMA_Stop*****************
 // Stop the transfer halfwords from source to destination

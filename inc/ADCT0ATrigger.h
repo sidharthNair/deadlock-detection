@@ -43,6 +43,6 @@
 // Sample the ADC using Timer0 hardware triggering using SS0
 // this function initiates the sampling, does not wait for completion
 // task is user function to process or send data
-int ADC0_InitTimer0ATriggerSeq0(uint32_t channelNum, uint32_t fs, void(*task)(uint32_t));
+int ADC0_InitTimer0ATriggerSeq0(uint32_t channelNum, uint32_t fs, void (*task)(uint32_t));
 
 void ADC0_InitTimer0ATriggerSeq3PD3(uint32_t period);

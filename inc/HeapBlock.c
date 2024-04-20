@@ -21,11 +21,11 @@
  http://users.ece.utexas.edu/~valvano/
 */
 #include <stdint.h>
-#define SIZE 4  // number of 32-bit words in each block
-#define NUM 5   // number of blocks
-#define NULL 0  // definition of empty pointer
-int32_t *FreePt;   // points to the first free block
-int32_t Heap[SIZE*NUM];
+#define SIZE 4   // number of 32-bit words in each block
+#define NUM 5    // number of blocks
+#define NULL 0   // definition of empty pointer
+int32_t *FreePt; // points to the first free block
+int32_t Heap[SIZE * NUM];
 
 //------------Heap_Init------------
 // Initialize the heap and pointer to the first free block.  Free
@@ -35,14 +35,17 @@ int32_t Heap[SIZE*NUM];
 // NULL to signify that there are no free blocks after it.
 // Input: none
 // Output: none
-void Heap_Init(void){ int i;
-int32_t *pt;
-  pt = FreePt = &Heap[0];
-  for(i=1; i<NUM; i++){
-    *pt = (long)(pt+SIZE);// the first word of a free block points to another free block
-    pt = pt + SIZE;       // value of pointer pt should increase by 4*SIZE
-  }
-  *(long*)pt = NULL;      // the last free block points to NULL
+void Heap_Init(void)
+{
+    int i;
+    int32_t *pt;
+    pt = FreePt = &Heap[0];
+    for (i = 1; i < NUM; i++)
+    {
+        *pt = (long)(pt + SIZE); // the first word of a free block points to another free block
+        pt = pt + SIZE;          // value of pointer pt should increase by 4*SIZE
+    }
+    *(long *)pt = NULL; // the last free block points to NULL
 }
 
 //------------Heap_Allocate------------
@@ -53,13 +56,15 @@ int32_t *pt;
 // If no blocks are free, this function returns a NULL pointer.
 // Input: none
 // Output: pointer to free block or NULL if all blocks full
-int32_t *Heap_Allocate(void){
-int32_t *pt;
-  pt = FreePt;
-  if (pt != NULL){        // do nothing if all blocks full
-    FreePt = (int32_t*)*pt;  // link next
-  }
-  return(pt);
+int32_t *Heap_Allocate(void)
+{
+    int32_t *pt;
+    pt = FreePt;
+    if (pt != NULL)
+    {                            // do nothing if all blocks full
+        FreePt = (int32_t *)*pt; // link next
+    }
+    return (pt);
 }
 
 //------------Heap_Release------------
@@ -74,9 +79,10 @@ int32_t *pt;
 // An invalid pointer may produce unpredictable behavior.
 // Input: pt  pointer to the block to be released
 // Output: none
-void Heap_Release(int32_t *pt){
-int32_t *oldFreePt;
-  oldFreePt = FreePt;
-  FreePt = pt;            // newly freed block is first
-  *pt = (int32_t)oldFreePt;  // newly freed block points to previous first
+void Heap_Release(int32_t *pt)
+{
+    int32_t *oldFreePt;
+    oldFreePt = FreePt;
+    FreePt = pt;              // newly freed block is first
+    *pt = (int32_t)oldFreePt; // newly freed block points to previous first
 }

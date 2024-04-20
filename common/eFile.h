@@ -10,8 +10,6 @@
  * @date      Jan 12, 2020
  ******************************************************************************/
 
-
-
 /**
  * @details This function must be called first, before calling any of the other eFile functions
  * @param  none
@@ -42,7 +40,7 @@ int eFile_Mount(void); // mount disk and file system
  * @return 0 if successful and 1 on failure (e.g., already exists)
  * @brief  Create a new file
  */
-int eFile_Create(const char name[]);  // create new file, make it empty 
+int eFile_Create(const char name[]); // create new file, make it empty
 
 /**
  * @details Create a new, empty directory with one allocated block
@@ -50,7 +48,7 @@ int eFile_Create(const char name[]);  // create new file, make it empty
  * @return 0 if successful and 1 on failure (e.g., already exists)
  * @brief  Create a new directory
  */
-int eFile_CreateDir(const char name[]);  // create new directory, make it empty 
+int eFile_CreateDir(const char name[]); // create new directory, make it empty
 
 /**
  * @details Open the file for writing, read into RAM last block
@@ -58,7 +56,7 @@ int eFile_CreateDir(const char name[]);  // create new directory, make it empty
  * @return 0 if successful and 1 on failure (e.g., trouble reading from flash)
  * @brief  Open an existing file for writing
  */
-int eFile_WOpen(const char name[]);      // open a file for writing 
+int eFile_WOpen(const char name[]); // open a file for writing
 
 /**
  * @details Save one byte at end of the open file
@@ -66,7 +64,7 @@ int eFile_WOpen(const char name[]);      // open a file for writing
  * @return 0 if successful and 1 on failure (e.g., trouble writing to flash)
  * @brief  Format the disk
  */
-int eFile_Write(const char data);  
+int eFile_Write(const char data);
 
 /**
  * @details Close the file, leave disk in a state power can be removed.
@@ -83,16 +81,16 @@ int eFile_WClose(void); // close the file for writing
  * @return 0 if successful and 1 on failure (e.g., trouble reading from flash)
  * @brief  Open an existing file for reading
  */
-int eFile_ROpen(const char name[]);      // open a file for reading 
-   
+int eFile_ROpen(const char name[]); // open a file for reading
+
 /**
  * @details Read one byte from disk into RAM
  * @param  pt call by reference pointer to place to save data
  * @return 0 if successful and 1 on failure (e.g., trouble reading from flash)
  * @brief  Retreive data from open file
  */
-int eFile_ReadNext(char *pt);       // get next byte 
-                              
+int eFile_ReadNext(char *pt); // get next byte
+
 /**
  * @details Close the file, leave disk in a state power can be removed.
  * @param  none
@@ -107,7 +105,7 @@ int eFile_RClose(void); // close the file for writing
  * @return 0 if successful and 1 on failure (e.g., file doesn't exist)
  * @brief  delete this file
  */
-int eFile_Delete(const char name[]);  // remove this file 
+int eFile_Delete(const char name[]); // remove this file
 
 /**
  * @details Open a (sub)directory, read into RAM
@@ -116,7 +114,7 @@ int eFile_Delete(const char name[]);  // remove this file
  * @return 0 if successful and 1 on failure (e.g., trouble reading from flash)
  */
 int eFile_DOpen(const char name[]);
-	
+
 /**
  * @details Retreive directory entry from open directory
  * @param pointers to return file name and size by reference
@@ -137,4 +135,4 @@ int eFile_DClose(void);
  * @return 0 if successful and 1 on failure (e.g., trouble writing to flash)
  * @brief  Unmount the disk
  */
-int eFile_Unmount(void); 
+int eFile_Unmount(void);

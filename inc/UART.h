@@ -10,7 +10,7 @@
 
 "Embedded Systems: Real Time Interfacing to ARM Cortex M Microcontrollers",
    ISBN: 978-1463590154, Jonathan Valvano, copyright (c) 2020
- 
+
  Copyright 2020 by Jonathan W. Valvano, valvano@mail.utexas.edu
     You may use, edit, run or distribute this file
     as long as the above copyright notice remains
@@ -27,13 +27,12 @@
 // U0Tx (VCP transmit) connected to PA1
 
 // standard ASCII symbols
-#define CR   0x0D
-#define LF   0x0A
-#define BS   0x08
-#define ESC  0x1B
-#define SP   0x20
-#define DEL  0x7F
-
+#define CR 0x0D
+#define LF 0x0A
+#define BS 0x08
+#define ESC 0x1B
+#define SP 0x20
+#define DEL 0x7F
 
 //------------UART_Init------------
 // Initialize the UART for 115,200 baud rate (assuming 80 MHz clock),
@@ -123,4 +122,3 @@ void UART_InString(char *bufPt, uint16_t max);
 // Input: none
 // Output: none
 void Output_Init(void);
-

@@ -1,8 +1,8 @@
-//UART1.h
-//Dung Nguyen
-//Wally Guzman
+// UART1.h
+// Dung Nguyen
+// Wally Guzman
 
-#include <stdint.h> 
+#include <stdint.h>
 
 void UART1_Init(uint32_t baud);
 

@@ -23,52 +23,61 @@
 #include <stdint.h>
 #include "../inc/HeapBlock.h"
 
-#define NULL 0  // definition of empty pointer
+#define NULL 0 // definition of empty pointer
 
- struct Node{
-  struct Node *Next;
-  int32_t Data;
+struct Node
+{
+    struct Node *Next;
+    int32_t Data;
 };
 
 typedef struct Node NodeType;
-NodeType *PutPt;   // place to put
-NodeType *GetPt;   // place to get
+NodeType *PutPt; // place to put
+NodeType *GetPt; // place to get
 
-void Fifo_Init(void){
-  GetPt = NULL;    // Empty when null
-  PutPt = NULL;
-  Heap_Init();
-}
-
-int Fifo_Put(int32_t theData){
-NodeType *pt;
-  pt = (NodeType*)Heap_Allocate();
-  if(!pt){         // check for NULL pointer if heap full
-    return(0);     // full
-  }
-  pt->Data = theData; // store
-  pt->Next = NULL;
-  if(PutPt){
-    PutPt->Next = pt; // Link
-  }
-  else{
-    GetPt = pt;    // first one
-  }
-  PutPt = pt;
-  return(1);       // successful
-}
-
-int Fifo_Get(int32_t *datapt){
-NodeType *pt;
-  if(!GetPt){      // check for NULL pointer if FIFO empty
-    return(0);     // empty
-  }
-  *datapt = GetPt->Data;
-  pt = GetPt;
-  GetPt = GetPt->Next;
-  if(GetPt==NULL){ // one entry
+void Fifo_Init(void)
+{
+    GetPt = NULL; // Empty when null
     PutPt = NULL;
-  }
-  Heap_Release((int32_t*)pt);
-  return(1);       // success
+    Heap_Init();
+}
+
+int Fifo_Put(int32_t theData)
+{
+    NodeType *pt;
+    pt = (NodeType *)Heap_Allocate();
+    if (!pt)
+    {               // check for NULL pointer if heap full
+        return (0); // full
+    }
+    pt->Data = theData; // store
+    pt->Next = NULL;
+    if (PutPt)
+    {
+        PutPt->Next = pt; // Link
+    }
+    else
+    {
+        GetPt = pt; // first one
+    }
+    PutPt = pt;
+    return (1); // successful
+}
+
+int Fifo_Get(int32_t *datapt)
+{
+    NodeType *pt;
+    if (!GetPt)
+    {               // check for NULL pointer if FIFO empty
+        return (0); // empty
+    }
+    *datapt = GetPt->Data;
+    pt = GetPt;
+    GetPt = GetPt->Next;
+    if (GetPt == NULL)
+    { // one entry
+        PutPt = NULL;
+    }
+    Heap_Release((int32_t *)pt);
+    return (1); // success
 }

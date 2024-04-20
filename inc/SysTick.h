@@ -5,7 +5,7 @@
 // of 10 milliseconds using busy wait.  After a power-on-reset, the
 // LM4F120 gets its clock from the 16 MHz precision internal oscillator,
 // which can vary by +/- 1% at room temperature and +/- 3% across all
-// temperature ranges.  
+// temperature ranges.
 // Daniel Valvano
 // September 11, 2013
 
@@ -55,4 +55,3 @@ void SysTick_Start(void);
 
 // end the stopwatch, and return elased time in bus cycles
 uint32_t SysTick_Stop(void);
-

@@ -28,10 +28,6 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
-
-
-
-
 //------------LED_Init------------
 // Initialize GPIO Port F for negative logic switches on PF0 and
 // PF4 as the Launchpad is wired.  Weak internal pull-up
@@ -41,7 +37,6 @@
 // Output: none
 void LED_Init(void);
 
-
 //------------Board_Input------------
 // Read and return the status of the switches.
 // Input: none
@@ -50,7 +45,6 @@ void LED_Init(void);
 //         3 if both switches are pressed
 //         0 if no switches are pressed
 uint32_t Board_Input(void);
-
 
 //------------LED_RedOn------------
 // Turn on red LED
@@ -70,7 +64,6 @@ void LED_RedOff(void);
 // Output: none
 void LED_RedToggle(void);
 
-
 //------------LED_BlueOn------------
 // Turn on blue LED
 // Input: none
@@ -89,7 +82,6 @@ void LED_BlueOff(void);
 // Output: none
 void LED_BlueToggle(void);
 
-
 //------------LED_GreenOn------------
 // Turn on green LED
 // Input: none
@@ -107,4 +99,3 @@ void LED_GreenOff(void);
 // Input: none
 // Output: none
 void LED_GreenToggle(void);
-

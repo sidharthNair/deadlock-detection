@@ -28,20 +28,22 @@
 #include "./inc/esp8266_blynk.h"
 #include "./inc/ST7735.h"
 
-#define PF1   (*((volatile uint32_t *)0x40025008)) // RED LED
-#define PF2   (*((volatile uint32_t *)0x40025010)) // BLUE LED
-#define PF3   (*((volatile uint32_t *)0x40025020)) // GREEN LED
+#define PF1 (*((volatile uint32_t *)0x40025008)) // RED LED
+#define PF2 (*((volatile uint32_t *)0x40025010)) // BLUE LED
+#define PF3 (*((volatile uint32_t *)0x40025020)) // GREEN LED
 
-void EnableInterrupts(void);    // Defined in startup.s
-void DisableInterrupts(void);   // Defined in startup.s
-void WaitForInterrupt(void);    // Defined in startup.s
+void EnableInterrupts(void);  // Defined in startup.s
+void DisableInterrupts(void); // Defined in startup.s
+void WaitForInterrupt(void);  // Defined in startup.s
 
 #define NUM_QUEUE_ELEMENTS 50
 static blynk_info_t info_queue[NUM_QUEUE_ELEMENTS];
 static uint8_t info_queue_head, info_queue_tail;
 
-void tm4c_to_blynk(const blynk_info_t info) {
-    if (info.pin_number < 70 || info.pin_number > 99) return;
+void tm4c_to_blynk(const blynk_info_t info)
+{
+    if (info.pin_number < 70 || info.pin_number > 99)
+        return;
 
     /* Output CSV string to ESP8266 in format <Virtual pin number>,<value>,0.0\n */
     ESP8266_OutInteger(info.pin_number);
@@ -63,13 +65,15 @@ void tm4c_to_blynk(const blynk_info_t info) {
 #endif
 }
 
-blynk_info_t blynk_to_tm4c(void) {
-    char serial_buffer[64] = { '\0' };
-    char pin_number[8] = { '\0' };
-    char pin_integer[8] = { '\0' };
-    char pin_float[8] = { '\0' };
+blynk_info_t blynk_to_tm4c(void)
+{
+    char serial_buffer[64] = {'\0'};
+    char pin_number[8] = {'\0'};
+    char pin_integer[8] = {'\0'};
+    char pin_float[8] = {'\0'};
 
-    if (!ESP8266_GetMessage(serial_buffer)) {
+    if (!ESP8266_GetMessage(serial_buffer))
+    {
         blynk_info_t info = {255, 0, 0}; // 255 is our indicator that we have no data.
         return info;
     }
@@ -83,12 +87,12 @@ blynk_info_t blynk_to_tm4c(void) {
     blynk_info_t info = {
         .pin_number = atoi(pin_number),
         .integer_value = atoi(pin_integer),
-        .float_value = atoi(pin_float)
-    };
+        .float_value = atoi(pin_float)};
 
 #ifdef DEBUG
     /* LED select button */
-    if (info.pin_number == 0x1) {
+    if (info.pin_number == 0x1)
+    {
         PF2 = info.pin_number;
         ST7735_SetTextColor(ST7735_CYAN);
         ST7735_OutString("Rcv VP1 data = ");
@@ -109,24 +113,29 @@ blynk_info_t blynk_to_tm4c(void) {
     return info;
 }
 
-void blynk_handler(void) {
+void blynk_handler(void)
+{
     blynk_info_t info = blynk_to_tm4c();
 
     DisableInterrupts();
 
     /* Early exit if no data. */
-    if (info.pin_number == 255) {
+    if (info.pin_number == 255)
+    {
         EnableInterrupts();
         return;
     }
 
     /* Early exit if queue is full. */
-    if (info_queue_head == (info_queue_tail + NUM_QUEUE_ELEMENTS - 1) % NUM_QUEUE_ELEMENTS) {
+    if (info_queue_head == (info_queue_tail + NUM_QUEUE_ELEMENTS - 1) % NUM_QUEUE_ELEMENTS)
+    {
         PF1 = 0x2;
         PF3 = 0x0;
         EnableInterrupts();
         return;
-    } else {
+    }
+    else
+    {
         PF1 = 0x0;
         PF3 = 0x8;
     }
@@ -138,22 +147,26 @@ void blynk_handler(void) {
     EnableInterrupts();
 }
 
-void blynk_init(char *wifi_ssid, char *wifi_pass, char *blynk_auth_token, bool use_timer_interrupt) {
+void blynk_init(char *wifi_ssid, char *wifi_pass, char *blynk_auth_token, bool use_timer_interrupt)
+{
     ESP8266_Init();
     ESP8266_Reset();
     ESP8266_Connect(wifi_ssid, wifi_pass, blynk_auth_token);
 
-    if (use_timer_interrupt) {
+    if (use_timer_interrupt)
+    {
         /* Check for data from the Blynk app every 10 ms. */
         Timer2A_Init(&blynk_handler, 800000, 4);
     }
 }
 
-bool blynk_get_data_from_queue(blynk_info_t *info) {
+bool blynk_get_data_from_queue(blynk_info_t *info)
+{
     DisableInterrupts();
 
     /* Queue is empty. */
-    if (info_queue_head == info_queue_tail) {
+    if (info_queue_head == info_queue_tail)
+    {
         EnableInterrupts();
         return false;
     }

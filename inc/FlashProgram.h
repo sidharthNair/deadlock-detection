@@ -24,8 +24,8 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
-#define ERROR                   1           // Value returned if failure
-#define NOERROR                 0           // Value returned if success
+#define ERROR 1   // Value returned if failure
+#define NOERROR 0 // Value returned if success
 
 //------------Flash_Init------------
 // This function was critical to the write and erase

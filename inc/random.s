@@ -1,9 +1,9 @@
 ;Random number generator;
-; Linear congruential generator 
+; Linear congruential generator
 ; from Numerical Recipes by Press et al.
 ; Jonathan Valvano
 
-; How to use: 
+; How to use:
 ; 1) call Random_Init once with a seed
 ;     Random_Init(1);
 ;     Random_Init(NVIC_CURRENT_R);
@@ -14,7 +14,7 @@
        THUMB
        AREA    DATA, ALIGN=2
 M      SPACE   4
-       ALIGN          
+       ALIGN
        AREA    |.text|, CODE, READONLY, ALIGN=2
        EXPORT  Random_Init
        EXPORT  Random
@@ -26,30 +26,29 @@ Random_Init
        BX  LR
 ;------------Random32------------
 ; Return R0= random number
-; Linear congruential generator 
+; Linear congruential generator
 ; from Numerical Recipes by Press et al.
 Random32 LDR R2,=M    ; R2 = &M, R4 points to M
        LDR R0,[R2]  ; R0=M
        LDR R1,=1664525
        MUL R0,R0,R1 ; R0 = 1664525*M
        LDR R1,=1013904223
-       ADD R0,R1    ; 1664525*M+1013904223 
+       ADD R0,R1    ; 1664525*M+1013904223
        STR R0,[R2]  ; store M
        BX  LR
 
 ;------------Random------------
 ; Return R0= random number, 0 to 255
-; Linear congruential generator 
+; Linear congruential generator
 ; from Numerical Recipes by Press et al.
 Random LDR R2,=M     ; R2 = &M, R4 points to M
        LDR R0,[R2]   ; R0=M
        LDR R1,=1664525
        MUL R0,R0,R1  ; R0 = 1664525*M
        LDR R1,=1013904223
-       ADD R0,R1     ; 1664525*M+1013904223 
+       ADD R0,R1     ; 1664525*M+1013904223
        STR R0,[R2]   ; store M
        LSR R0,R0,#24 ; top 8 bits of number
        BX  LR
-       ALIGN      
-       END  
-           
+       ALIGN
+       END

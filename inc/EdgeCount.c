@@ -45,35 +45,39 @@ that are loaded into the timer registers when the timer is enabled.
 // on the rising edge of PB6 (T0CCP0).
 // Input: none
 // Output: none
-void EdgeCount_Init(void){
-  SYSCTL_RCGCTIMER_R |= 0x01;  // activate Timer 0
-  SYSCTL_RCGCGPIO_R |= 0x02;   // activate Port B
-                               // allow time to finish activating
-  while((SYSCTL_PRGPIO_R&0x0002) == 0){};
-  GPIO_PORTB_DIR_R &= ~0x40;   // make PB6 in
-  GPIO_PORTB_AFSEL_R |= 0x40;  // enable alt funct on PB6
-  GPIO_PORTB_DEN_R |= 0x40;    // enable digital I/O on PB6
-                               // configure PB6 as T0CCP0
-  GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xF0FFFFFF)+0x07000000;
-  GPIO_PORTB_AMSEL_R &= ~0x40; // disable analog functionality on PB6
-  TIMER0_CTL_R &= ~0x00000001; // disable timer0A during setup
-  TIMER0_CFG_R = 0x00000004;   // configure for 16-bit timer mode
-   // configure for capture mode, edge-count, up-count settings
-   // In the GPTM Timer Mode (GPTMTnMR) register, write the TnCDIR field to 0x1,
-   // the TnAMS field to 0x0, the TnCMR field to 0x0, and the TnMR field to 0x3.
-  TIMER0_TAMR_R = 0x13;        // edge count, count up
-  TIMER0_CTL_R &= ~(0xC);      // configure for rising edge event
-  TIMER0_TAILR_R = 0xFFFF;
-  TIMER0_TAPR_R = 0xFF;        // counts up to 0xFFFFFF (16,777,215)
-  TIMER0_TAMATCHR_R = 0xFFFF;
-  TIMER0_TAPMR_R = 0xFF;
-  TIMER0_CTL_R |= 0x00000001;  // enable timer0A 16-b, positive edge-count, up-count
+void EdgeCount_Init(void)
+{
+    SYSCTL_RCGCTIMER_R |= 0x01; // activate Timer 0
+    SYSCTL_RCGCGPIO_R |= 0x02;  // activate Port B
+                                // allow time to finish activating
+    while ((SYSCTL_PRGPIO_R & 0x0002) == 0)
+    {
+    };
+    GPIO_PORTB_DIR_R &= ~0x40;  // make PB6 in
+    GPIO_PORTB_AFSEL_R |= 0x40; // enable alt funct on PB6
+    GPIO_PORTB_DEN_R |= 0x40;   // enable digital I/O on PB6
+                                // configure PB6 as T0CCP0
+    GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xF0FFFFFF) + 0x07000000;
+    GPIO_PORTB_AMSEL_R &= ~0x40; // disable analog functionality on PB6
+    TIMER0_CTL_R &= ~0x00000001; // disable timer0A during setup
+    TIMER0_CFG_R = 0x00000004;   // configure for 16-bit timer mode
+                                 // configure for capture mode, edge-count, up-count settings
+                                 // In the GPTM Timer Mode (GPTMTnMR) register, write the TnCDIR field to 0x1,
+                                 // the TnAMS field to 0x0, the TnCMR field to 0x0, and the TnMR field to 0x3.
+    TIMER0_TAMR_R = 0x13;        // edge count, count up
+    TIMER0_CTL_R &= ~(0xC);      // configure for rising edge event
+    TIMER0_TAILR_R = 0xFFFF;
+    TIMER0_TAPR_R = 0xFF; // counts up to 0xFFFFFF (16,777,215)
+    TIMER0_TAMATCHR_R = 0xFFFF;
+    TIMER0_TAPMR_R = 0xFF;
+    TIMER0_CTL_R |= 0x00000001; // enable timer0A 16-b, positive edge-count, up-count
 }
 
 //------------EdgeCount_Result------------
 // Count the number of rising edges since initialization.
 // Input: none
 // Output: 24-bit count of edges
-uint32_t EdgeCount_Result(void){
-  return TIMER0_TAR_R;
+uint32_t EdgeCount_Result(void)
+{
+    return TIMER0_TAR_R;
 }

@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2005-2010 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 6075 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -44,11 +44,10 @@
 //
 //*****************************************************************************
 static const uint32_t g_pulPriority[] =
-{
-    NVIC_APINT_PRIGROUP_0_8, NVIC_APINT_PRIGROUP_1_7, NVIC_APINT_PRIGROUP_2_6,
-    NVIC_APINT_PRIGROUP_3_5, NVIC_APINT_PRIGROUP_4_4, NVIC_APINT_PRIGROUP_5_3,
-    NVIC_APINT_PRIGROUP_6_2, NVIC_APINT_PRIGROUP_7_1
-};
+    {
+        NVIC_APINT_PRIGROUP_0_8, NVIC_APINT_PRIGROUP_1_7, NVIC_APINT_PRIGROUP_2_6,
+        NVIC_APINT_PRIGROUP_3_5, NVIC_APINT_PRIGROUP_4_4, NVIC_APINT_PRIGROUP_5_3,
+        NVIC_APINT_PRIGROUP_6_2, NVIC_APINT_PRIGROUP_7_1};
 
 //*****************************************************************************
 //
@@ -57,11 +56,10 @@ static const uint32_t g_pulPriority[] =
 //
 //*****************************************************************************
 static const uint32_t g_pulRegs[] =
-{
-    0, NVIC_SYS_PRI1, NVIC_SYS_PRI2, NVIC_SYS_PRI3, NVIC_PRI0, NVIC_PRI1,
-    NVIC_PRI2, NVIC_PRI3, NVIC_PRI4, NVIC_PRI5, NVIC_PRI6, NVIC_PRI7,
-    NVIC_PRI8, NVIC_PRI9, NVIC_PRI10, NVIC_PRI11, NVIC_PRI12, NVIC_PRI13
-};
+    {
+        0, NVIC_SYS_PRI1, NVIC_SYS_PRI2, NVIC_SYS_PRI3, NVIC_PRI0, NVIC_PRI1,
+        NVIC_PRI2, NVIC_PRI3, NVIC_PRI4, NVIC_PRI5, NVIC_PRI6, NVIC_PRI7,
+        NVIC_PRI8, NVIC_PRI9, NVIC_PRI10, NVIC_PRI11, NVIC_PRI12, NVIC_PRI13};
 
 //*****************************************************************************
 //
@@ -82,7 +80,7 @@ IntDefaultHandler(void)
     //
     // Go into an infinite loop.
     //
-    while(1)
+    while (1)
     {
     }
 }
@@ -97,19 +95,17 @@ IntDefaultHandler(void)
 // address given in the corresponding location in this list.
 //
 //*****************************************************************************
-#define NUM_INTERRUPTS_TM4C123                          155
+#define NUM_INTERRUPTS_TM4C123 155
 
 #if defined(ewarm)
 static __no_init void (*g_pfnRAMVectors[NUM_INTERRUPTS_TM4C123])(void) @ "VTABLE";
 #elif defined(sourcerygxx)
-static __attribute__((section(".cs3.region-head.ram")))
-void (*g_pfnRAMVectors[NUM_INTERRUPTS_TM4C123])(void);
+static __attribute__((section(".cs3.region-head.ram"))) void (*g_pfnRAMVectors[NUM_INTERRUPTS_TM4C123])(void);
 #elif defined(ccs)
 #pragma DATA_SECTION(g_pfnRAMVectors, ".vtable")
 void (*g_pfnRAMVectors[NUM_INTERRUPTS_TM4C123])(void);
 #else
-static __attribute__((section("vtable")))
-void (*g_pfnRAMVectors[NUM_INTERRUPTS_TM4C123])(void);
+static __attribute__((section("vtable"))) void (*g_pfnRAMVectors[NUM_INTERRUPTS_TM4C123])(void);
 #endif
 
 //*****************************************************************************
@@ -197,8 +193,7 @@ IntMasterDisable(void)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntRegister(uint32_t ulInterrupt, void (*pfnHandler)(void))
+void IntRegister(uint32_t ulInterrupt, void (*pfnHandler)(void))
 {
     uint32_t ulIdx, ulValue;
 
@@ -215,17 +210,17 @@ IntRegister(uint32_t ulInterrupt, void (*pfnHandler)(void))
     //
     // See if the RAM vector table has been initialized.
     //
-    if(HWREG(NVIC_VTABLE) != (uint32_t)g_pfnRAMVectors)
+    if (HWREG(NVIC_VTABLE) != (uint32_t)g_pfnRAMVectors)
     {
         //
         // Copy the vector table from the beginning of FLASH to the RAM vector
         // table.
         //
         ulValue = HWREG(NVIC_VTABLE);
-        for(ulIdx = 0; ulIdx < NUM_INTERRUPTS_TM4C123; ulIdx++)
+        for (ulIdx = 0; ulIdx < NUM_INTERRUPTS_TM4C123; ulIdx++)
         {
             g_pfnRAMVectors[ulIdx] = (void (*)(void))HWREG((ulIdx * 4) +
-                                                     ulValue);
+                                                           ulValue);
         }
 
         //
@@ -256,8 +251,7 @@ IntRegister(uint32_t ulInterrupt, void (*pfnHandler)(void))
 //! \return None.
 //
 //*****************************************************************************
-void
-IntUnregister(uint32_t ulInterrupt)
+void IntUnregister(uint32_t ulInterrupt)
 {
     //
     // Check the arguments.
@@ -286,8 +280,7 @@ IntUnregister(uint32_t ulInterrupt)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntPriorityGroupingSet(uint32_t ulBits)
+void IntPriorityGroupingSet(uint32_t ulBits)
 {
     //
     // Check the arguments.
@@ -323,12 +316,12 @@ IntPriorityGroupingGet(void)
     //
     // Loop through the priority grouping values.
     //
-    for(ulLoop = 0; ulLoop < NUM_PRIORITY; ulLoop++)
+    for (ulLoop = 0; ulLoop < NUM_PRIORITY; ulLoop++)
     {
         //
         // Stop looping if this value matches.
         //
-        if(ulValue == g_pulPriority[ulLoop])
+        if (ulValue == g_pulPriority[ulLoop])
         {
             break;
         }
@@ -337,7 +330,7 @@ IntPriorityGroupingGet(void)
     //
     // Return the number of priority bits.
     //
-    return(ulLoop);
+    return (ulLoop);
 }
 
 //*****************************************************************************
@@ -364,8 +357,7 @@ IntPriorityGroupingGet(void)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntPrioritySet(uint32_t ulInterrupt, unsigned char ucPriority)
+void IntPrioritySet(uint32_t ulInterrupt, unsigned char ucPriority)
 {
     uint32_t ulTemp;
 
@@ -407,8 +399,8 @@ IntPriorityGet(uint32_t ulInterrupt)
     //
     // Return the interrupt priority.
     //
-    return((HWREG(g_pulRegs[ulInterrupt >> 2]) >> (8 * (ulInterrupt & 3))) &
-           0xFF);
+    return ((HWREG(g_pulRegs[ulInterrupt >> 2]) >> (8 * (ulInterrupt & 3))) &
+            0xFF);
 }
 
 //*****************************************************************************
@@ -424,8 +416,7 @@ IntPriorityGet(uint32_t ulInterrupt)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntEnable(uint32_t ulInterrupt)
+void IntEnable(uint32_t ulInterrupt)
 {
     //
     // Check the arguments.
@@ -435,42 +426,42 @@ IntEnable(uint32_t ulInterrupt)
     //
     // Determine the interrupt to enable.
     //
-    if(ulInterrupt == FAULT_MPU)
+    if (ulInterrupt == FAULT_MPU)
     {
         //
         // Enable the MemManage interrupt.
         //
         HWREG(NVIC_SYS_HND_CTRL) |= NVIC_SYS_HND_CTRL_MEM;
     }
-    else if(ulInterrupt == FAULT_BUS)
+    else if (ulInterrupt == FAULT_BUS)
     {
         //
         // Enable the bus fault interrupt.
         //
         HWREG(NVIC_SYS_HND_CTRL) |= NVIC_SYS_HND_CTRL_BUS;
     }
-    else if(ulInterrupt == FAULT_USAGE)
+    else if (ulInterrupt == FAULT_USAGE)
     {
         //
         // Enable the usage fault interrupt.
         //
         HWREG(NVIC_SYS_HND_CTRL) |= NVIC_SYS_HND_CTRL_USAGE;
     }
-    else if(ulInterrupt == FAULT_SYSTICK)
+    else if (ulInterrupt == FAULT_SYSTICK)
     {
         //
         // Enable the System Tick interrupt.
         //
         HWREG(NVIC_ST_CTRL) |= NVIC_ST_CTRL_INTEN;
     }
-    else if((ulInterrupt >= 16) && (ulInterrupt <= 47))
+    else if ((ulInterrupt >= 16) && (ulInterrupt <= 47))
     {
         //
         // Enable the general interrupt.
         //
         HWREG(NVIC_EN0) = 1 << (ulInterrupt - 16);
     }
-    else if(ulInterrupt >= 48)
+    else if (ulInterrupt >= 48)
     {
         //
         // Enable the general interrupt.
@@ -492,8 +483,7 @@ IntEnable(uint32_t ulInterrupt)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntDisable(uint32_t ulInterrupt)
+void IntDisable(uint32_t ulInterrupt)
 {
     //
     // Check the arguments.
@@ -503,42 +493,42 @@ IntDisable(uint32_t ulInterrupt)
     //
     // Determine the interrupt to disable.
     //
-    if(ulInterrupt == FAULT_MPU)
+    if (ulInterrupt == FAULT_MPU)
     {
         //
         // Disable the MemManage interrupt.
         //
         HWREG(NVIC_SYS_HND_CTRL) &= ~(NVIC_SYS_HND_CTRL_MEM);
     }
-    else if(ulInterrupt == FAULT_BUS)
+    else if (ulInterrupt == FAULT_BUS)
     {
         //
         // Disable the bus fault interrupt.
         //
         HWREG(NVIC_SYS_HND_CTRL) &= ~(NVIC_SYS_HND_CTRL_BUS);
     }
-    else if(ulInterrupt == FAULT_USAGE)
+    else if (ulInterrupt == FAULT_USAGE)
     {
         //
         // Disable the usage fault interrupt.
         //
         HWREG(NVIC_SYS_HND_CTRL) &= ~(NVIC_SYS_HND_CTRL_USAGE);
     }
-    else if(ulInterrupt == FAULT_SYSTICK)
+    else if (ulInterrupt == FAULT_SYSTICK)
     {
         //
         // Disable the System Tick interrupt.
         //
         HWREG(NVIC_ST_CTRL) &= ~(NVIC_ST_CTRL_INTEN);
     }
-    else if((ulInterrupt >= 16) && (ulInterrupt <= 47))
+    else if ((ulInterrupt >= 16) && (ulInterrupt <= 47))
     {
         //
         // Disable the general interrupt.
         //
         HWREG(NVIC_DIS0) = 1 << (ulInterrupt - 16);
     }
-    else if(ulInterrupt >= 48)
+    else if (ulInterrupt >= 48)
     {
         //
         // Disable the general interrupt.
@@ -564,8 +554,7 @@ IntDisable(uint32_t ulInterrupt)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntPendSet(uint32_t ulInterrupt)
+void IntPendSet(uint32_t ulInterrupt)
 {
     //
     // Check the arguments.
@@ -575,35 +564,35 @@ IntPendSet(uint32_t ulInterrupt)
     //
     // Determine the interrupt to pend.
     //
-    if(ulInterrupt == FAULT_NMI)
+    if (ulInterrupt == FAULT_NMI)
     {
         //
         // Pend the NMI interrupt.
         //
         HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_NMI_SET;
     }
-    else if(ulInterrupt == FAULT_PENDSV)
+    else if (ulInterrupt == FAULT_PENDSV)
     {
         //
         // Pend the PendSV interrupt.
         //
         HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_PEND_SV;
     }
-    else if(ulInterrupt == FAULT_SYSTICK)
+    else if (ulInterrupt == FAULT_SYSTICK)
     {
         //
         // Pend the SysTick interrupt.
         //
         HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_PENDSTSET;
     }
-    else if((ulInterrupt >= 16) && (ulInterrupt <= 47))
+    else if ((ulInterrupt >= 16) && (ulInterrupt <= 47))
     {
         //
         // Pend the general interrupt.
         //
         HWREG(NVIC_PEND0) = 1 << (ulInterrupt - 16);
     }
-    else if(ulInterrupt >= 48)
+    else if (ulInterrupt >= 48)
     {
         //
         // Pend the general interrupt.
@@ -626,8 +615,7 @@ IntPendSet(uint32_t ulInterrupt)
 //! \return None.
 //
 //*****************************************************************************
-void
-IntPendClear(uint32_t ulInterrupt)
+void IntPendClear(uint32_t ulInterrupt)
 {
     //
     // Check the arguments.
@@ -637,28 +625,28 @@ IntPendClear(uint32_t ulInterrupt)
     //
     // Determine the interrupt to unpend.
     //
-    if(ulInterrupt == FAULT_PENDSV)
+    if (ulInterrupt == FAULT_PENDSV)
     {
         //
         // Unpend the PendSV interrupt.
         //
         HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_UNPEND_SV;
     }
-    else if(ulInterrupt == FAULT_SYSTICK)
+    else if (ulInterrupt == FAULT_SYSTICK)
     {
         //
         // Unpend the SysTick interrupt.
         //
         HWREG(NVIC_INT_CTRL) |= NVIC_INT_CTRL_PENDSTCLR;
     }
-    else if((ulInterrupt >= 16) && (ulInterrupt <= 47))
+    else if ((ulInterrupt >= 16) && (ulInterrupt <= 47))
     {
         //
         // Unpend the general interrupt.
         //
         HWREG(NVIC_UNPEND0) = 1 << (ulInterrupt - 16);
     }
-    else if(ulInterrupt >= 48)
+    else if (ulInterrupt >= 48)
     {
         //
         // Unpend the general interrupt.

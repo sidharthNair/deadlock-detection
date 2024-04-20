@@ -46,7 +46,7 @@
 // sample code  http://www.azdisplays.com/PDF/agm1264f_code.pdf
 // data sheet   http://www.azdisplays.com/PDF/agm1264f.pdf
 
-// Sparkfun LCD-00710      GDM12864H.pdf 
+// Sparkfun LCD-00710      GDM12864H.pdf
 // HardwareADM12864H (tested):
 // +5V    =  1- Vdd
 // gnd    =  2- Vss
@@ -81,7 +81,6 @@
 // GoTo bug fixed on 11/20/09
 
 //******************************************************************
-
 
 // to use it as an 8-line by 21-character display
 // initialize it once using
@@ -200,7 +199,7 @@ void LCD_OutFix3(unsigned short n);
 // label has 13 character maximum size
 // errors: min and max must be less than or equal to 999
 void LCD_PlotXaxis(unsigned short min, unsigned short max,
-  unsigned short resolution, char *label);
+                   unsigned short resolution, char *label);
 
 //-----------------------LCD_PlotYaxis-----------------------
 // Draw Y axis
@@ -216,7 +215,7 @@ void LCD_PlotXaxis(unsigned short min, unsigned short max,
 // Output: none
 // errors: must be called once, before calling Plot
 void LCD_PlotYaxis(short min, short center, short max,
-  unsigned short resolution, char *label);
+                   unsigned short resolution, char *label);
 
 //-----------------------LCD_PlotClear-----------------------
 // Clear plot window,

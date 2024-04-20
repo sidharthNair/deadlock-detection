@@ -193,11 +193,11 @@ int32_t Median(int32_t newdata);
 
 /**
  * 60-Hz notch high-Q, IIR filter, assuming fs=2000 Hz.
- * Assumes the ADC is sampled at 2 kHz. 
+ * Assumes the ADC is sampled at 2 kHz.
  * Assumes this filter is executed at 2 kHz. <br>
  * y(n) = (256x(n) -503x(n-1) + 256x(n-2) + 498y(n-1)-251y(n-2))/256 (2k sampling)<br>
  * @param data new ADC data
  * @return result filter output
  * @brief  60-Hz notch high-Q, IIR filter
  */
- long Filter(long data);
+long Filter(long data);

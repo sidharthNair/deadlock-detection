@@ -1,6 +1,6 @@
 // Matrix.c
 // Runs on  LM4F120/TM4C123
-// Provide functions that initialize GPIO ports and SysTick 
+// Provide functions that initialize GPIO ports and SysTick
 // Use periodic polling
 // Daniel Valvano
 // August 11, 2014
@@ -52,97 +52,109 @@ Copyright 2015 by Jonathan W. Valvano, valvano@mail.utexas.edu
 #include "../inc/CortexM.h"
 #include "../inc/SysTickInts.h"
 
-
 volatile uint32_t Counts = 0;
 
-#define FIFOSIZE   16         // size of the FIFOs (must be power of 2)
-#define FIFOSUCCESS 1         // return value on success
-#define FIFOFAIL    0         // return value on failure
-                              // create index implementation FIFO (see FIFO.h)
+#define FIFOSIZE 16                  // size of the FIFOs (must be power of 2)
+#define FIFOSUCCESS 1                // return value on success
+#define FIFOFAIL 0                   // return value on failure
+                                     // create index implementation FIFO (see FIFO.h)
 AddIndexFifo(Matrix, 16, char, 1, 0) // create a FIFO
-uint32_t HeartBeat;  // incremented every 25 ms
-
-
+    uint32_t HeartBeat;              // incremented every 25 ms
 
 // Initialization of Matrix keypad
-void MatrixKeypad_Init(void){ 
-  SYSCTL_RCGCGPIO_R |= 0x0009;        // enable Ports A and D
-  HeartBeat = 0;
-  GPIO_PORTA_DEN_R |= 0x3C;        // enable digital I/O on PA5-2
-  GPIO_PORTA_DIR_R &= ~0x3C;       // make PA5-2 in (PA5-2 columns)
-  GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R&0xFF0000FF)+0x00000000;
-  GPIO_PORTA_AFSEL_R = 0;     // disable alternate functionality on PA
-  GPIO_PORTA_AMSEL_R = 0;     // disable analog functionality on PA
-  GPIO_PORTD_DATA_R &= ~0x0F;      // DIRn=0, OUTn=HiZ; DIRn=1, OUTn=0
-  GPIO_PORTD_DEN_R |= 0x0F;        // enable digital I/O on PD3-0
-  GPIO_PORTD_DIR_R &= ~0x0F;       // make PD3-0 in (PD3-0 rows)
-  GPIO_PORTD_PCTL_R = (GPIO_PORTD_PCTL_R&0xFFFF0000)+0x00000000;
-  GPIO_PORTD_AMSEL_R = 0;     // disable analog functionality on PD
-  GPIO_PORTA_AFSEL_R = 0;     // disable alternate functionality on PD
+void MatrixKeypad_Init(void)
+{
+    SYSCTL_RCGCGPIO_R |= 0x0009; // enable Ports A and D
+    HeartBeat = 0;
+    GPIO_PORTA_DEN_R |= 0x3C;  // enable digital I/O on PA5-2
+    GPIO_PORTA_DIR_R &= ~0x3C; // make PA5-2 in (PA5-2 columns)
+    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFF0000FF) + 0x00000000;
+    GPIO_PORTA_AFSEL_R = 0;     // disable alternate functionality on PA
+    GPIO_PORTA_AMSEL_R = 0;     // disable analog functionality on PA
+    GPIO_PORTD_DATA_R &= ~0x0F; // DIRn=0, OUTn=HiZ; DIRn=1, OUTn=0
+    GPIO_PORTD_DEN_R |= 0x0F;   // enable digital I/O on PD3-0
+    GPIO_PORTD_DIR_R &= ~0x0F;  // make PD3-0 in (PD3-0 rows)
+    GPIO_PORTD_PCTL_R = (GPIO_PORTD_PCTL_R & 0xFFFF0000) + 0x00000000;
+    GPIO_PORTD_AMSEL_R = 0; // disable analog functionality on PD
+    GPIO_PORTA_AFSEL_R = 0; // disable alternate functionality on PD
 }
 
-
-
-struct Row{
-  uint32_t direction;
-  char keycode[4];};
+struct Row
+{
+    uint32_t direction;
+    char keycode[4];
+};
 typedef const struct Row RowType;
-RowType ScanTab[5]={
-{   0x01, "123A" }, // row 0
-{   0x02, "456B" }, // row 1
-{   0x04, "789C" }, // row 2
-{   0x08, "*0#D" }, // row 3
-{   0x00, "    " }};
+RowType ScanTab[5] = {
+    {0x01, "123A"}, // row 0
+    {0x02, "456B"}, // row 1
+    {0x04, "789C"}, // row 2
+    {0x08, "*0#D"}, // row 3
+    {0x00, "    "}};
 
 /* Returns ASCII code for key pressed,
    Num is the number of keys pressed
    both equal zero if no key pressed */
-char MatrixKeypad_Scan(int32_t *Num){
-  RowType *pt;
-  char column, key;
-  int32_t j;
-  (*Num) = 0;
-  key = 0;    // default values
-  pt = &ScanTab[0];
-  while(pt->direction){
-    GPIO_PORTD_DIR_R = pt->direction;      // one output
-    GPIO_PORTD_DATA_R &= ~0x0F;            // DIRn=0, OUTn=HiZ; DIRn=1, OUTn=0
-    for(j=1; j<=10; j++);                  // very short delay
-    column = ((GPIO_PORTA_DATA_R&0x3C)>>2);// read columns
-    for(j=0; j<=3; j++){
-      if((column&0x01)==0){
-        key = pt->keycode[j];
-        (*Num)++;
-      }
-      column>>=1;  // shift into position
+char MatrixKeypad_Scan(int32_t *Num)
+{
+    RowType *pt;
+    char column, key;
+    int32_t j;
+    (*Num) = 0;
+    key = 0; // default values
+    pt = &ScanTab[0];
+    while (pt->direction)
+    {
+        GPIO_PORTD_DIR_R = pt->direction; // one output
+        GPIO_PORTD_DATA_R &= ~0x0F;       // DIRn=0, OUTn=HiZ; DIRn=1, OUTn=0
+        for (j = 1; j <= 10; j++)
+            ;                                       // very short delay
+        column = ((GPIO_PORTA_DATA_R & 0x3C) >> 2); // read columns
+        for (j = 0; j <= 3; j++)
+        {
+            if ((column & 0x01) == 0)
+            {
+                key = pt->keycode[j];
+                (*Num)++;
+            }
+            column >>= 1; // shift into position
+        }
+        pt++;
     }
-    pt++;
-  }
-  return key;
+    return key;
 }
 
-char static LastKey; 
-void Matrix_Init(void){
-  LastKey = 0;             // no key typed
-  MatrixFifo_Init();
-  MatrixKeypad_Init();     // Program 4.13
-  SysTick_Init(25*80000);  // Program 5.12, 25 ms polling
-} 
-void SysTick_Handler(void){  char thisKey; int32_t n;
-  thisKey = MatrixKeypad_Scan(&n); // scan 
-  if((thisKey != LastKey) && (n == 1)){
-    MatrixFifo_Put(thisKey);
-    LastKey = thisKey;
-  } else if(n == 0){
-    LastKey = 0; // invalid
-  }
-  HeartBeat++;
+char static LastKey;
+void Matrix_Init(void)
+{
+    LastKey = 0; // no key typed
+    MatrixFifo_Init();
+    MatrixKeypad_Init();      // Program 4.13
+    SysTick_Init(25 * 80000); // Program 5.12, 25 ms polling
+}
+void SysTick_Handler(void)
+{
+    char thisKey;
+    int32_t n;
+    thisKey = MatrixKeypad_Scan(&n); // scan
+    if ((thisKey != LastKey) && (n == 1))
+    {
+        MatrixFifo_Put(thisKey);
+        LastKey = thisKey;
+    }
+    else if (n == 0)
+    {
+        LastKey = 0; // invalid
+    }
+    HeartBeat++;
 }
 // input ASCII character from keypad
 // spin if Fifo is empty
-char Matrix_InChar(void){  char letter;
-  while(MatrixFifo_Get(&letter) == FIFOFAIL){};
-  return(letter);
+char Matrix_InChar(void)
+{
+    char letter;
+    while (MatrixFifo_Get(&letter) == FIFOFAIL)
+    {
+    };
+    return (letter);
 }
-
-

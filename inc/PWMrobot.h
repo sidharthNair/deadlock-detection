@@ -21,7 +21,7 @@
 // PB6 A-  regular GPIO level low (0)
 // to go forward on left motor
 // PB5 B+  PWM 100 Hz, PWM negative logic (e.g., 10% duty cycle is 90% power)
-// PB4 B-  regular GPIO level high (1) 
+// PB4 B-  regular GPIO level high (1)
 // to go backward on left motor
 // PB5 B+  regular GPIO level high (1)
 // PB4 B-  PWM 100 Hz, PWM negative logic (e.g., 10% duty cycle is 90% power)
@@ -58,9 +58,13 @@
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
  */
- 
-enum Direction{ BACKWARD, FORWARD, COAST};
 
+enum Direction
+{
+    BACKWARD,
+    FORWARD,
+    COAST
+};
 
 // period is 16-bit number of PWM clock cycles in one period (3<=period)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
@@ -82,12 +86,12 @@ void DRV8848_RightStop(void);
 // Inputs: period was set in call to Right_InitDRV8848
 //         duty is in 800 ns units
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
-// Must call Right_InitDRV8848  
-// - once initially before calling Right_DutyDRV8848 
+// Must call Right_InitDRV8848
+// - once initially before calling Right_DutyDRV8848
 // - to change direction
 // Motor board version 6 with DRV8848 dual H-bridge
 void DRV8848_RightDuty(uint16_t duty);
- 
+
 // period is 16-bit number of PWM clock cycles in one period (3<=period)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
 // PWM clock rate = processor clock rate/SYSCTL_RCC_PWMDIV
@@ -107,13 +111,13 @@ void DRV8848_LeftStop(void);
 // Inputs: period was set in call to Left_InitDRV8848
 //         duty is in 800 ns units
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
-// Must call Left_InitDRV8848  
-// - once initially before calling Left_DutyDRV8848 
+// Must call Left_InitDRV8848
+// - once initially before calling Left_DutyDRV8848
 // - to change direction
 // Motor board version 6 with DRV8848 dual H-bridge
 void DRV8848_LeftDuty(uint16_t duty);
- 
- // period is 16-bit number of PWM clock cycles in one period (3<=period)
+
+// period is 16-bit number of PWM clock cycles in one period (3<=period)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
 // PWM clock rate = processor clock rate/SYSCTL_RCC_PWMDIV
 //                = BusClock/64
@@ -131,7 +135,6 @@ void Right_Init(uint16_t period, uint16_t duty, int direction);
 //         direction is value output to PB7(0 or 1)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
 void Right_Duty(uint16_t duty, int direction);
-
 
 // period is 16-bit number of PWM clock cycles in one period (3<=period)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
@@ -170,7 +173,6 @@ void Left_Init(uint16_t period, uint16_t duty, int direction);
 //         direction is value output to PB5 (0 or 1)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)
 void Left_Duty(uint16_t duty, int direction);
-
 
 // period is 16-bit number of PWM clock cycles in one period (3<=period)
 // duty is number of PWM clock cycles output is high  (2<=duty<=period-1)

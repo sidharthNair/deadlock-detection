@@ -47,4 +47,4 @@ void DMA_Transfer(volatile uint32_t *source, uint8_t *destination, uint32_t coun
 // Can be used to check the status of a previous request
 // Inputs:  none
 // Outputs: true if still active, false if complete
-uint32_t DMA_Status(void); 
+uint32_t DMA_Status(void);

@@ -21,8 +21,6 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
-
-
 // ************DMA_Init*****************
 // Initialize the memory to memory transfer
 // This needs to be called once before requesting a transfer
@@ -44,4 +42,4 @@ void DMA_Transfer(uint32_t *source, uint32_t *destination, uint32_t count);
 // Inputs:  none
 // Outputs: true if still active, false if complete
 // This routine does not wait for completion
-uint32_t DMA_Status(void); 
+uint32_t DMA_Status(void);

@@ -27,8 +27,6 @@
 #include "../inc/CortexM.h"
 #include "../inc/SysTickInts.h"
 
-
-
 // **************SysTick_Init*********************
 // Initialize SysTick periodic interrupts
 // Input: interrupt period
@@ -36,20 +34,15 @@
 //        Maximum is 2^24-1
 //        Minimum is determined by length of ISR
 // Output: none
-void SysTick_Init(uint32_t period){long sr;
-  sr = StartCritical();
-  NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
-  NVIC_ST_RELOAD_R = period-1;// reload value
-  NVIC_ST_CURRENT_R = 0;      // any write to current clears it
-  NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
-                              // enable SysTick with core clock and interrupts
-  NVIC_ST_CTRL_R = 0x07;
-  EndCritical(sr);
+void SysTick_Init(uint32_t period)
+{
+    long sr;
+    sr = StartCritical();
+    NVIC_ST_CTRL_R = 0;                                            // disable SysTick during setup
+    NVIC_ST_RELOAD_R = period - 1;                                 // reload value
+    NVIC_ST_CURRENT_R = 0;                                         // any write to current clears it
+    NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R & 0x00FFFFFF) | 0x40000000; // priority 2
+                                                                   // enable SysTick with core clock and interrupts
+    NVIC_ST_CTRL_R = 0x07;
+    EndCritical(sr);
 }
-
-
-
-
-
-
-

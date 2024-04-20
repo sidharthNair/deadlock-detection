@@ -70,9 +70,9 @@
 // CS   - PA3 TFT_CS, active low to enable TFT
 // *CS  - (NC) SDC_CS, active low to enable SDC
 // MISO - (NC) MISO SPI data from SDC to microcontroller
-// SDA  – (NC) I2C data for ADXL345 accelerometer
-// SCL  – (NC) I2C clock for ADXL345 accelerometer
-// SDO  – (NC) I2C alternate address for ADXL345 accelerometer
+// SDA  ï¿½ (NC) I2C data for ADXL345 accelerometer
+// SCL  ï¿½ (NC) I2C clock for ADXL345 accelerometer
+// SDO  ï¿½ (NC) I2C alternate address for ADXL345 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
 
 // **********wide.hk ST7735R with ADXL335 accelerometer *******************
@@ -86,11 +86,10 @@
 // CS   - PA3 TFT_CS, active low to enable TFT
 // *CS  - (NC) SDC_CS, active low to enable SDC
 // MISO - (NC) MISO SPI data from SDC to microcontroller
-// X– (NC) analog input X-axis from ADXL335 accelerometer
-// Y– (NC) analog input Y-axis from ADXL335 accelerometer
-// Z– (NC) analog input Z-axis from ADXL335 accelerometer
+// Xï¿½ (NC) analog input X-axis from ADXL335 accelerometer
+// Yï¿½ (NC) analog input Y-axis from ADXL335 accelerometer
+// Zï¿½ (NC) analog input Z-axis from ADXL335 accelerometer
 // Backlight + - Light, backlight connected to +3.3 V
-
 
 // **********HiLetgo ST7735 TFT and SDC (SDC not tested)*******************
 // ST7735
@@ -113,26 +112,26 @@
 #define _ST7735H_
 #include <stdint.h>
 // some flags for ST7735_InitR()
-enum initRFlags{
-  none,
-  INITR_GREENTAB,
-  INITR_REDTAB,
-  INITR_BLACKTAB
+enum initRFlags
+{
+    none,
+    INITR_GREENTAB,
+    INITR_REDTAB,
+    INITR_BLACKTAB
 };
 
-#define ST7735_TFTWIDTH  128
+#define ST7735_TFTWIDTH 128
 #define ST7735_TFTHEIGHT 160
 
-
 // Color definitions
-#define ST7735_BLACK   0x0000
-#define ST7735_BLUE    0xF800
-#define ST7735_RED     0x001F
-#define ST7735_GREEN   0x07E0
-#define ST7735_CYAN    0xFFE0
+#define ST7735_BLACK 0x0000
+#define ST7735_BLUE 0xF800
+#define ST7735_RED 0x001F
+#define ST7735_GREEN 0x07E0
+#define ST7735_CYAN 0xFFE0
 #define ST7735_MAGENTA 0xF81F
-#define ST7735_YELLOW  0x07FF
-#define ST7735_WHITE   0xFFFF
+#define ST7735_YELLOW 0x07FF
+#define ST7735_WHITE 0xFFFF
 
 //------------ST7735_InitB------------
 // Initialization for ST7735B screens.
@@ -140,13 +139,11 @@ enum initRFlags{
 // Output: none
 void ST7735_InitB(void);
 
-
 //------------ST7735_InitR------------
 // Initialization for ST7735R screens (green or red tabs).
 // Input: option one of the enumerated options depending on tabs
 // Output: none
 void ST7735_InitR(enum initRFlags option);
-
 
 //------------ST7735_DrawPixel------------
 // Color the pixel at the given coordinates with the given color.
@@ -172,7 +169,6 @@ void ST7735_DrawPixel(int16_t x, int16_t y, uint16_t color);
 // Output: none
 void ST7735_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 
-
 //------------ST7735_DrawFastHLine------------
 // Draw a horizontal line at the given coordinates with the given width and color.
 // A horizontal line is parallel to the shorter side of the rectangular display
@@ -184,14 +180,12 @@ void ST7735_DrawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
 // Output: none
 void ST7735_DrawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
 
-
 //------------ST7735_FillScreen------------
 // Fill the screen with the given color.
 // Requires 40,971 bytes of transmission
 // Input: color 16-bit color, which can be produced by ST7735_Color565()
 // Output: none
 void ST7735_FillScreen(uint16_t color);
-
 
 //------------ST7735_FillRect------------
 // Draw a filled rectangle at the given coordinates with the given width, height, and color.
@@ -236,8 +230,7 @@ uint16_t ST7735_Color565(uint8_t r, uint8_t g, uint8_t b);
 // green is unchanged.
 // Input: x 16-bit color in format B, G, R
 // Output: 16-bit color in format R, G, B
-uint16_t ST7735_SwapColor(uint16_t x) ;
-
+uint16_t ST7735_SwapColor(uint16_t x);
 
 //------------ST7735_DrawBitmap------------
 // Displays a 16-bit color BMP image.  A bitmap file that is created
@@ -302,9 +295,8 @@ void ST7735_DrawChar(int16_t x, int16_t y, char c, int16_t textColor, int16_t bg
 //        textColor 16-bit color of the characters
 // bgColor is Black and size is 1
 // Output: number of characters printed
-uint32_t ST7735_DrawString(uint16_t x, uint16_t y, char *pt, int16_t textColor);;
-
-
+uint32_t ST7735_DrawString(uint16_t x, uint16_t y, char *pt, int16_t textColor);
+;
 
 //********ST7735_SetCursor*****************
 // Move the cursor to the desired X- and Y-position.  The
@@ -325,13 +317,12 @@ void ST7735_SetCursor(uint32_t newX, uint32_t newY);
 void ST7735_OutUDec(uint32_t n);
 
 //------------ST7735_Message------------
-// String draw and number output.  
+// String draw and number output.
 // Input: device  0 is on top, 1 is on bottom
 //        line    row from top, 0 to 7 for each device
 //        pt      pointer to a null terminated string to be printed
 //        value   signed integer to be printed
-void ST7735_Message(uint32_t  d, uint32_t  l, char *pt, int32_t value);
-
+void ST7735_Message(uint32_t d, uint32_t l, char *pt, int32_t value);
 
 //-----------------------ST7735_OutUDec4-----------------------
 // Output a 32-bit number in unsigned 4-digit decimal format
@@ -356,15 +347,14 @@ void ST7735_OutUDec5(uint32_t n);
 // Requires 2 bytes of transmission
 // Input: m new rotation value (0 to 3)
 // Output: none
-void ST7735_SetRotation(uint8_t m) ;
-
+void ST7735_SetRotation(uint8_t m);
 
 //------------ST7735_InvertDisplay------------
 // Send the command to invert all of the colors.
 // Requires 1 byte of transmission
 // Input: i 0 to disable inversion; non-zero to enable inversion
 // Output: none
-void ST7735_InvertDisplay(int i) ;
+void ST7735_InvertDisplay(int i);
 
 // graphics routines
 // y coordinates 0 to 31 used for labels and messages
@@ -398,7 +388,7 @@ void ST7735_PlotLine(int32_t y);
 // Inputs: y1 is the y coordinate of the first point plotted
 //         y2 is the y coordinate of the second point plotted
 // Outputs: none
-void ST7735_PlotPoints(int32_t y1,int32_t y2);
+void ST7735_PlotPoints(int32_t y1, int32_t y2);
 
 // *************** ST7735_PlotBar ********************
 // Used in the voltage versus time bar, plot one bar at y
@@ -498,7 +488,5 @@ void ST7735_OutString(char *ptr);
 // Output: none
 // ********************************************************
 void ST7735_SetTextColor(uint16_t color);
-
-
 
 #endif

@@ -29,12 +29,12 @@
 #include <stdint.h>
 
 // standard ASCII symbols
-#define CR   0x0D
-#define LF   0x0A
-#define BS   0x08
-#define ESC  0x1B
-#define SP   0x20
-#define DEL  0x7F
+#define CR 0x0D
+#define LF 0x0A
+#define BS 0x08
+#define ESC 0x1B
+#define SP 0x20
+#define DEL 0x7F
 
 //------------UART1_Init------------
 // Initialize the UART1 for 115,200 baud rate (assuming 80 MHz clock),

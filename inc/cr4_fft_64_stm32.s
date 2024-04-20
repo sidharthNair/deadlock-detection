@@ -18,8 +18,8 @@
     PRESERVE8
 
 	AREA |.text|, CODE, READONLY, ALIGN=2
-		        
-	EXPORT cr4_fft_64_stm32      
+
+	EXPORT cr4_fft_64_stm32
 	EXTERN TableFFT
 
 
@@ -46,7 +46,7 @@ tmp2      	RN R14
 NPT EQU 64
 
 ;----------------------------- MACROS ----------------------------------------
-	 
+
 	 	MACRO
 	 	DEC  $reg
      	SUB  $reg,$reg,#1
@@ -101,7 +101,7 @@ NPT EQU 64
         MLA  $YYr, $Yr, $tmp2, $tmp   ; lYYr = sYr*sKr+sYi*sKi
         MEND
 
-; Four point complex Fast Fourier Transform		
+; Four point complex Fast Fourier Transform
 		MACRO
 		CXADDA4  $s
         ; (C,D) = (C+D, C-D)
@@ -128,7 +128,7 @@ NPT EQU 64
         ADD     Dr, Bi, Dr, ASR#(1+$s)
         MEND
 
-		
+
 		MACRO
 		BUTFLY4ZERO_OPT  $pIN,$offset, $pOUT
         LDRSH Ai, [$pIN, #2]
@@ -205,19 +205,19 @@ NPT EQU 64
 ;* Function Name  : cr4_fft_64_stm32
 ;* Description    : complex radix-4 64 points FFT
 ;* Input          : - R0 = pssOUT: Output array .
-;*                  - R1 = pssIN: Input array 
-;*                  - R2 = Nbin: =64 number of points, this optimized FFT function  
+;*                  - R1 = pssIN: Input array
+;*                  - R2 = Nbin: =64 number of points, this optimized FFT function
 ;*                    can only convert 64 points.
-;* Output         : None 
+;* Output         : None
 ;* Return         : None
 ;*******************************************************************************
 cr4_fft_64_stm32
 
         STMFD   SP!, {R4-R11, LR}
-        
+
         MOV cntrbitrev, #0
         MOV index,#0
-        
+
 preloop_v7
         ADD     pssIN2, pssIN, cntrbitrev, LSR#26 ;64-pts
         BUTFLY4ZERO_OPT pssIN2,Nbin,pssOUT
@@ -229,21 +229,21 @@ preloop_v7
 
         SUB     pssX, pssOUT, Nbin, LSL#2
         MOV     index, #16
-        MOVS    butternbr, Nbin, LSR#4   ;dual use of register 
-        
+        MOVS    butternbr, Nbin, LSR#4   ;dual use of register
+
 ;------------------------------------------------------------------------------
-;   The FFT coefficients table can be stored into Flash or RAM. 
-;   The following two lines of code allow selecting the method for coefficients 
-;   storage. 
+;   The FFT coefficients table can be stored into Flash or RAM.
+;   The following two lines of code allow selecting the method for coefficients
+;   storage.
 ;   In the case of choosing coefficients in RAM, you have to:
-;   1. Include the file table_fft.h, which is a part of the DSP library, 
+;   1. Include the file table_fft.h, which is a part of the DSP library,
 ;      in your main file.
-;   2. Decomment the line LDR.W pssK, =TableFFT and comment the line 
+;   2. Decomment the line LDR.W pssK, =TableFFT and comment the line
 ;      ADRL    pssK, TableFFT_V7
 ;   3. Comment all the TableFFT_V7 data.
 ;------------------------------------------------------------------------------
-        ADRL    pssK, TableFFT_V7    ; Coeff in Flash 
-        ;LDR.W pssK, =TableFFT      ; Coeff in RAM 
+        ADRL    pssK, TableFFT_V7    ; Coeff in Flash
+        ;LDR.W pssK, =TableFFT      ; Coeff in RAM
 
 ;................................
 passloop_v7
@@ -270,7 +270,7 @@ butterloop_v7
 ;................
         LDMFD   sp!, {pssX, butternbr}
         QUAD    index
-        MOVS    butternbr, butternbr, LSR#2    ; loop nbr /= radix 
+        MOVS    butternbr, butternbr, LSR#2    ; loop nbr /= radix
         BNE     passloop_v7
 ;................................
        LDMFD   SP!, {R4-R11, PC}
@@ -300,6 +300,6 @@ TableFFT_V7
         DCW 0xf721,0xd766, 0xd556,0x3d3f, 0xa73b,0x238e
         DCW 0x11a8,0xcac9, 0xcdb7,0x3ec5, 0xac61,0x187e
         DCW 0x2aaa,0xc2c1, 0xc695,0x3fb1, 0xb4be,0x0c7c
-        
+
        END
 ;******************* (C) COPYRIGHT 2009  STMicroelectronics *****END OF FILE****

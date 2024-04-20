@@ -30,7 +30,7 @@
 //          period in units (1/clockfreq)
 //          priority 0 (highest) to 7 (lowest)
 // Outputs: none
-void Timer3A_Init(void(*task)(void), uint32_t period, uint32_t priority);
+void Timer3A_Init(void (*task)(void), uint32_t period, uint32_t priority);
 
 void Timer3A_Stop(void);
 

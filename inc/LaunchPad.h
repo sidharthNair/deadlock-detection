@@ -23,7 +23,7 @@
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
  */
- #include <stdint.h>
+#include <stdint.h>
 
 // negative logic built-in SW 1 connected to PF4
 // negative logic built-in SW 2 connected to PF0
@@ -31,32 +31,31 @@
 // built-in blue LED connected to PF2
 // built-in green LED connected to PF1
 // Function parameter              LED(s)   PortF
-#define DARK      0x00   // dark     ---    0
-#define RED       0x01   // red      R--    0x02
-#define BLUE      0x02   // blue     --B    0x04
-#define GREEN     0x04   // green    -G-    0x08
-#define YELLOW    0x05   // yellow   RG-    0x0A
-#define SKYBLUE   0x06   // sky blue -GB    0x0C
-#define WHITE     0x07   // white    RGB    0x0E
-#define PINK      0x03   // pink     R-B    0x06
+#define DARK 0x00    // dark     ---    0
+#define RED 0x01     // red      R--    0x02
+#define BLUE 0x02    // blue     --B    0x04
+#define GREEN 0x04   // green    -G-    0x08
+#define YELLOW 0x05  // yellow   RG-    0x0A
+#define SKYBLUE 0x06 // sky blue -GB    0x0C
+#define WHITE 0x07   // white    RGB    0x0E
+#define PINK 0x03    // pink     R-B    0x06
 
 #define SW1 2
 #define SW2 1
-#define PF4             (*((volatile uint32_t *)0x40025040))
-#define PF3             (*((volatile uint32_t *)0x40025020))
-#define PF2             (*((volatile uint32_t *)0x40025010))
-#define PF1             (*((volatile uint32_t *)0x40025008))
-#define PF0             (*((volatile uint32_t *)0x40025004))
+#define PF4 (*((volatile uint32_t *)0x40025040))
+#define PF3 (*((volatile uint32_t *)0x40025020))
+#define PF2 (*((volatile uint32_t *)0x40025010))
+#define PF1 (*((volatile uint32_t *)0x40025008))
+#define PF0 (*((volatile uint32_t *)0x40025004))
 //------------LaunchPad_Init------------
 // Initialize Switch input and LED output
 // Input: none
 // Output: none
 void LaunchPad_Init(void);
 
-
 //------------LaunchPad_Input------------
-// Input from Switches, 
-// Convert hardware negative logic to software positive logic 
+// Input from Switches,
+// Convert hardware negative logic to software positive logic
 // Input: none
 // Output: 0x00 none
 //         0x01 SW2 pressed (from PF4)
@@ -66,7 +65,7 @@ uint8_t LaunchPad_Input(void);
 void LaunchPad_WaitForTouch(void);
 void LaunchPad_WaitForRelease(void);
 //------------LaunchPad__Output------------
-// Output to LaunchPad LEDs 
+// Output to LaunchPad LEDs
 // Positive logic hardware and positive logic software
 // Input: 0 off, bit0=red,bit1=blue,bit2=green
 // Output: none

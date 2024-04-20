@@ -23,18 +23,18 @@
  */
 #include <stdint.h>
 
-#define STCTRL          (*((volatile uint32_t *)0xE000E010))
-#define STRELOAD        (*((volatile uint32_t *)0xE000E014))
-#define STCURRENT       (*((volatile uint32_t *)0xE000E018))
-#define INTCTRL         (*((volatile uint32_t *)0xE000ED04))
-#define SYSPRI1         (*((volatile uint32_t *)0xE000ED18))
-#define SYSPRI2         (*((volatile uint32_t *)0xE000ED1C))
-#define SYSPRI3         (*((volatile uint32_t *)0xE000ED20))
-#define SYSHNDCTRL      (*((volatile uint32_t *)0xE000ED24))
-#define FAULTSTAT       (*((volatile uint32_t *)0xE000ED28))
-#define HFAULTSTAT      (*((volatile uint32_t *)0xE000ED2C))
-#define MMADDR          (*((volatile uint32_t *)0xE000ED34))
-#define FAULTADDR       (*((volatile uint32_t *)0xE000ED38))
+#define STCTRL (*((volatile uint32_t *)0xE000E010))
+#define STRELOAD (*((volatile uint32_t *)0xE000E014))
+#define STCURRENT (*((volatile uint32_t *)0xE000E018))
+#define INTCTRL (*((volatile uint32_t *)0xE000ED04))
+#define SYSPRI1 (*((volatile uint32_t *)0xE000ED18))
+#define SYSPRI2 (*((volatile uint32_t *)0xE000ED1C))
+#define SYSPRI3 (*((volatile uint32_t *)0xE000ED20))
+#define SYSHNDCTRL (*((volatile uint32_t *)0xE000ED24))
+#define FAULTSTAT (*((volatile uint32_t *)0xE000ED28))
+#define HFAULTSTAT (*((volatile uint32_t *)0xE000ED2C))
+#define MMADDR (*((volatile uint32_t *)0xE000ED34))
+#define FAULTADDR (*((volatile uint32_t *)0xE000ED38))
 
 // these functions are defined in the startup file
 
@@ -48,21 +48,21 @@ void DisableInterrupts(void); // Disable interrupts
 // clears the I bit in the PRIMASK to enable interrupts
 // Inputs: none
 // Outputs: none
-void EnableInterrupts(void);  // Enable interrupts
+void EnableInterrupts(void); // Enable interrupts
 
 //******StartCritical************
 // StartCritical saves a copy of PRIMASK and disables interrupts
 // Code between StartCritical and EndCritical is run atomically
 // Inputs: none
 // Outputs: copy of the PRIMASK (I bit) before StartCritical called
-long StartCritical(void);    
+long StartCritical(void);
 
 //******EndCritical************
 // EndCritical sets PRIMASK with value passed in
 // Code between StartCritical and EndCritical is run atomically
 // Inputs: PRIMASK (I bit) before StartCritical called
 // Outputs: none
-void EndCritical(long sr);    // restore I bit to previous value
+void EndCritical(long sr); // restore I bit to previous value
 
 //******WaitForInterrupt************
 // enters low power sleep mode waiting for interrupt (WFI instruction)
@@ -70,7 +70,7 @@ void EndCritical(long sr);    // restore I bit to previous value
 // returns after ISR has been run
 // Inputs: none
 // Outputs: none
-void WaitForInterrupt(void);  
+void WaitForInterrupt(void);
 
 void Clock_Delay(uint32_t ulCount);
 // ------------Clock_Delay1ms------------
@@ -78,6 +78,3 @@ void Clock_Delay(uint32_t ulCount);
 // Inputs: n, number of msec to wait
 // Outputs: none
 void Clock_Delay1ms(uint32_t n);
-
-
-

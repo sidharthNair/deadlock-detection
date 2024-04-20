@@ -16,7 +16,6 @@
  * the module should operate with any 2 wheel differential drive robot.
  ******************************************************************************/
 
-
 /* This example accompanies the book
    "Embedded Systems: Introduction to Robotics,
    Jonathan W. Valvano, ISBN: 9781074544300, copyright (c) 2019
@@ -53,18 +52,18 @@ policies, either expressed or implied, of the FreeBSD Project.
 #ifndef _ODOMETRY_H_
 #define _ODOMETRY_H_
 #include <stdint.h>
-#define N 360     ///< counts/rotation, just one edge of one tach
-#define D 70000   ///< wheel diameter 0.0001cm
-#define W 140000  ///< wheel base 0.0001 cm
-#define C 219910  ///< wheel circumference 0.0001cm
-#define PI 8192   ///< representation of pi radians
-#define TWOPI (2*PI) ///< 6.28...
-#define NORTH 4096   ///< direction that is north
-#define EAST  0      ///< direction that is east
-#define SOUTH -4096  ///< direction that is south
-#define WEST -8192   ///< direction that is west
-#define XYTOLERANCE 10000      ///< tolerance in x,y goal seeking, 1 cm
-#define THETATOLERANCE (4096/90)  ///< tolerance in angle goal seeking, 1 deg
+#define N 360                      ///< counts/rotation, just one edge of one tach
+#define D 70000                    ///< wheel diameter 0.0001cm
+#define W 140000                   ///< wheel base 0.0001 cm
+#define C 219910                   ///< wheel circumference 0.0001cm
+#define PI 8192                    ///< representation of pi radians
+#define TWOPI (2 * PI)             ///< 6.28...
+#define NORTH 4096                 ///< direction that is north
+#define EAST 0                     ///< direction that is east
+#define SOUTH -4096                ///< direction that is south
+#define WEST -8192                 ///< direction that is west
+#define XYTOLERANCE 10000          ///< tolerance in x,y goal seeking, 1 cm
+#define THETATOLERANCE (4096 / 90) ///< tolerance in angle goal seeking, 1 deg
 /**
  * Initialize odometry module by specifying the initial position/angle of the robot.
  * Angles range from (-pi to +pi) signified by -8192 to +8191.
@@ -113,14 +112,13 @@ int32_t Odometry_GetX(void);
  */
 int32_t Odometry_GetY(void);
 
- /**
-  * Fetch value of the current theta angle of the robot
-  * @param none
-  * @return position units of 2*pi/16384 radians
-  * @brief  Get theta angle
-  */
+/**
+ * Fetch value of the current theta angle of the robot
+ * @param none
+ * @return position units of 2*pi/16384 radians
+ * @brief  Get theta angle
+ */
 int32_t Odometry_GetAngle(void);
-
 
 /**
  * Get the current robot position.
@@ -134,22 +132,20 @@ int32_t Odometry_GetAngle(void);
  */
 void Odometry_Get(int32_t *x, int32_t *y, int32_t *theta);
 
-
 /**
  * \enum RobotState
  * These are possible robot motions for odometry system
  * @brief robot state
  */
-enum RobotState{
-  ISSTOPPED, ///< stopped
-  GOFORWARD, ///< going forward
-  HARDRIGHT, ///< turning hard right
-  HARDLEFT,  ///< turning hard left
-  SOFTRIGHT, ///< turning soft right
-  SOFTLEFT   ///< turning soft left
+enum RobotState
+{
+    ISSTOPPED, ///< stopped
+    GOFORWARD, ///< going forward
+    HARDRIGHT, ///< turning hard right
+    HARDLEFT,  ///< turning hard left
+    SOFTRIGHT, ///< turning soft right
+    SOFTLEFT   ///< turning soft left
 };
-
-
 
 /**
  * Take wheel counts and update position
@@ -225,7 +221,6 @@ uint32_t ForwardUntilY(int32_t desiredY);
  */
 uint32_t SoftLeftUntilTh(int32_t desiredTh);
 
-
 /**
  * Odometry command to Go straight until X goal has been reached.
  * This routine will start the command, but return immediately
@@ -277,19 +272,20 @@ void SoftLeftUntilThStart(int32_t thedesiredTh);
  * @return true if done or error, false if still running ok
  * @brief check status of soft left until theta command
  */
-uint32_t  ForwardUntilThStatus(void);
+uint32_t ForwardUntilThStatus(void);
 
 /**
  * \enum OdometryCommand
  * These are possible odometry commands
  * @brief Odometry Commands
  */
-enum OdometryCommand{
-  STOP,       ///< stop robot
-  FORWARDTOX, ///< move forward straight until X is matched within tolerance XYTOLERANCE
-  FORWARDTOY, ///< move forward straight until Y is matched within tolerance XYTOLERANCE
-  LEFTTOTH,   ///< turn left until theta is matched within tolerance THETATOLERANCE
-  RIGHTTOTH   ///< turn right until theta is matched within tolerance THETATOLERANCE
+enum OdometryCommand
+{
+    STOP,       ///< stop robot
+    FORWARDTOX, ///< move forward straight until X is matched within tolerance XYTOLERANCE
+    FORWARDTOY, ///< move forward straight until Y is matched within tolerance XYTOLERANCE
+    LEFTTOTH,   ///< turn left until theta is matched within tolerance THETATOLERANCE
+    RIGHTTOTH   ///< turn right until theta is matched within tolerance THETATOLERANCE
 };
 
 /**

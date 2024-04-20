@@ -52,11 +52,8 @@ policies, either expressed or implied, of the FreeBSD Project.
 // ground connected to all GP2Y0A21YK0F grounds and microcontroller ground
 // ground connected to negative side of all 10 uF capacitors
 
-
-
 #ifndef IRDISTANCE_H_
 #define IRDISTANCE_H_
-
 
 /**
  * Convert ADC sample into distance for the GP2Y0A21YK0F
@@ -68,6 +65,5 @@ policies, either expressed or implied, of the FreeBSD Project.
  * @brief  Convert infrared distance measurement
  */
 int32_t IRDistance_Convert(int32_t adcSample, uint32_t sensor);
-
 
 #endif /* IRDISTANCE_H_ */

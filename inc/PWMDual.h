@@ -22,10 +22,9 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
-
 // period is 16-bit number of PWM clock cycles in one period (3<=period)
 // PWM clock rate = processor clock rate/SYSCTL_RCC_PWMDIV
-//                = BusClock/64 
+//                = BusClock/64
 //                = 3.2 MHz/64 = 50 kHz (in this example)
 void PWM0Dual_Init(uint16_t period);
 

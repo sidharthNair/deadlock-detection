@@ -77,7 +77,6 @@ typedef uint8_t fuz_t;
  */
 fuz_t not(fuz_t u1);
 
-
 /**
  * Fuzzy logic or
  * @param u1 is a fuzzy variable
@@ -85,7 +84,7 @@ fuz_t not(fuz_t u1);
  * @return maximum of u1 u2
  * @brief  Fuzzy or
  */
-fuz_t or(fuz_t u1,fuz_t u2);
+fuz_t or (fuz_t u1, fuz_t u2);
 
 /**
  * Fuzzy logic or
@@ -95,7 +94,7 @@ fuz_t or(fuz_t u1,fuz_t u2);
  * @return maximum of u1 u2 u3
  * @brief  Fuzzy or
  */
-fuz_t or3(fuz_t u1,fuz_t u2,fuz_t u3);
+fuz_t or3(fuz_t u1, fuz_t u2, fuz_t u3);
 
 /**
  * Fuzzy logic and
@@ -104,7 +103,7 @@ fuz_t or3(fuz_t u1,fuz_t u2,fuz_t u3);
  * @return minimum of u1 u2
  * @brief  Fuzzy and
  */
-fuz_t and(fuz_t u1,fuz_t u2);
+fuz_t and (fuz_t u1, fuz_t u2);
 
 /**
  * Fuzzy logic and
@@ -114,7 +113,7 @@ fuz_t and(fuz_t u1,fuz_t u2);
  * @return minimum of u1 u2 u3
  * @brief  Fuzzy and
  */
-fuz_t and3(fuz_t u1,fuz_t u2,fuz_t u3);
+fuz_t and3(fuz_t u1, fuz_t u2, fuz_t u3);
 
 /**
  * 32-bit unsigned minimum
@@ -123,7 +122,7 @@ fuz_t and3(fuz_t u1,fuz_t u2,fuz_t u3);
  * @return minimum of u1 u2
  * @brief  minimum
  */
-uint32_t umin32(uint32_t u1,uint32_t u2);
+uint32_t umin32(uint32_t u1, uint32_t u2);
 
 /**
  * 32-bit signed minimum
@@ -133,7 +132,7 @@ uint32_t umin32(uint32_t u1,uint32_t u2);
  * @return minimum of n1 n2 n3
  * @brief  minimum
  */
-int32_t min32(int32_t n1,int32_t n2,int32_t n3);
+int32_t min32(int32_t n1, int32_t n2, int32_t n3);
 
 /**
  * Fuzzy logic fuzzification, converting crisp input to fuzzy variable.<br>
@@ -210,7 +209,7 @@ fuz_t CenterFuzzification(int32_t crisp, const int32_t MIN, const int32_t CENTER
  * @brief  Fuzzification
  */
 fuz_t LeftRightFuzzification(int32_t crisp, const int32_t MIN,
-    const int32_t LEFT, const int32_t RIGHT, const int32_t MAX);
+                             const int32_t LEFT, const int32_t RIGHT, const int32_t MAX);
 
 /**
  * Fuzzy logic fuzzification, converting crisp input to fuzzy variable.<br>
@@ -243,4 +242,3 @@ fuz_t MaxFuzzification(int32_t crisp, const int32_t MIN, const int32_t MAX);
  * @brief  convert fuzzy variable to ASCII character
  */
 char FuzzyChar(fuz_t fuz);
-

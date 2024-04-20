@@ -43,19 +43,19 @@
 // If it turns out that these pins are needed by another
 // BoosterPack, such as the Bluetooth one, then the
 // following definitions will need to be modified.
-#define PROFILE0  (*((volatile uint32_t *)0x40024008))  /* PE1 */
+#define PROFILE0 (*((volatile uint32_t *)0x40024008)) /* PE1 */
 #define PROFILE0_BIT 0x02
-#define PROFILE1  (*((volatile uint32_t *)0x40024010))  /* PE2 */
+#define PROFILE1 (*((volatile uint32_t *)0x40024010)) /* PE2 */
 #define PROFILE1_BIT 0x04
-#define PROFILE2  (*((volatile uint32_t *)0x40024020))  /* PE3 */
+#define PROFILE2 (*((volatile uint32_t *)0x40024020)) /* PE3 */
 #define PROFILE2_BIT 0x08
-#define PROFILE3  (*((volatile uint32_t *)0x40025008))  /* PF1 */
+#define PROFILE3 (*((volatile uint32_t *)0x40025008)) /* PF1 */
 #define PROFILE3_BIT 0x02
-#define PROFILE4  (*((volatile uint32_t *)0x40024004))  /* PE0 */
+#define PROFILE4 (*((volatile uint32_t *)0x40024004)) /* PE0 */
 #define PROFILE4_BIT 0x01
-#define PROFILE5  (*((volatile uint32_t *)0x40006080))  /* PC5 */
+#define PROFILE5 (*((volatile uint32_t *)0x40006080)) /* PC5 */
 #define PROFILE5_BIT 0x20
-#define PROFILE6  (*((volatile uint32_t *)0x40006100))  /* PC6 */
+#define PROFILE6 (*((volatile uint32_t *)0x40006100)) /* PC6 */
 #define PROFILE6_BIT 0x40
 
 // ------------Profile_Init------------

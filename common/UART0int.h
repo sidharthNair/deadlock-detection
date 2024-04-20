@@ -1,9 +1,9 @@
 /**
  * @file      UART0int.h
  * @brief     Interrupt driven serial I/O on UART0.
- * @details   Runs on LM4F120/TM4C123. 
+ * @details   Runs on LM4F120/TM4C123.
  * Uses UART0 to implement bidirectional data transfer to and from a
- * computer running PuTTy.  
+ * computer running PuTTy.
  * Interrupts, semaphores and FIFOs  * are used.
  * @version   V1.0
  * @author    Valvano
@@ -41,12 +41,12 @@
 /**
  * \brief standard ASCII symbols
  */
-#define CR   0x0D
-#define LF   0x0A
-#define BS   0x08
-#define ESC  0x1B
-#define SP   0x20
-#define DEL  0x7F
+#define CR 0x0D
+#define LF 0x0A
+#define BS 0x08
+#define ESC 0x1B
+#define SP 0x20
+#define DEL 0x7F
 
 /**
  * @details  Initialize the UART using interrupts
@@ -127,7 +127,7 @@ void UART_OutUDec(uint32_t n);
  * @return none
  * @brief  Number serial output.
  */
- void UART_OutUDec3(unsigned long n);
+void UART_OutUDec3(unsigned long n);
 
 /**
  * @details  Output a 32-bit number in unsigned decimal format
@@ -179,7 +179,7 @@ void UART_OutUHex(uint32_t number);
  If a backspace is inputted, the string is modified and the backspace is echoed<br>
  Terminates the string with a null character<br>
  -- Modified by Agustinus Darmawan + Mingjie Qiu --
- * @param  bufPt pointer to empty buffer, 
+ * @param  bufPt pointer to empty buffer,
  * @param  max size of buffer
  * @return none
  * @brief  UART input ASCII string.
@@ -194,7 +194,7 @@ void UART_InString(char *bufPt, uint16_t max);
   -22100 to "-221.00"<br>
   -102 to "  -1.02" <br>
      31 to "   0.31" <br>
-  error     " ***.**" <br>  
+  error     " ***.**" <br>
  * @return none
  * @brief  Fixed-point output.
  */

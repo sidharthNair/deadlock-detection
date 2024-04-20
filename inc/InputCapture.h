@@ -30,4 +30,4 @@
 // acknowledges the interrupt and calls a user function.
 // Input: task is a pointer to a user function
 // Output: none
-void TimerCapture_Init(void(*task)(void));
+void TimerCapture_Init(void (*task)(void));

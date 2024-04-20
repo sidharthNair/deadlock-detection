@@ -107,14 +107,14 @@ policies, either expressed or implied, of the FreeBSD Project.
  *  SCL -------- PB2 | SCL -------- PA6 | SCL -------- PE4 | SCL -------- PD0
  *  SDA -------- PB3 | SDA -------- PA7 | SDA -------- PE5 | SDA -------- PD1
  */
-#define SSD1306_BLACK               0 ///< Draw 'off' pixels
-#define SSD1306_WHITE               1 ///< Draw 'on' pixels
-#define SSD1306_INVERSE             2 ///< Invert pixels
-#define SSD1306_EXTERNALVCC         0x01 ///< External display voltage source
-#define SSD1306_SWITCHCAPVCC        0x02 ///< Gen. display voltage from 3.3V
+#define SSD1306_BLACK 0           ///< Draw 'off' pixels
+#define SSD1306_WHITE 1           ///< Draw 'on' pixels
+#define SSD1306_INVERSE 2         ///< Invert pixels
+#define SSD1306_EXTERNALVCC 0x01  ///< External display voltage source
+#define SSD1306_SWITCHCAPVCC 0x02 ///< Gen. display voltage from 3.3V
 
-#define true 1   ///< Function successive
-#define false 0  ///< Function failed
+#define true 1  ///< Function successive
+#define false 0 ///< Function failed
 
 /*!
     @brief  II2 driver for SSD1306 OLED display
@@ -133,7 +133,7 @@ policies, either expressed or implied, of the FreeBSD Project.
  * @return success or failure
  * @note for EE319K use vccst=SSD1306_SWITCHCAPVCC
  */
-int  SSD1306_Init(int vccst);
+int SSD1306_Init(int vccst);
 
 /**
  * Copy all of RAM image to OLED. Use this command with SSD1306_ClearBuffer, and all Draw functions
@@ -280,7 +280,7 @@ void SSD1306_stopscroll(void);
     @note   Reads from buffer contents; may not reflect current contents of
             screen if SSD1306_DisplayBuffer() has not been called.
 */
-int  SSD1306_GetPixel(int16_t x, int16_t y);
+int SSD1306_GetPixel(int16_t x, int16_t y);
 
 /*!
     @brief  Get base address of display buffer for direct reading or writing.
@@ -319,8 +319,8 @@ void SSD1306_DrawChar(int16_t x, int16_t y, char letter, uint16_t color);
     @return None (void).
     @note   Changes buffer contents only, no immediate effect on display.
             Follow up with a call to SSD1306_DisplayBuffer(), or with other
-            graphics commands as needed by one's own application.      
-    @image html SSD1306DrawString.png width=300px            
+            graphics commands as needed by one's own application.
+    @image html SSD1306DrawString.png width=300px
 
 */
 void SSD1306_DrawString(int16_t x, int16_t y, char *pt, uint16_t color);
