@@ -70,20 +70,18 @@ int realmain(void)
     return 0;
 }
 
-Sema4Type lock1;
-Sema4Type lock2;
+Sema4Type FirstArrived;
+Sema4Type SecondArrived;
 
 void BasicThread1(void)
 {
     while (1)
     {
-        OS_bWait(&lock1);
-        OS_bWait(&lock2);
-        PD1 ^= 0x02;
+        PD2 ^= 0x04;
+        OS_bWait(&SecondArrived);
+        OS_bSignal(&FirstArrived);
         OS_Sleep(1000);
-        PD1 ^= 0x02;
-        OS_bSignal(&lock2);
-        OS_bSignal(&lock1);
+        PD2 ^= 0x04;
     }
 }
 
@@ -91,13 +89,11 @@ void BasicThread2(void)
 {
     while (1)
     {
-        OS_bWait(&lock1);
-        OS_bWait(&lock2);
-        PD2 ^= 0x04;
+        PD1 ^= 0x02;
+        OS_bWait(&FirstArrived);
+        OS_bSignal(&SecondArrived);
         OS_Sleep(1000);
-        PD2 ^= 0x04;
-        OS_bSignal(&lock2);
-        OS_bSignal(&lock1);
+        PD1 ^= 0x02;
     }
 }
 
@@ -106,8 +102,8 @@ int TestmainBasic(void)
     OS_Init();
     PortD_Init();
 
-    OS_InitSemaphore(&lock1, 1);
-    OS_InitSemaphore(&lock2, 1);
+    OS_InitSemaphore(&FirstArrived, 0);
+    OS_InitSemaphore(&SecondArrived, 0);
 
     NumCreated = 0;
     NumCreated += OS_AddThread(&BasicThread1, 128, 3);
