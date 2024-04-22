@@ -41,6 +41,8 @@ void PortD_Init(void)
     ; // disable analog functionality on PD
 }
 
+extern uint32_t num_killed;
+
 //------------------Idle Task--------------------------------
 // foreground thread, runs when nothing else does
 // never blocks, never sleeps, never dies
@@ -51,6 +53,10 @@ void Idle(void)
     IdleCount = 0;
     while (1)
     {
+        if (IdleCount % 1024 == 0)
+        {
+            ST7735_Message(1, 7, "num_killed: ", num_killed);
+        }
         IdleCount++;
         PD0 ^= 0x01;
         WaitForInterrupt();
@@ -107,6 +113,56 @@ int TestmainBasic(void)
     NumCreated = 0;
     NumCreated += OS_AddThread(&BasicThread1, 128, 3);
     NumCreated += OS_AddThread(&BasicThread2, 128, 3);
+    NumCreated += OS_AddThread(&Idle, 128, 5);
+
+    OS_Launch(TIME_2MS);
+    return 0;
+}
+
+#define NUM_PHILOSOPHERS 5
+
+Lock forks[NUM_PHILOSOPHERS];
+
+void DiningPhilosopher()
+{
+    int philosopher_id = OS_Id();
+    int left_fork = philosopher_id;
+    int right_fork = (philosopher_id + 1) % NUM_PHILOSOPHERS;
+
+    while (1)
+    {
+        ST7735_Message(0, philosopher_id, "acquiring left", philosopher_id);
+        OS_LockAcquire(&forks[left_fork]);
+        OS_Sleep(500);
+        ST7735_Message(0, philosopher_id, "acquiring right", philosopher_id);
+        OS_LockAcquire(&forks[right_fork]);
+
+        // Philosopher eats...
+        OS_Sleep(500);
+
+        // Philosopher releases both forks
+        ST7735_Message(0, philosopher_id, "releasing left", philosopher_id);
+        OS_LockRelease(&forks[left_fork]);
+        OS_Sleep(500);
+        ST7735_Message(0, philosopher_id, "releasing right", philosopher_id);
+        OS_LockRelease(&forks[right_fork]);
+
+        // Philosopher thinks...
+    }
+}
+
+int TestmainDining()
+{
+    OS_Init();
+    PortD_Init();
+
+    NumCreated = 0;
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++)
+    {
+        OS_InitLock(&forks[i]);
+        NumCreated += OS_AddThread(&DiningPhilosopher, 128, 3);
+    }
+
     NumCreated += OS_AddThread(&Idle, 128, 5);
 
     OS_Launch(TIME_2MS);
@@ -293,5 +349,5 @@ int TestMainBankersSimple(void)
 //*******************Trampoline for selecting main to execute**********
 int main(void)
 {
-    TestmainBasic();
+    TestmainDining();
 }

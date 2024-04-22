@@ -83,6 +83,7 @@ volatile uint32_t IdleCountRef = 0;
 
 // TCBs
 uint32_t num_created = 0;
+uint32_t num_killed = 0;
 TCB *RunPt = NULL;
 TCB *NextPt = NULL;
 TCB tcb_pool[MAX_THREADS];
@@ -968,6 +969,7 @@ void OS_Kill(void)
     {
         PriorityPts[RunPt->priority] = PriorityPts[RunPt->priority]->prev;
     }
+    num_killed++;
     OSCRITICAL_EXIT();
     OS_Suspend();
 };
@@ -1013,6 +1015,7 @@ void OS_Kill_Thread(uint32_t tid)
     {
         thread->SemaPt->BlockedPts[thread->priority] = tcb_list_remove(thread);
     }
+    num_killed++;
     OSCRITICAL_EXIT();
     OS_Suspend();
 };
