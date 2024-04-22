@@ -23,10 +23,6 @@
 #define TIME_500US (TIME_1MS / 2)
 #define TIME_250US (TIME_1MS / 4)
 
-// 0 = spinlock semaphores, 1 = blocking semaphores
-#define BLOCKING 1
-// 0 = round robin scheduler, 1 = priority scheduler
-#define PRIORITY 1
 // Number of priority levels
 #define PRIORITY_LEVELS 7
 
@@ -35,6 +31,8 @@
 #define STACK_SIZE 128
 
 #define MAX_PROCESSES 10
+
+#define DEADLOCK_DETECTION 1
 
 // Forward definitions
 struct TCB;
@@ -48,12 +46,20 @@ typedef struct PCB PCB;
  */
 struct Sema4
 {
-    int32_t Value; // >0 means free, otherwise means busy
-#if (PRIORITY)
-    TCB *BlockedPts[PRIORITY_LEVELS]; // List for each priority level of blocked threads
-#endif
+    int32_t Value;                    // >0 means free, otherwise means busy
+    TCB *BlockedPts[PRIORITY_LEVELS]; // List for each priority level of blocked threads#
 };
 typedef struct Sema4 Sema4Type;
+
+struct Lock
+{
+    Sema4Type sema; // Semaphore for locking mechanism
+    TCB *holder;    // Pointer to the thread currently holding the lock
+#if (DEADLOCK_DETECTION)
+    struct Lock *next; // Linked list of locks to maintain which locks a particular thread holds
+#endif
+};
+typedef struct Lock Lock;
 
 // Thread status
 enum Status
@@ -75,6 +81,12 @@ struct TCB
     uint32_t priority;
     uint32_t sleepCount;
     Sema4Type *SemaPt;
+#if (DEADLOCK_DETECTION)
+    uint32_t lockStart;
+    Lock *LockPt;
+    Lock *acquired;
+    uint8_t visited;
+#endif
     enum Status status;
 };
 
@@ -139,6 +151,23 @@ void OS_bWait(Sema4Type *semaPt);
 // input:  pointer to a binary semaphore
 // output: none
 void OS_bSignal(Sema4Type *semaPt);
+
+// Initializes a Lock instance
+// Input: Pointer to a Lock instance
+// Output: None
+void OS_InitLock(Lock *lock);
+
+// Acquires the lock
+// Input: Pointer to a Lock instance
+// Output: None
+void OS_LockAcquire(Lock *lock);
+
+// Releases the lock
+// Input: Pointer to a Lock instance
+// Output:
+//   - None if the lock is released successfully
+//   - Error code if the thread doesn't hold the lock
+int OS_LockRelease(Lock *lock);
 
 //******** OS_AddThread ***************
 // add a foregound thread to the scheduler
@@ -221,6 +250,12 @@ void OS_Sleep(uint32_t sleepTime);
 // input:  none
 // output: none
 void OS_Kill(void);
+
+// ******** OS_Kill_Thread ************
+// kill a thread, release its TCB and stack
+// input:  thread id to kill
+// output: none
+void OS_Kill_Thread(uint32_t tid);
 
 // ******** OS_Suspend ************
 // suspend execution of currently running thread

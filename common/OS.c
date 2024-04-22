@@ -12,6 +12,7 @@
 #include "../inc/CortexM.h"
 #include "../inc/PLL.h"
 #include "../inc/LaunchPad.h"
+#include "../inc/Timer0A.h"
 #include "../inc/Timer1A.h"
 #include "../inc/Timer2A.h"
 #include "../inc/Timer3A.h"
@@ -178,6 +179,64 @@ void Timer2Calibrate()
 }
 void Timer2Dummy() {}
 
+#if (DEADLOCK_DETECTION)
+int CheckForDeadlocks(TCB *thread)
+{
+    printf("checking for deadlocks starting from thread %d\r\n", thread->id);
+    for (uint32_t tid = 0; tid < MAX_THREADS; tid++)
+    {
+        tcb_pool[tid].visited = 0;
+    }
+
+    TCB *curr = thread;
+    int found_cycle = 0;
+    while (curr->status == BLOCKED &&
+           curr->LockPt != NULL)
+    {
+        curr->visited = 1;
+        curr = curr->LockPt->holder;
+        if (curr->visited)
+        {
+            found_cycle = 1;
+            break;
+        }
+    }
+
+    if (found_cycle)
+    {
+        printf("detected cycle: ");
+        thread = curr;
+        do
+        {
+            printf("%d -> ", curr->id);
+            OS_Kill_Thread(curr->id);
+            curr = curr->LockPt->holder;
+        } while (curr != thread);
+        printf("%d\r\n", curr->id);
+        printf("killed all threads in cycle\r\n");
+    }
+
+    return found_cycle;
+}
+
+void DeadlockTask()
+{
+    for (uint32_t tid = 0; tid < MAX_THREADS; tid++)
+    {
+        if (tcb_pool[tid].status == BLOCKED &&
+            tcb_pool[tid].LockPt != NULL &&
+            OS_TimeDifference(tcb_pool[tid].lockStart, OS_MsTime()) > (TIME_1MS * 3000))
+        {
+            // Thread has been waiting for a lock for over 3 seconds -- check for cycle
+            if (CheckForDeadlocks(&tcb_pool[tid]))
+            {
+                break;
+            }
+        }
+    }
+}
+#endif
+
 /**
  * @details  Initialize operating system, disable interrupts until OS_Launch.
  * Initialize OS controlled I/O: serial, ADC, systick, LaunchPad I/O and timers.
@@ -199,14 +258,17 @@ void OS_Init(void)
     UART_Init();
     ST7735_InitR(INITR_REDTAB);
     Heap_Init();
+
+#if (DEADLOCK_DETECTION)
+    Timer0A_Init(&DeadlockTask, (TIME_1MS * 3000), 7);
+#endif
+
     DisableInterrupts();
 
-#if (PRIORITY)
     for (uint32_t i = 0; i < PRIORITY_LEVELS; i++)
     {
         PriorityPts[i] = NULL;
     }
-#endif
 };
 
 // ******** OS_InitSemaphore ************
@@ -216,12 +278,10 @@ void OS_Init(void)
 void OS_InitSemaphore(Sema4Type *semaPt, int32_t value)
 {
     semaPt->Value = value;
-#if (PRIORITY)
     for (uint32_t i = 0; i < PRIORITY_LEVELS; i++)
     {
         semaPt->BlockedPts[i] = NULL;
     }
-#endif
 };
 
 // ******** OS_Wait ************
@@ -233,14 +293,12 @@ void OS_InitSemaphore(Sema4Type *semaPt, int32_t value)
 void OS_Wait(Sema4Type *semaPt)
 {
     int32_t sr;
-#if (BLOCKING)
     OSCRITICAL_ENTER();
     semaPt->Value -= 1;
     if (semaPt->Value < 0)
     {
         RunPt->status = BLOCKED;
         RunPt->SemaPt = semaPt;
-#if (PRIORITY)
         // Remove thread from priority lists
         PriorityPts[RunPt->priority] = tcb_list_remove(RunPt);
         if (PriorityPts[RunPt->priority] != NULL)
@@ -249,23 +307,11 @@ void OS_Wait(Sema4Type *semaPt)
         }
         // Add thread to semaphore blocked lists
         semaPt->BlockedPts[RunPt->priority] = tcb_list_add(semaPt->BlockedPts[RunPt->priority], RunPt);
-#endif
         OSCRITICAL_EXIT();
         OS_Suspend(); // Force context switch
         OSCRITICAL_ENTER();
     }
     OSCRITICAL_EXIT();
-#else
-    DisableInterrupts();
-    while (semaPt->Value <= 0)
-    {
-        EnableInterrupts();
-        OS_Suspend(); // Force context switch
-        DisableInterrupts();
-    }
-    semaPt->Value -= 1;
-    EnableInterrupts();
-#endif
 };
 
 // ******** OS_Signal ************
@@ -277,12 +323,10 @@ void OS_Wait(Sema4Type *semaPt)
 void OS_Signal(Sema4Type *semaPt)
 {
     int32_t sr;
-#if (BLOCKING)
     OSCRITICAL_ENTER();
     semaPt->Value += 1;
     if (semaPt->Value <= 0)
     {
-#if (PRIORITY)
         uint32_t priority;
         for (priority = 0; priority < PRIORITY_LEVELS; priority++)
         {
@@ -302,33 +346,8 @@ void OS_Signal(Sema4Type *semaPt)
                 break;
             }
         }
-
-        // if (priority < RunPt->priority) {
-        //   EndCritical(status);
-        //   OS_Suspend(); // force context switch if higher priority
-        //   status = StartCritical();
-        // }
-#else
-        // Find the thread thats blocked on this semaphore and unblock it
-        TCB *curr = RunPt;
-        do
-        {
-            if (curr->status == BLOCKED && curr->SemaPt == semaPt)
-            {
-                curr->status = ACTIVE;
-                curr->SemaPt = NULL;
-                break;
-            }
-            curr = curr->next;
-        } while (curr != RunPt);
-#endif
     }
     OSCRITICAL_EXIT();
-#else
-    OSCRITICAL_ENTER();
-    semaPt->Value += 1;
-    OSCRITICAL_EXIT();
-#endif
 };
 
 void OS_SignalAll(Sema4Type *semaPt)
@@ -349,19 +368,7 @@ void OS_SignalAll(Sema4Type *semaPt)
 // output: none
 void OS_bWait(Sema4Type *semaPt)
 {
-#if (BLOCKING)
     OS_Wait(semaPt);
-#else
-    DisableInterrupts();
-    while (semaPt->Value == 0)
-    {
-        EnableInterrupts();
-        OS_Suspend(); // Force context switch
-        DisableInterrupts();
-    }
-    semaPt->Value = 0;
-    EnableInterrupts();
-#endif
 };
 
 // ******** OS_bSignal ************
@@ -371,14 +378,106 @@ void OS_bWait(Sema4Type *semaPt)
 // output: none
 void OS_bSignal(Sema4Type *semaPt)
 {
-#if (BLOCKING)
     OS_Signal(semaPt);
-#else
-    OSCRITICAL_ENTER();
-    semaPt->Value = 1;
-    OSCRITICAL_EXIT();
-#endif
 };
+
+#if (DEADLOCK_DETECTION)
+// Adds an element to the list and returns the head
+Lock *lock_list_append(Lock *head, Lock *elem)
+{
+    if (head == NULL)
+    {
+        return elem;
+    }
+
+    Lock *curr = head;
+    while (curr->next != NULL)
+    {
+        curr = curr->next;
+    }
+    curr->next = elem;
+    elem->next = NULL;
+
+    return head;
+}
+
+// Removes an element from the list and returns the new head
+Lock *lock_list_remove(Lock *head, Lock *elem)
+{
+    if (head == NULL)
+    {
+        return NULL;
+    }
+
+    if (elem == NULL)
+    {
+        return head;
+    }
+
+    if (head == elem)
+    {
+        return head->next;
+    }
+
+    Lock *curr = head;
+    Lock *prev = head;
+    while (curr != NULL || curr != elem)
+    {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (curr != NULL)
+    {
+        prev->next = curr->next;
+        curr->next = NULL;
+    }
+
+    return head;
+}
+#endif
+
+// Initializes a Lock instance
+void OS_InitLock(Lock *lock)
+{
+    OS_InitSemaphore(&(lock->sema), 1);
+    lock->holder = NULL;
+    lock->next = NULL;
+}
+
+// Acquires the lock
+void OS_LockAcquire(Lock *lock)
+{
+#if (DEADLOCK_DETECTION)
+    RunPt->lockStart = OS_Time();
+    RunPt->LockPt = lock;
+#endif
+    OS_Wait(&(lock->sema));
+    lock->holder = RunPt;
+
+#if (DEADLOCK_DETECTION)
+    RunPt->lockStart = 0;
+    RunPt->LockPt = NULL;
+    RunPt->acquired = lock_list_append(RunPt->acquired, lock);
+#endif
+}
+
+// Releases the lock
+int OS_LockRelease(Lock *lock)
+{
+    if (lock->holder != RunPt)
+    {
+        return 1;
+    }
+
+    lock->holder = NULL;
+
+#if (DEADLOCK_DETECTION)
+    RunPt->acquired = lock_list_remove(RunPt->acquired, lock);
+#endif
+    OS_Signal(&(lock->sema));
+    return 0;
+}
 
 //******** OS_AddThread ***************
 // add a foregound thread to the scheduler
@@ -424,6 +523,12 @@ int OS_AddThread(void (*task)(void),
         tcb_pool[tid].process = RunPt->process;
         tcb_pool[tid].process->num_threads++;
     }
+#if (DEADLOCK_DETECTION)
+    tcb_pool[tid].lockStart = 0;
+    tcb_pool[tid].LockPt = NULL;
+    tcb_pool[tid].acquired = NULL;
+    tcb_pool[tid].visited = 0;
+#endif
     stack_pool[tid][STACK_SIZE - 1] = 0x01000000;                                                                              // PSR (thumb bit = 1)
     stack_pool[tid][STACK_SIZE - 2] = (uint32_t)task;                                                                          // PC
     stack_pool[tid][STACK_SIZE - 3] = (uint32_t)&OS_Kill;                                                                      // R14
@@ -441,17 +546,12 @@ int OS_AddThread(void (*task)(void),
     stack_pool[tid][STACK_SIZE - 15] = 0x05050505;                                                                             // R5
     stack_pool[tid][STACK_SIZE - 16] = 0x04040404;                                                                             // R4
 
-#if (PRIORITY)
     // Add new thread to end of priority linked list
     PriorityPts[priority] = tcb_list_add(PriorityPts[priority], &tcb_pool[tid]);
     if (RunPt == NULL)
     {
         RunPt = &tcb_pool[tid];
     }
-#else
-    // Add new thread to end of linked list
-    RunPt = tcb_list_add(RunPt, &tcb_pool[tid]);
-#endif
 
     if (NextPt == NULL)
     {
@@ -495,6 +595,12 @@ int OS_ProcessAddInitialThread(void (*task)(void),
     tcb_pool[tid].status = ACTIVE;
     tcb_pool[tid].sp = &stack_pool[tid][STACK_SIZE - 16];
     tcb_pool[tid].process = process;
+#if (DEADLOCK_DETECTION)
+    tcb_pool[tid].lockStart = 0;
+    tcb_pool[tid].LockPt = NULL;
+    tcb_pool[tid].acquired = NULL;
+    tcb_pool[tid].visited = 0;
+#endif
     stack_pool[tid][STACK_SIZE - 1] = 0x01000000;                                                  // PSR (thumb bit = 1)
     stack_pool[tid][STACK_SIZE - 2] = (uint32_t)task;                                              // PC
     stack_pool[tid][STACK_SIZE - 3] = (uint32_t)&OS_Kill;                                          // R14
@@ -512,17 +618,12 @@ int OS_ProcessAddInitialThread(void (*task)(void),
     stack_pool[tid][STACK_SIZE - 15] = 0x05050505;                                                 // R5
     stack_pool[tid][STACK_SIZE - 16] = 0x04040404;                                                 // R4
 
-#if (PRIORITY)
     // Add new thread to end of priority linked list
     PriorityPts[priority] = tcb_list_add(PriorityPts[priority], &tcb_pool[tid]);
     if (RunPt == NULL)
     {
         RunPt = &tcb_pool[tid];
     }
-#else
-    // Add new thread to end of linked list
-    RunPt = tcb_list_add(RunPt, &tcb_pool[tid]);
-#endif
 
     if (NextPt == NULL)
     {
@@ -842,6 +943,15 @@ void OS_Kill(void)
 {
     int32_t sr;
     OSCRITICAL_ENTER();
+#if (DEADLOCK_DETECTION)
+    // Release all held locks
+    Lock *curr = RunPt->acquired;
+    while (curr != NULL)
+    {
+        OS_LockRelease(curr);
+        curr = curr->next;
+    }
+#endif
     RunPt->status = DEAD;
     if (RunPt->process != NULL)
     {
@@ -853,15 +963,56 @@ void OS_Kill(void)
             RunPt->process->status = DEAD;
         }
     }
-#if (PRIORITY)
     PriorityPts[RunPt->priority] = tcb_list_remove(RunPt);
     if (PriorityPts[RunPt->priority] != NULL)
     {
         PriorityPts[RunPt->priority] = PriorityPts[RunPt->priority]->prev;
     }
-#else
-    tcb_list_remove(RunPt);
+    OSCRITICAL_EXIT();
+    OS_Suspend();
+};
+
+// ******** OS_Kill_Thread ************
+// kill a thread, release its TCB and stack
+// input:  thread id to kill
+// output: none
+void OS_Kill_Thread(uint32_t tid)
+{
+    int32_t sr;
+    OSCRITICAL_ENTER();
+    TCB *thread = &tcb_pool[tid];
+#if (DEADLOCK_DETECTION)
+    // Release all held locks
+    Lock *curr = thread->acquired;
+    while (curr != NULL)
+    {
+        OS_LockRelease(curr);
+        curr = curr->next;
+    }
 #endif
+    thread->status = DEAD;
+    if (thread->process != NULL)
+    {
+        thread->process->num_threads--;
+        if (thread->process->num_threads == 0)
+        {
+            Heap_Free(thread->process->text);
+            Heap_Free(thread->process->data);
+            thread->process->status = DEAD;
+        }
+    }
+    if (thread == PriorityPts[thread->priority])
+    {
+        PriorityPts[thread->priority] = tcb_list_remove(thread);
+        if (PriorityPts[thread->priority] != NULL)
+        {
+            PriorityPts[thread->priority] = PriorityPts[thread->priority]->prev;
+        }
+    }
+    else if (thread->SemaPt != NULL && thread == thread->SemaPt->BlockedPts[thread->priority])
+    {
+        thread->SemaPt->BlockedPts[thread->priority] = tcb_list_remove(thread);
+    }
     OSCRITICAL_EXIT();
     OS_Suspend();
 };
@@ -875,7 +1026,6 @@ void OS_Kill(void)
 // output: none
 void OS_Suspend(void)
 {
-#if (PRIORITY)
     // Rotate current priority list
     if (PriorityPts[RunPt->priority] != NULL)
     {
@@ -910,13 +1060,6 @@ void OS_Suspend(void)
     }
     // How to handle if all threads are inactive? Not sure if we need to consider this
     NextPt = PriorityPts[priority];
-#else
-    NextPt = RunPt->next;
-    while (NextPt->status != ACTIVE)
-    {
-        NextPt = NextPt->next;
-    }
-#endif
     ContextSwitch();
 };
 
@@ -1069,7 +1212,6 @@ void OS_MsTask(void)
 {
     time++;
 
-#if (PRIORITY)
     for (uint32_t priority = 0; priority < PRIORITY_LEVELS; priority++)
     {
         TCB *curr = PriorityPts[priority];
@@ -1089,22 +1231,6 @@ void OS_MsTask(void)
             } while (curr != PriorityPts[priority]);
         }
     }
-#else
-    // Decrement sleepCount of all sleeping threads
-    TCB *curr = RunPt;
-    do
-    {
-        if (curr->status == SLEEPING)
-        {
-            curr->sleepCount--;
-            if (curr->sleepCount == 0)
-            {
-                curr->status = ACTIVE;
-            }
-        }
-        curr = curr->next;
-    } while (curr != RunPt);
-#endif
 }
 // ******** OS_ClearMsTime ************
 // sets the system time to zero (solve for Lab 1), and start a periodic interrupt

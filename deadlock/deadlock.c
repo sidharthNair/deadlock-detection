@@ -71,31 +71,29 @@ int realmain(void)
     return 0;
 }
 
-Sema4Type FirstArrived;
-Sema4Type SecondArrived;
+Lock first;
+Lock second;
 
 void BasicThread1(void)
 {
-    while (1)
-    {
-        PD2 ^= 0x04;
-        OS_bWait(&SecondArrived);
-        OS_bSignal(&FirstArrived);
-        OS_Sleep(1000);
-        PD2 ^= 0x04;
-    }
+    PD2 ^= 0x04;
+    OS_LockAcquire(&first);
+    OS_Sleep(1000);
+    OS_LockAcquire(&second);
+    OS_LockRelease(&first);
+    OS_LockRelease(&second);
+    PD2 ^= 0x04;
 }
 
 void BasicThread2(void)
 {
-    while (1)
-    {
-        PD1 ^= 0x02;
-        OS_bWait(&FirstArrived);
-        OS_bSignal(&SecondArrived);
-        OS_Sleep(1000);
-        PD1 ^= 0x02;
-    }
+    PD1 ^= 0x02;
+    OS_LockAcquire(&second);
+    OS_Sleep(1000);
+    OS_LockAcquire(&first);
+    OS_LockRelease(&first);
+    OS_LockRelease(&second);
+    PD1 ^= 0x02;
 }
 
 int TestmainBasic(void)
@@ -103,8 +101,8 @@ int TestmainBasic(void)
     OS_Init();
     PortD_Init();
 
-    OS_InitSemaphore(&FirstArrived, 0);
-    OS_InitSemaphore(&SecondArrived, 0);
+    OS_InitLock(&first);
+    OS_InitLock(&second);
 
     NumCreated = 0;
     NumCreated += OS_AddThread(&BasicThread1, 128, 3);
@@ -295,5 +293,5 @@ int TestMainBankersSimple(void)
 //*******************Trampoline for selecting main to execute**********
 int main(void)
 {
-    TestMainBankersSimple();
+    TestmainBasic();
 }

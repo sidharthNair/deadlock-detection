@@ -514,6 +514,11 @@
               <FileType>1</FileType>
               <FilePath>.\bankers.c</FilePath>
             </File>
+            <File>
+              <FileName>Timer0A.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\inc\Timer0A.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
