@@ -509,6 +509,11 @@
               <FileType>1</FileType>
               <FilePath>.\deadlock.c</FilePath>
             </File>
+            <File>
+              <FileName>bankers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bankers.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

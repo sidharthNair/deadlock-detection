@@ -16,6 +16,7 @@
 #include "../common/ST7735.h"
 #include "../common/eDisk.h"
 #include "../common/eFile.h"
+#include "../deadlock/bankers.h"
 
 uint32_t NumCreated; // number of foreground threads created
 uint32_t IdleCount;  // CPU idle counter
@@ -114,8 +115,185 @@ int TestmainBasic(void)
     return 0;
 }
 
+void Requestor0(void)
+{
+    int max_demand[] = {7, 5, 3};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request[] = {0, 1, 0};
+    Bankers_RequestResourcesBlocking(-1, request);
+    OS_Sleep(1000);
+    Bankers_ReleaseResources(-1, request);
+    ST7735_Message(0, 0, "Requestor done: ", 0);
+    OS_Kill();
+}
+
+void Requestor1(void)
+{
+    int max_demand[] = {3, 2, 2};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request[] = {2, 0, 0};
+    Bankers_RequestResourcesBlocking(-1, request);
+    OS_Sleep(1000);
+    Bankers_ReleaseResources(-1, request);
+    ST7735_Message(0, 1, "Requestor done: ", 1);
+    OS_Kill();
+}
+
+void Requestor2(void)
+{
+    int max_demand[] = {9, 0, 2};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request[] = {3, 0, 2};
+    Bankers_RequestResourcesBlocking(-1, request);
+    OS_Sleep(1000);
+    Bankers_ReleaseResources(-1, request);
+    ST7735_Message(0, 2, "Requestor done: ", 2);
+    OS_Kill();
+}
+
+void Requestor3(void)
+{
+    int max_demand[] = {2, 2, 2};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request[] = {2, 1, 1};
+    Bankers_RequestResourcesBlocking(-1, request);
+    OS_Sleep(1000);
+    Bankers_ReleaseResources(-1, request);
+    ST7735_Message(0, 3, "Requestor done: ", 3);
+    OS_Kill();
+}
+
+void Requestor4(void)
+{
+    int max_demand[] = {4, 3, 3};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request[] = {0, 0, 2};
+    Bankers_RequestResourcesBlocking(-1, request);
+    OS_Sleep(1000);
+    Bankers_ReleaseResources(-1, request);
+    ST7735_Message(0, 4, "Requestor done: ", 4);
+    OS_Kill();
+}
+
+// all requests succeed
+int TestMainBankers0(void)
+{
+    OS_Init();
+    PortD_Init();
+
+    printf("\r\n==== TestMain Bankers0 ====\r\n");
+
+    int resources[] = {10, 5, 7};
+    int status = Bankers_Init(3, -1, resources);
+    if (status)
+    {
+        printf("Error with Bankers_Init: %d\r\n", status);
+    }
+
+    NumCreated = 0;
+    NumCreated += OS_AddThread(&Requestor0, 128, 3);
+    NumCreated += OS_AddThread(&Requestor1, 128, 3);
+    NumCreated += OS_AddThread(&Requestor2, 128, 3);
+    NumCreated += OS_AddThread(&Requestor3, 128, 3);
+    NumCreated += OS_AddThread(&Requestor4, 128, 3);
+    NumCreated += OS_AddThread(&Idle, 128, 5);
+
+    OS_Launch(TIME_2MS);
+    return 0;
+}
+
+// some requests will be rejected (they will retry until they succeed) due to potential deadlock
+int TestMainBankers1(void)
+{
+    OS_Init();
+    PortD_Init();
+
+    printf("\r\n==== TestMain Bankers1 ====\r\n");
+
+    int resources[] = {9, 5, 3};
+    int status = Bankers_Init(3, -1, resources);
+    if (status)
+    {
+        printf("Error with Bankers_Init: %d\r\n", status);
+    }
+
+    NumCreated = 0;
+    NumCreated += OS_AddThread(&Requestor0, 128, 3);
+    NumCreated += OS_AddThread(&Requestor1, 128, 3);
+    NumCreated += OS_AddThread(&Requestor2, 128, 3);
+    NumCreated += OS_AddThread(&Requestor3, 128, 3);
+    NumCreated += OS_AddThread(&Requestor4, 128, 3);
+    NumCreated += OS_AddThread(&Idle, 128, 5);
+
+    OS_Launch(TIME_2MS);
+    return 0;
+}
+
+void Basic0(void)
+{
+    int max_demand[] = {1, 1};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request1[] = {1, 0};
+    int request2[] = {0, 1};
+    Bankers_RequestResourcesBlocking(-1, request1);
+    OS_Sleep(1000);
+    Bankers_RequestResourcesBlocking(-1, request2);
+    OS_Sleep(1000);
+    int release[] = {1, 1};
+    Bankers_ReleaseResources(-1, release);
+    ST7735_Message(0, 0, "Requestor done: ", 0);
+    OS_Kill();
+}
+
+void Basic1(void)
+{
+    int max_demand[] = {1, 1};
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    int request1[] = {0, 1};
+    int request2[] = {1, 0};
+    Bankers_RequestResourcesBlocking(-1, request1);
+    OS_Sleep(1000);
+    Bankers_RequestResourcesBlocking(-1, request2);
+    OS_Sleep(1000);
+    int release[] = {1, 1};
+    Bankers_ReleaseResources(-1, release);
+    ST7735_Message(0, 1, "Requestor done: ", 1);
+    OS_Kill();
+}
+
+// very basic example
+int TestMainBankersSimple(void)
+{
+    OS_Init();
+    PortD_Init();
+
+    printf("\r\n==== TestMain BankersSimple ====\r\n");
+
+    int resources[] = {1, 1};
+    int status = Bankers_Init(2, -1, resources);
+    if (status)
+    {
+        printf("Error with Bankers_Init: %d\r\n", status);
+    }
+
+    NumCreated = 0;
+    NumCreated += OS_AddThread(&Basic0, 128, 3);
+    NumCreated += OS_AddThread(&Basic1, 128, 3);
+    NumCreated += OS_AddThread(&Idle, 128, 5);
+
+    OS_Launch(TIME_2MS);
+    return 0;
+}
+
 //*******************Trampoline for selecting main to execute**********
 int main(void)
 {
-    TestmainBasic();
+    TestMainBankersSimple();
 }

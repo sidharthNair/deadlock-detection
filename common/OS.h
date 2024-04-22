@@ -120,6 +120,12 @@ void OS_Wait(Sema4Type *semaPt);
 // output: none
 void OS_Signal(Sema4Type *semaPt);
 
+// ******** OS_Signal ************
+// increment semaphore until all waiting threads are released
+// input:  pointer to a counting semaphore
+// output: none
+void OS_SignalAll(Sema4Type *semaPt);
+
 // ******** OS_bWait ************
 // Lab2 spinlock, set to 0
 // Lab3 block if less than zero

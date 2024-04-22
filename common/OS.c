@@ -331,6 +331,17 @@ void OS_Signal(Sema4Type *semaPt)
 #endif
 };
 
+void OS_SignalAll(Sema4Type *semaPt)
+{
+    int32_t sr;
+    OSCRITICAL_ENTER();
+    while (semaPt->Value < 0)
+    {
+        OS_Signal(semaPt);
+    }
+    OSCRITICAL_EXIT();
+}
+
 // ******** OS_bWait ************
 // Lab2 spinlock, set to 0
 // Lab3 block if less than zero
