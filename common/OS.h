@@ -27,12 +27,14 @@
 #define PRIORITY_LEVELS 7
 
 // Thread and stack size configuration
-#define MAX_THREADS 16
+#define MAX_THREADS 9
 #define STACK_SIZE 128
 
-#define MAX_PROCESSES 10
+#define MAX_PROCESSES 1
 
 #define DEADLOCK_DETECTION 1
+#define DEADLOCK_CHECK_PERIOD_MS 3000
+#define DEADLOCK_PRINTS 1
 
 // Forward definitions
 struct TCB;
@@ -44,26 +46,23 @@ typedef struct PCB PCB;
 /**
  * \brief Semaphore structure. Feel free to change the type of semaphore, there are lots of good solutions
  */
-struct Sema4
-{
-    int32_t Value;                    // >0 means free, otherwise means busy
-    TCB *BlockedPts[PRIORITY_LEVELS]; // List for each priority level of blocked threads#
+struct Sema4 {
+    int32_t Value;                     // >0 means free, otherwise means busy
+    TCB *BlockedPts[PRIORITY_LEVELS];  // List for each priority level of blocked threads#
 };
 typedef struct Sema4 Sema4Type;
 
-struct Lock
-{
-    Sema4Type sema; // Semaphore for locking mechanism
-    TCB *holder;    // Pointer to the thread currently holding the lock
+struct Lock {
+    Sema4Type sema;  // Semaphore for locking mechanism
+    TCB *holder;     // Pointer to the thread currently holding the lock
 #if (DEADLOCK_DETECTION)
-    struct Lock *next; // Linked list of locks to maintain which locks a particular thread holds
+    struct Lock *next;  // Linked list of locks to maintain which locks a particular thread holds
 #endif
 };
 typedef struct Lock Lock;
 
 // Thread status
-enum Status
-{
+enum Status {
     DEAD,
     ACTIVE,
     SLEEPING,
@@ -71,8 +70,7 @@ enum Status
 };
 
 // Thread Control Block
-struct TCB
-{
+struct TCB {
     uint32_t *sp;
     struct TCB *next;
     struct TCB *prev;
@@ -91,8 +89,7 @@ struct TCB
 };
 
 // Process Control Block
-struct PCB
-{
+struct PCB {
     uint32_t id;
     uint32_t num_threads;
     uint32_t *text;

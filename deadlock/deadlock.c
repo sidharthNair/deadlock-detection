@@ -3,23 +3,24 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "../inc/tm4c123gh6pm.h"
-#include "../inc/CortexM.h"
-#include "../inc/LaunchPad.h"
-#include "../inc/PLL.h"
-#include "../inc/LPF.h"
-#include "../common/UART0int.h"
+
 #include "../common/ADC.h"
-#include "../common/OS.h"
-#include "../common/heap.h"
 #include "../common/Interpreter.h"
+#include "../common/OS.h"
 #include "../common/ST7735.h"
+#include "../common/UART0int.h"
 #include "../common/eDisk.h"
 #include "../common/eFile.h"
+#include "../common/heap.h"
 #include "../deadlock/bankers.h"
+#include "../inc/CortexM.h"
+#include "../inc/LPF.h"
+#include "../inc/LaunchPad.h"
+#include "../inc/PLL.h"
+#include "../inc/tm4c123gh6pm.h"
 
-uint32_t NumCreated; // number of foreground threads created
-uint32_t IdleCount;  // CPU idle counter
+uint32_t NumCreated;  // number of foreground threads created
+uint32_t IdleCount;   // CPU idle counter
 
 //---------------------User debugging-----------------------
 #define PD0 (*((volatile uint32_t *)0x40007004))
@@ -27,18 +28,16 @@ uint32_t IdleCount;  // CPU idle counter
 #define PD2 (*((volatile uint32_t *)0x40007010))
 #define PD3 (*((volatile uint32_t *)0x40007020))
 
-void PortD_Init(void)
-{
-    SYSCTL_RCGCGPIO_R |= 0x08; // activate port D
-    while ((SYSCTL_RCGCGPIO_R & 0x08) == 0)
-    {
+void PortD_Init(void) {
+    SYSCTL_RCGCGPIO_R |= 0x08;  // activate port D
+    while ((SYSCTL_RCGCGPIO_R & 0x08) == 0) {
     };
-    GPIO_PORTD_DIR_R |= 0x0F;    // make PD3-0 output heartbeats
-    GPIO_PORTD_AFSEL_R &= ~0x0F; // disable alt funct on PD3-0
-    GPIO_PORTD_DEN_R |= 0x0F;    // enable digital I/O on PD3-0
+    GPIO_PORTD_DIR_R |= 0x0F;     // make PD3-0 output heartbeats
+    GPIO_PORTD_AFSEL_R &= ~0x0F;  // disable alt funct on PD3-0
+    GPIO_PORTD_DEN_R |= 0x0F;     // enable digital I/O on PD3-0
     GPIO_PORTD_PCTL_R = ~0x0000FFFF;
     GPIO_PORTD_AMSEL_R &= ~0x0F;
-    ; // disable analog functionality on PD
+    ;  // disable analog functionality on PD
 }
 
 extern uint32_t num_killed;
@@ -48,13 +47,10 @@ extern uint32_t num_killed;
 // never blocks, never sleeps, never dies
 // inputs:  none
 // outputs: none
-void Idle(void)
-{
+void Idle(void) {
     IdleCount = 0;
-    while (1)
-    {
-        if (IdleCount % 1024 == 0)
-        {
+    while (1) {
+        if (IdleCount % 1024 == 0) {
             ST7735_Message(1, 7, "num_killed: ", num_killed);
         }
         IdleCount++;
@@ -64,8 +60,7 @@ void Idle(void)
 }
 //--------------end of Idle Task-----------------------------
 
-int realmain(void)
-{
+int realmain(void) {
     OS_Init();
     PortD_Init();
 
@@ -80,30 +75,27 @@ int realmain(void)
 Lock first;
 Lock second;
 
-void BasicThread1(void)
-{
-    PD2 ^= 0x04;
+void BasicThread1(void) {
+    PD1 ^= 0x02;
     OS_LockAcquire(&first);
     OS_Sleep(1000);
     OS_LockAcquire(&second);
     OS_LockRelease(&first);
     OS_LockRelease(&second);
-    PD2 ^= 0x04;
+    PD1 ^= 0x02;
 }
 
-void BasicThread2(void)
-{
-    PD1 ^= 0x02;
+void BasicThread2(void) {
+    PD2 ^= 0x04;
     OS_LockAcquire(&second);
     OS_Sleep(1000);
     OS_LockAcquire(&first);
     OS_LockRelease(&first);
     OS_LockRelease(&second);
-    PD1 ^= 0x02;
+    PD2 ^= 0x04;
 }
 
-int TestmainBasic(void)
-{
+int TestmainBasic(void) {
     OS_Init();
     PortD_Init();
 
@@ -119,31 +111,29 @@ int TestmainBasic(void)
     return 0;
 }
 
-#define NUM_PHILOSOPHERS 5
+#define NUM_PHILOSOPHERS 8
 
 Lock forks[NUM_PHILOSOPHERS];
 
-void DiningPhilosopher()
-{
+void DiningPhilosopher() {
     int philosopher_id = OS_Id();
     int left_fork = philosopher_id;
     int right_fork = (philosopher_id + 1) % NUM_PHILOSOPHERS;
 
-    while (1)
-    {
-        ST7735_Message(0, philosopher_id, "acquiring left", philosopher_id);
+    while (1) {
+        // ST7735_Message(0, philosopher_id, "acquiring left", philosopher_id);
         OS_LockAcquire(&forks[left_fork]);
-        OS_Sleep(500);
+        OS_Sleep(100);
         ST7735_Message(0, philosopher_id, "acquiring right", philosopher_id);
         OS_LockAcquire(&forks[right_fork]);
 
         // Philosopher eats...
-        OS_Sleep(500);
+        OS_Sleep(100);
 
         // Philosopher releases both forks
         ST7735_Message(0, philosopher_id, "releasing left", philosopher_id);
         OS_LockRelease(&forks[left_fork]);
-        OS_Sleep(500);
+        OS_Sleep(100);
         ST7735_Message(0, philosopher_id, "releasing right", philosopher_id);
         OS_LockRelease(&forks[right_fork]);
 
@@ -151,14 +141,12 @@ void DiningPhilosopher()
     }
 }
 
-int TestmainDining()
-{
+int TestmainDining() {
     OS_Init();
     PortD_Init();
 
     NumCreated = 0;
-    for (int i = 0; i < NUM_PHILOSOPHERS; i++)
-    {
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
         OS_InitLock(&forks[i]);
         NumCreated += OS_AddThread(&DiningPhilosopher, 128, 3);
     }
@@ -169,8 +157,7 @@ int TestmainDining()
     return 0;
 }
 
-void Requestor0(void)
-{
+void Requestor0(void) {
     int max_demand[] = {7, 5, 3};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -182,8 +169,7 @@ void Requestor0(void)
     OS_Kill();
 }
 
-void Requestor1(void)
-{
+void Requestor1(void) {
     int max_demand[] = {3, 2, 2};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -195,8 +181,7 @@ void Requestor1(void)
     OS_Kill();
 }
 
-void Requestor2(void)
-{
+void Requestor2(void) {
     int max_demand[] = {9, 0, 2};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -208,8 +193,7 @@ void Requestor2(void)
     OS_Kill();
 }
 
-void Requestor3(void)
-{
+void Requestor3(void) {
     int max_demand[] = {2, 2, 2};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -221,8 +205,7 @@ void Requestor3(void)
     OS_Kill();
 }
 
-void Requestor4(void)
-{
+void Requestor4(void) {
     int max_demand[] = {4, 3, 3};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -235,8 +218,7 @@ void Requestor4(void)
 }
 
 // all requests succeed
-int TestMainBankers0(void)
-{
+int TestmainBankers0(void) {
     OS_Init();
     PortD_Init();
 
@@ -244,8 +226,7 @@ int TestMainBankers0(void)
 
     int resources[] = {10, 5, 7};
     int status = Bankers_Init(3, -1, resources);
-    if (status)
-    {
+    if (status) {
         printf("Error with Bankers_Init: %d\r\n", status);
     }
 
@@ -262,8 +243,7 @@ int TestMainBankers0(void)
 }
 
 // some requests will be rejected (they will retry until they succeed) due to potential deadlock
-int TestMainBankers1(void)
-{
+int TestmainBankers1(void) {
     OS_Init();
     PortD_Init();
 
@@ -271,8 +251,7 @@ int TestMainBankers1(void)
 
     int resources[] = {9, 5, 3};
     int status = Bankers_Init(3, -1, resources);
-    if (status)
-    {
+    if (status) {
         printf("Error with Bankers_Init: %d\r\n", status);
     }
 
@@ -288,8 +267,7 @@ int TestMainBankers1(void)
     return 0;
 }
 
-void Basic0(void)
-{
+void Basic0(void) {
     int max_demand[] = {1, 1};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -305,8 +283,7 @@ void Basic0(void)
     OS_Kill();
 }
 
-void Basic1(void)
-{
+void Basic1(void) {
     int max_demand[] = {1, 1};
     Bankers_SetMaxDemand(-1, max_demand);
     OS_Sleep(1000);
@@ -323,8 +300,7 @@ void Basic1(void)
 }
 
 // very basic example
-int TestMainBankersSimple(void)
-{
+int TestmainBankersSimple(void) {
     OS_Init();
     PortD_Init();
 
@@ -332,8 +308,7 @@ int TestMainBankersSimple(void)
 
     int resources[] = {1, 1};
     int status = Bankers_Init(2, -1, resources);
-    if (status)
-    {
+    if (status) {
         printf("Error with Bankers_Init: %d\r\n", status);
     }
 
@@ -346,8 +321,45 @@ int TestMainBankersSimple(void)
     return 0;
 }
 
+#define NUM_RESOURCES 128
+#define NUM_REQUESTORS 8
+int max_demand[NUM_RESOURCES] = {[0 ... NUM_RESOURCES-1] = 1};
+int request[] = {[0 ... NUM_RESOURCES-1] = 1};
+int resources[] = {[0 ... NUM_RESOURCES-1] = NUM_REQUESTORS-1};
+
+void Basic(void) {
+    Bankers_SetMaxDemand(-1, max_demand);
+    OS_Sleep(1000);
+    Bankers_RequestResourcesBlocking(-1, request);
+    OS_Sleep(1000);
+    Bankers_ReleaseResources(-1, request);
+    printf("Requestor done: %d\r\n", OS_Id());
+    OS_Kill();
+}
+
+int TestmainBankers(void) {
+    OS_Init();
+    PortD_Init();
+
+    printf("\r\n==== TestMain Bankers ====\r\n");
+
+        int status = Bankers_Init(NUM_RESOURCES, -1, resources);
+    if (status) {
+        printf("Error with Bankers_Init: %d\r\n", status);
+    }
+
+    NumCreated = 0;
+    for (int i = 0; i < NUM_REQUESTORS; i++) {
+        NumCreated += OS_AddThread(&Basic, 128, 3);
+    }
+    
+    NumCreated += OS_AddThread(&Idle, 128, 5);
+
+    OS_Launch(TIME_2MS);
+    return 0;
+}
+
 //*******************Trampoline for selecting main to execute**********
-int main(void)
-{
-    TestmainDining();
+int main(void) {
+    TestmainBankers();
 }

@@ -53,4 +53,4 @@ int Bankers_RequestResourcesBlocking(int customer, int *request);
 //   BANKERS_OK if resources are released successfully, otherwise error code
 int Bankers_ReleaseResources(int customer, int *release);
 
-#endif // BANKERS_H
+#endif  // BANKERS_H
