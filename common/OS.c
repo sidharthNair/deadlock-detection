@@ -174,16 +174,20 @@ int CheckForDeadlocks(TCB *thread) {
 #if (DEADLOCK_PRINTS)
     printf("checking for deadlocks starting from thread %d\r\n", thread->id);
 #endif
+    for (uint32_t tid = 0; tid < MAX_THREADS; tid++) {
+        tcb_pool[tid].visited = 0;
+    }
     TCB *curr = thread;
     int found_cycle = 0;
-    while (curr->status == BLOCKED &&
+    while (curr != NULL &&
+           curr->status == BLOCKED &&
            curr->LockPt != NULL) {
-        curr->visited = 1;
-        curr = curr->LockPt->holder;
         if (curr->visited) {
             found_cycle = 1;
             break;
         }
+        curr->visited = 1;
+        curr = curr->LockPt->holder;
     }
 
     if (found_cycle) {
@@ -211,14 +215,11 @@ int CheckForDeadlocks(TCB *thread) {
 void DeadlockTask() {
     // PD1 ^= 0x02;
     for (uint32_t tid = 0; tid < MAX_THREADS; tid++) {
-        tcb_pool[tid].visited = 0;
-    }
-    for (uint32_t tid = 0; tid < MAX_THREADS; tid++) {
         if (tcb_pool[tid].status == BLOCKED &&
             tcb_pool[tid].LockPt != NULL &&
-            OS_TimeDifference(tcb_pool[tid].lockStart, OS_MsTime()) > (TIME_1MS * DEADLOCK_CHECK_PERIOD_MS)) {
+            ((int32_t)(OS_MsTime() - tcb_pool[tid].lockStart)) > DEADLOCK_CHECK_PERIOD_MS) {
             // Thread has been waiting for a lock for over 3 seconds -- check for cycle
-            if (!tcb_pool[tid].visited && CheckForDeadlocks(&tcb_pool[tid])) {
+            if (CheckForDeadlocks(&tcb_pool[tid])) {
                 break;
             }
         }
@@ -388,7 +389,7 @@ Lock *lock_list_remove(Lock *head, Lock *elem) {
 
     Lock *curr = head;
     Lock *prev = head;
-    while (curr != NULL || curr != elem) {
+    while (curr != NULL && curr != elem) {
         prev = curr;
         curr = curr->next;
     }
@@ -414,15 +415,15 @@ void OS_InitLock(Lock *lock) {
 // Acquires the lock
 void OS_LockAcquire(Lock *lock) {
 #if (DEADLOCK_DETECTION)
-    RunPt->lockStart = OS_Time();
+    RunPt->lockStart = OS_MsTime();
     RunPt->LockPt = lock;
 #endif
     OS_Wait(&(lock->sema));
     lock->holder = RunPt;
 
 #if (DEADLOCK_DETECTION)
-    RunPt->lockStart = 0;
     RunPt->LockPt = NULL;
+    RunPt->lockStart = 0;
     RunPt->acquired = lock_list_append(RunPt->acquired, lock);
 #endif
 }

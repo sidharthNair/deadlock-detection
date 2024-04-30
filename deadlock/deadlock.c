@@ -138,6 +138,36 @@ void DiningPhilosopher() {
         OS_LockRelease(&forks[right_fork]);
 
         // Philosopher thinks...
+        OS_Sleep(100);
+    }
+}
+
+#define MIN(a, b) (a < b ? a : b)
+#define MAX(a, b) (a > b ? a : b)
+void DiningPhilosopherFixed() {
+    int philosopher_id = OS_Id();
+    int left_fork = MIN(philosopher_id, (philosopher_id + 1) % NUM_PHILOSOPHERS);
+    int right_fork = MAX(philosopher_id, (philosopher_id + 1) % NUM_PHILOSOPHERS);
+
+    while (1) {
+        // ST7735_Message(0, philosopher_id, "acquiring left", philosopher_id);
+        OS_LockAcquire(&forks[left_fork]);
+        OS_Sleep(100);
+        ST7735_Message(0, philosopher_id, "acquiring right", philosopher_id);
+        OS_LockAcquire(&forks[right_fork]);
+
+        // Philosopher eats...
+        OS_Sleep(100);
+
+        // Philosopher releases both forks
+        ST7735_Message(0, philosopher_id, "releasing left", philosopher_id);
+        OS_LockRelease(&forks[left_fork]);
+        OS_Sleep(100);
+        ST7735_Message(0, philosopher_id, "releasing right", philosopher_id);
+        OS_LockRelease(&forks[right_fork]);
+
+        // Philosopher thinks...
+        OS_Sleep(100);
     }
 }
 
@@ -148,7 +178,7 @@ int TestmainDining() {
     NumCreated = 0;
     for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
         OS_InitLock(&forks[i]);
-        NumCreated += OS_AddThread(&DiningPhilosopher, 128, 3);
+        NumCreated += OS_AddThread(&DiningPhilosopherFixed, 128, 3);
     }
 
     NumCreated += OS_AddThread(&Idle, 128, 5);
@@ -361,5 +391,5 @@ int TestmainBankers(void) {
 
 //*******************Trampoline for selecting main to execute**********
 int main(void) {
-    TestmainBankers();
+    TestmainDining();
 }
