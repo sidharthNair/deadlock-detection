@@ -27,12 +27,12 @@
 #define PRIORITY_LEVELS 7
 
 // Thread and stack size configuration
-#define MAX_THREADS 9
+#define MAX_THREADS 16
 #define STACK_SIZE 128
 
 #define MAX_PROCESSES 1
 
-#define DEADLOCK_DETECTION 1
+#define DEADLOCK_DETECTION 0
 #define DEADLOCK_CHECK_PERIOD_MS 3000
 #define DEADLOCK_PRINTS 1
 

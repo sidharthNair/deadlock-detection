@@ -323,16 +323,14 @@ int TestmainBankersSimple(void) {
 
 #define NUM_RESOURCES 128
 #define NUM_REQUESTORS 8
-int max_demand[NUM_RESOURCES] = {[0 ... NUM_RESOURCES-1] = 1};
-int request[] = {[0 ... NUM_RESOURCES-1] = 1};
-int resources[] = {[0 ... NUM_RESOURCES-1] = NUM_REQUESTORS-1};
+int max_demand[NUM_RESOURCES] = {[0 ... NUM_RESOURCES-1] = 0};
+int request[NUM_RESOURCES] = {[0 ... NUM_RESOURCES-1] = 0};
+int resources[NUM_RESOURCES] = {[0 ... NUM_RESOURCES-1] = 0};
 
 void Basic(void) {
-    Bankers_SetMaxDemand(-1, max_demand);
+    Bankers_RequestResourcesBlocking(NUM_REQUESTORS-1, request);
     OS_Sleep(1000);
-    Bankers_RequestResourcesBlocking(-1, request);
-    OS_Sleep(1000);
-    Bankers_ReleaseResources(-1, request);
+    Bankers_ReleaseResources(NUM_REQUESTORS-1, request);
     printf("Requestor done: %d\r\n", OS_Id());
     OS_Kill();
 }
@@ -342,19 +340,30 @@ int TestmainBankers(void) {
     PortD_Init();
 
     printf("\r\n==== TestMain Bankers ====\r\n");
-
-        int status = Bankers_Init(NUM_RESOURCES, -1, resources);
+    
+    for (int i = 0; i < NUM_REQUESTORS; i++) {
+        resources[i%NUM_RESOURCES]++;
+        max_demand[i%NUM_RESOURCES]++;
+    }
+    
+    int status = Bankers_Init(NUM_RESOURCES, NUM_REQUESTORS, resources);
     if (status) {
         printf("Error with Bankers_Init: %d\r\n", status);
     }
-
-    NumCreated = 0;
+    
     for (int i = 0; i < NUM_REQUESTORS; i++) {
-        NumCreated += OS_AddThread(&Basic, 128, 3);
+        Bankers_SetMaxDemand(i, max_demand);
+        max_demand[i%NUM_RESOURCES]--;
     }
     
-    NumCreated += OS_AddThread(&Idle, 128, 5);
+    request[(NUM_REQUESTORS-1)%NUM_RESOURCES] = 1;
+    Bankers_ReleaseResources(NUM_REQUESTORS-1, request);
 
+    NumCreated = 0;
+    NumCreated += OS_AddThread(&Basic, 128, 3);
+    
+    NumCreated += OS_AddThread(&Idle, 128, 5);
+    
     OS_Launch(TIME_2MS);
     return 0;
 }

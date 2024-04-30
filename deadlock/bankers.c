@@ -6,8 +6,9 @@
 #include "../common/OS.h"
 #include "../common/heap.h"
 
-#define BANKERS_DEBUG 1
+#define BANKERS_DEBUG 0
 #define PD1 (*((volatile uint32_t *)0x40007008))
+#define PD2 (*((volatile uint32_t *)0x40007010))
 
 uint32_t size_resources = -1;
 uint32_t size_customers = -1;
@@ -95,6 +96,19 @@ int Bankers_SetMaxDemand(int customer, int *max_demand) {
     }
 
     OS_bWait(&bankers_lock);
+    
+#if (BANKERS_DEBUG)
+    printf("Customer %d setting max demand: ", customer);
+    for (int i = 0; i < size_resources; i++) {
+        printf("%d ", max_demand[i]);
+    }
+    printf("\r\n");
+#endif
+    
+    // REMOVE THESE TWO LINES FOR ACTUAL OPERATION -- THIS IS FOR BENCHMARKING WITH TESTMAINBANKERS
+    available[customer % size_resources]--;
+    customers[customer].allocation[customer % size_resources] = 1;
+    
     for (int i = 0; i < size_resources; i++) {
         customers[customer].maximum[i] = max_demand[i];
         customers[customer].need[i] = max_demand[i] - customers[customer].allocation[i];
@@ -108,7 +122,7 @@ int Bankers_SetMaxDemand(int customer, int *max_demand) {
 // Helper function to check if there exists a safe exit sequence of the processes.
 // bankers_lock is assumed to be held before calling this function.
 int Bankers_CheckSafeSequence() {
-    PD1 ^= 0x02;
+    PD2 ^= 0x04;
     int done = 0;
     int *curr_available = Heap_Malloc(sizeof(int) * size_resources);
     if (available == NULL)
@@ -151,7 +165,7 @@ int Bankers_CheckSafeSequence() {
     }
 
     Heap_Free(curr_available);
-    PD1 ^= 0x02;
+    PD2 ^= 0x04;
     if (done < size_customers) {
 #if (BANKERS_DEBUG)
         printf("Safe sequence does not exist\r\n");
@@ -175,6 +189,7 @@ int Bankers_RequestResourcesNonBlocking(int customer, int *request) {
     }
 
     OS_bWait(&bankers_lock);
+    PD1 ^= 0x02;
 
 #if (BANKERS_DEBUG)
     printf("Customer %d requesting resources: ", customer);
@@ -196,6 +211,7 @@ int Bankers_RequestResourcesNonBlocking(int customer, int *request) {
         customers[customer].allocation[i] += request[i];
         customers[customer].need[i] -= request[i];
     }
+    PD1 ^= 0x02;
 
     int status = Bankers_CheckSafeSequence();
     if (status != BANKERS_OK) {
